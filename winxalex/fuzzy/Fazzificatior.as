@@ -21,17 +21,6 @@ package winxalex.fuzzy
   //a vector containing all the fuzzy rules
   private var fuzzyRules:Vector.<FuzzyRule>;
   
-
- 
- 
-  
-          
-
-  //this method calls the Fuzzify method of the named FLV
- //  Fuzzify(const std::string& NameOfFLV, double val);
-
-
- 
 		
 		
 		public function Fazzificatior() 
@@ -41,26 +30,7 @@ package winxalex.fuzzy
 			inputs = new Dictionary(true);
 			
 		}
-		
-	/*	public  static function AND(...args):FuzzyTerm
-		{
-		
-			var i:int = 0;
-			var len:int = args.length;
-			
-			for (; i < len; i++)
-			{
-				
-			}
-		}
-		
-		//fm.AddRule(FzOR(FzAND(a1,a2), FzAND(FzNOT(a3), FzVery(a4))), FzAND(c1, c2));
-
-
-		public static function OR(...args):FuzzyTerm
-		{
-			
-		}*/
+	
 		
 		
 	   //adds a rule to the fazificator
