@@ -9,7 +9,7 @@ package winxalex.fuzzy
 	{
 	
 		 
-		 function create(funcType:uint,...args):IFuzzyMembershipFunction
+		 function create(funcType:uint,...args):FuzzyMembershipFunction
 		
 	}
 	

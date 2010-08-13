@@ -24,7 +24,7 @@ package winxalex.fuzzy
 			if (_instance != null && getQualifiedSuperclassName(this) != _className) throw new Error("Factory is Singleton. Use FuzzyMembershipFunctionFactory.getInstance()");
 		}
 		
-		public function create(funcType:uint,...args):IFuzzyMembershipFunction
+		public function create(funcType:uint,...args):FuzzyMembershipFunction
 		{
 			//version 1 dispatcher.dispatchEvent(new MembershipFunctionCreateEvent(funcType,afgs...)
 			//version 2 using signal
@@ -40,7 +40,7 @@ package winxalex.fuzzy
 		
 		private static function createTriangleFunction(...args):IFuzzyMembershipFunction
 		{
-			return new FuzzyTrapezoidMembershipFunction(args[0], args[1], args[1], args[2],args[3]);
+			return new FuzzyTrapezoidMembershipFunction(args[0], args[1], args[2], args[2],args[3]);
 		}
 		
 		private static function createTrapezoidFunction(...args):IFuzzyMembershipFunction
@@ -50,12 +50,12 @@ package winxalex.fuzzy
 		
 		private static function createLeftShoulderFunction(...args):IFuzzyMembershipFunction
 		{
-			return new FuzzyLeftShoulderMembershipFunction(args[0], args[1], args[2], args[3]);
+			return new FuzzyLeftShoulderMembershipFunction(args[0], args[1], args[2]);
 		}
 		
 		private static function createRightShoulderFunction(...args):IFuzzyMembershipFunction
 		{
-			return new FuzzyRightShoulderMembershipFunction(args[0], args[1], args[2], args[3]);
+			return new FuzzyRightShoulderMembershipFunction(args[0], args[1], args[2]);
 		}
 		
 		private static function createQuadricFunction():IFuzzyMembershipFunction
