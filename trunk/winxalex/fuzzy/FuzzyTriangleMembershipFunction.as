@@ -11,7 +11,7 @@ package winxalex.fuzzy
 			
 		public function FuzzyTriangleMembershipFunction(linguisticQuantifier:String,peakPoint:Number=NaN,leftOffset:Number=NaN,rightOffset:Number=NaN) :void
 		{
-			super(linguisticQuantifier, peakPoint, leftOffset, rightOffset);
+			super(linguisticQuantifier,  leftOffset,peakPoint,peakPoint, rightOffset);
 		}
 		
 		public function calculateDOM(value:Number):void

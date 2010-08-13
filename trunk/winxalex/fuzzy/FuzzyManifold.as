@@ -8,7 +8,7 @@ package winxalex.fuzzy
 	public class FuzzyManifold//FuzzySurface
 	{
 		public var name:String;
-		public var memberfunctions:Vector.<FuzzyMembershipFunction>;
+		public var memberfunctions:Array;
 		public var maxRange:Number = Number.MIN_VALUE;
 		public var minRange:Number = Number.MAX_VALUE;
 	    private var _fazzificator:Fazzificatior = null;
@@ -16,11 +16,12 @@ package winxalex.fuzzy
 		public function FuzzyManifold(name:String) 
 		{
 			this.name = name;
+			memberfunctions = new Array();
 		}
 		
 		public function addMember(funct:FuzzyMembershipFunction):void
 		{
-			memberfunctions[funct.linguisticQuantifier] = funct;
+			memberfunctions[funct.linguisticTerm] = funct;
 			
 			if (funct.leftOffset < minRange)
 			minRange = funct.leftOffset;
