@@ -9,6 +9,9 @@ package winxalex.fuzzy
 		
 		public var rightPoint:Number;
 		
+		//domain value at the middle of
+		private var _averagePoint:Number=0;
+		
 		public function FuzzyTrapezoidMembershipFunction(linguisticTerm:String, leftMidPoint:Number = NaN,rightMidPoint:Number=NaN, leftOffset:Number = NaN, rightOffset:Number = NaN, ...args) 
 		{
 			
@@ -63,6 +66,13 @@ package winxalex.fuzzy
 							  }
 						  }
 						}
+		}
+		
+		public function get averagePoint():Number { return rightMidPoint+(rightMidPoint-leftMidPoint)/2; }
+		
+		public function set averagePoint(value:Number):void 
+		{
+			_averagePoint = value;
 		}
 		
 		

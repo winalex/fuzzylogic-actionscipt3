@@ -12,9 +12,15 @@ package winxalex.fuzzy
 		function calculateDOM(value:Number):void
 		
 		function reset():void;
+		
+		
 	
 			
 	 function toString():String;
+	 
+	 public function get averagePoint():Number;
+	 
+	
 		
 		
 		
