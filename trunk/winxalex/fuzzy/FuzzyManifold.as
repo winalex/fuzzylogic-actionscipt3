@@ -1,5 +1,6 @@
 package winxalex.fuzzy 
 {
+	import winxalex.fuzzy.events.FuzzyOutput;
 	
 	/**
 	 * ...
@@ -11,6 +12,12 @@ package winxalex.fuzzy
 		public var memberfunctions:Array;
 		public var maxRange:Number = Number.MIN_VALUE;
 		public var minRange:Number = Number.MAX_VALUE;
+		
+		
+		public var input:FuzzyInput;
+		private var _output:FuzzyOutput = new FuzzyOutput();
+		
+		
 	    private var _fuzzificator:Fazzificatior = null;
 		
 		public function FuzzyManifold(name:String) 
@@ -35,7 +42,7 @@ package winxalex.fuzzy
 		}
 		
 		
-		internal function Fuzzify(value:Number):void
+		internal function Fuzzify():void
 		{
 		
 			if (memberfunctions.length > 0)
@@ -48,7 +55,7 @@ package winxalex.fuzzy
 					  for each (var func:IFuzzyMembershipFunction in  this.memberfunctions)
 					  {
 						    func.reset();
-							func.calculateDOM(value);
+							func.calculateDOM(input.value);
 							trace(this.name,FuzzyMembershipFunction(func).linguisticTerm,FuzzyMembershipFunction(func).degreeOfMembership);
 					  }
 				}
@@ -72,6 +79,13 @@ package winxalex.fuzzy
 					  }
 					  
 					  return s;
+		}
+		
+		public function get output():FuzzyOutput { return _output; }
+		
+		public function set output(value:FuzzyOutput):void 
+		{
+			_output = value;
 		}
 		
 	}

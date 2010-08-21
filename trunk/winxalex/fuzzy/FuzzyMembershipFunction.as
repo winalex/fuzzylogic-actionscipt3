@@ -15,8 +15,10 @@ package winxalex.fuzzy
 		
 		
 		
-		
+		private var _levelOfConfidence:Number=0;
 		private var _degreeOfMembership:Number = 0.0;
+		
+		
 		
 		public var linguisticTerm:String;
 		public var  rightMidPoint:Number;
@@ -43,6 +45,23 @@ package winxalex.fuzzy
 		{
 			_degreeOfMembership = value;
 		}
+		
+		public function get levelOfConfidence():Number { return _levelOfConfidence; }
+		
+		public function set levelOfConfidence(value:Number):void 
+		{
+			_levelOfConfidence = value;
+		}
+		
+		public function get maximum():Number { return _maximum; }
+		
+		public function set maximum(value:Number):void 
+		{
+			_maximum = value;
+		}
+		
+		
+	
 		
 		public function reset():void
 		{
