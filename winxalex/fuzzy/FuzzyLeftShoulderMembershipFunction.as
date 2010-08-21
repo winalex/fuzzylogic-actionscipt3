@@ -7,9 +7,9 @@ package winxalex.fuzzy
 	public class FuzzyLeftShoulderMembershipFunction extends FuzzyMembershipFunction implements IFuzzyMembershipFunction
 	{
 		
-		public function FuzzyLeftShoulderMembershipFunction(linguisticTerm:String,peakPoint:Number=NaN,rightOffset:Number=NaN) :void
+		public function FuzzyLeftShoulderMembershipFunction(linguisticTerm:String,leftOffset:Number,peakPoint:Number,rightOffset:Number) :void
 		{
-			super(linguisticTerm,Number.MIN_VALUE,peakPoint,peakPoint,  rightOffset);
+			super(linguisticTerm,leftOffset,peakPoint,peakPoint,  rightOffset);
 		}
 		
 		public function calculateDOM(value:Number):void

@@ -13,8 +13,7 @@ package winxalex.fuzzy
      public  var fuzzymanifolds:Dictionary;
   
 	 
-	 //inputs
-	 public var inputs:Dictionary;
+
 
  
 	
@@ -28,7 +27,7 @@ package winxalex.fuzzy
 		{
 			fuzzymanifolds = new Dictionary(true);
 			fuzzyRules = new Vector.<FuzzyRule>();
-			inputs = new Dictionary(true);
+		
 			
 		}
 		
@@ -51,15 +50,13 @@ package winxalex.fuzzy
 		
 		public function connectInput(input:FuzzyInput,fm:FuzzyManifold):void
 		{
-			fuzzymanifolds[fm.name] = fm;
-			inputs[input] = fm;
+			fm.input = input;
+		
 		}
 		
-		public function disconnecttInput(input:FuzzyInput):void
+		public function disconnecttInput(fm:FuzzyManifold):void
 		{
-			delete fuzzymanifolds[FuzzyManifold(inputs[input]).name] ;
-			 
-			delete inputs[input] ;
+			fm.input = null;
 		}
 		
 		
@@ -68,9 +65,9 @@ package winxalex.fuzzy
 		{
 			var fm:FuzzyManifold;
 			
-			for (var input:* in inputs)
+			for each (fm in fuzzymanifolds)
 			{
-				fm = inputs[input];
+				if(fm.input)
 				fm.Fuzzify(input.value);
 			}
 			
@@ -80,22 +77,80 @@ package winxalex.fuzzy
 			}
 		}
 		
-		public function Defuzzify(method:uint):Number
+		public function Defuzzify(method:uint,...args):FuzzyOutput
 		{
 			//loop thru all manifolds that don't have inputs they are outputs
 			switch(method)
 			{
 				case DefuzzificationMethod.CENTROID:
+				return Centroid(args[0]);
 				break;
 				case DefuzzificationMethod.MAX_AVERAGED:
+				return MaxAv();
 				break;
 				case DefuzzificationMethod.MEAN_OF_MAXIMUM:
+				return MoM();
 				break;
 				
 			}
 			return 1;
 		}
 		
+		
+		private function MoM():Number
+		{
+			
+		}
+		
+		/**
+		 *    sum(input * xDOM(input))/sum of DOM(input)
+		 * @param	precission
+		 * @return
+		 */
+		private function Centroid(precission:uint=10):Number
+		{
+			var input:int = 0;
+			var fm:FuzzyManifold;
+			var currentDOM:Number;
+			
+			var s2:Number=0;
+			var s1:Number=0;
+			var sumDOMs:Number=0;
+			
+			for each (fm in fuzzymanifolds)
+			{
+				
+				if (!fm.input)
+				{
+						//get delta
+						delta = (fm.maxRange-fm.minRange) /precission;
+						for (var input = fm.minRange; input<= fm.maxRange; input=input+delta)
+						{
+							sumDOMs=0
+							for each(var func:IFuzzyMembershipFunction in fm.memberfunctions)
+							{
+								sumDOMs+=func.calculateDOM(input);
+							}
+							
+							s1 += input * sumDOMs;
+							s2 += sumDOMs;
+							
+							
+						}
+				}
+				
+				
+				fm.output = s1 / s2;
+				
+			}
+			
+			
+		}
+		
+		private function MaxAv():Number
+		{
+			
+		}
 	}
 
 }

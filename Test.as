@@ -29,12 +29,12 @@ package
 			trace(func.toString());
 				
 			/**///left0ffset,peakPoint
-			func = factory.create(FuzzyMembershipFunction.RIGHT_SHOULDER, "VeryDesirable", 25, 75 );
+			func = factory.create(FuzzyMembershipFunction.RIGHT_SHOULDER, "VeryDesirable", 25, 75,25 );
 			manifold.addMember(func);
 			trace(func.toString());
 			
 			//peakPoint,rightOffset
-			func = factory.create(FuzzyMembershipFunction.LEFT_SHOULDER, "Undesirable", 25, 25 );
+			func = factory.create(FuzzyMembershipFunction.LEFT_SHOULDER, "Undesirable", 25,25, 25 );
 			manifold.addMember(func);
 			trace(func.toString());
 			
@@ -48,13 +48,13 @@ package
 			
 			manifold = new FuzzyManifold("Distance_to_Target");
 			//left0ffset,peakPoint
-			func = factory.create(FuzzyMembershipFunction.RIGHT_SHOULDER, "Far", 150, 300 )  ;
+			func = factory.create(FuzzyMembershipFunction.RIGHT_SHOULDER, "Far", 150, 300,400 )  ;
 			//IFuzzyMembershipFunction(func).calculateDOM(200);
 			manifold.addMember(func);
 			//trace("Far:"+func.degreeOfMembership);
 			
 			//peakPoint,rightOffset
-			func = factory.create(FuzzyMembershipFunction.LEFT_SHOULDER, "Close", 25, 125 );
+			func = factory.create(FuzzyMembershipFunction.LEFT_SHOULDER, "Close", 0,25, 125 );
 			//IFuzzyMembershipFunction(func).calculateDOM(200);
 			manifold.addMember(func);
 			//trace("Close:"+func.degreeOfMembership);
@@ -75,13 +75,13 @@ package
 			
 			manifold = new FuzzyManifold("Ammo_Status");
 			//left0ffset,peakPoint
-			func = factory.create(FuzzyMembershipFunction.RIGHT_SHOULDER, "Loads", 10, 20 ); 
+			func = factory.create(FuzzyMembershipFunction.RIGHT_SHOULDER, "Loads", 10, 20,40 ); 
 			//IFuzzyMembershipFunction(func).calculateDOM(8);
 			manifold.addMember(func);
 			//trace(func.linguisticTerm+":"+func.degreeOfMembership);
 			//trace(func.toString());
 			//peakPoint,rightOffset
-			func = factory.create(FuzzyMembershipFunction.LEFT_SHOULDER, "Low", 0, 10 );
+			func = factory.create(FuzzyMembershipFunction.LEFT_SHOULDER, "Low", 0,0, 10 );
 			//IFuzzyMembershipFunction(func).calculateDOM(8);
 			manifold.addMember(func);
 			//trace(func.linguisticTerm+":"+func.degreeOfMembership);
@@ -146,13 +146,7 @@ package
 
 		
 
-			Rule 5. IF Target_Medium AND Ammo_Okay THEN VeryDesirable 
-
-			Rule 6. IF Target_Medium AND Ammo_Low THEN Desirable 
-
-			Rule 7. IF Target_Close AND Ammo_Loads THEN Undesirable 
-
-			Rule 8. IF Target_Close AND Ammo_Okay THEN Undesirable 
+		
 
 		
 
