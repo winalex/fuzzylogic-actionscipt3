@@ -14,6 +14,7 @@ package winxalex.fuzzy
 		private var _antCompiledStek:Vector.<Token>=null;
 		private var _conCompiledStek:Vector.<Token> = null; //operation OR,AND,NOT,VERY,SOMEWHAT
 		private var _rule:String;
+		private var _result:Number = 0;
 		
 		
 		
@@ -24,15 +25,15 @@ package winxalex.fuzzy
 		 */
 		public function FuzzyRule(rule:String):void
 		{
-			var inx:int = rule.indexOf("THEN");
-			//split("THEN"); v2
-			//regEx v3
+			
+			var match:Array=rule.split("THEN",2);
+			
 			
 			_rule = rule;
 			_fuzzificator = null;
 			
-			this.consequence = rule.substr(inx + 4);
-			this.antecedent = rule;
+			this.consequence = match[1];
+			this.antecedent = match[0];
 				
 		}
 		
@@ -258,7 +259,7 @@ package winxalex.fuzzy
 		 */
 		private function hasOperator(text:String,operator:String):Boolean
 		{
-			var regExp:RegExp = new RegExp("\\b" + operator, "ig");
+			var regExp:RegExp = new RegExp("\\b" + operator+"\\b", "ig");
 			return regExp.test(text);
 		}
 		
@@ -389,18 +390,22 @@ package winxalex.fuzzy
 		 */
 		public function evaluate():Number
 		{
-            var result:Number = evaluateStek(_antCompiledStek);
-			if (result)
+            _result = evaluateStek(_antCompiledStek);
+			if (_result)
 			{
 				_isFired = true;
 				
-				//Mamdani
-				result = FuzzyOperator.fOR(result, evaluateStek(_conCompiledStek));
+				//result steak
+				_result=evaluateStek(_conCompiledStek);
+				
 			}
 			else
 			  _isFired = false;
 			  
-			  return result;
+			  
+			  trace("Rule:" + this.rule + " has fired " + _isFired.toString().toLocaleUpperCase()+ " with result:"+_result);
+			  
+			  return _result;
 		}
 		
 	
@@ -428,6 +433,10 @@ package winxalex.fuzzy
 			_rule = value;
 		}
 		
+		public function get result():Number { return _result; }
+		
+	
+		
 		public function clone():FuzzyRule
 		{
 			var fr: FuzzyRule = new FuzzyRule(this._rule);
@@ -445,13 +454,38 @@ package winxalex.fuzzy
 		{
 			var memberfunction:FuzzyMembershipFunction;
 			var manifold:FuzzyManifold;
+			var currentDOM:Number;
 			
-		
-			/*manifold = _fuzzificator.fuzzymanifolds[manifoldName];
-			memberfunction=manifold.memberfunctions[memberfunctionName];
-			return memberfunction.getDOM();*/
+		    
+			manifold = _fuzzificator.fuzzymanifolds[manifoldName];
+			if (manifold)
+			{
+				memberfunction = manifold.memberfunctions[memberfunctionName];
+				if (memberfunction)
+				{
+					if (_isFired)
+					{
+					    currentDOM = memberfunction.degreeOfMembership;
+						
+						//OR new rule result with the previous result from rules in same membership function
+						memberfunction.degreeOfMembership = FuzzyOperator.fOR(currentDOM, _result);
+						
+						return _result;
+					}
+					
+					return memberfunction.degreeOfMembership;
+				}
+				else
+				throw new Error(this.rule + " has not existing memeber function  <" + memberfunctionName + "> in manifold <"+manifoldName+">");
+				
+			}
+			else
+			{
+				throw new Error(this.rule + " has not existing manifold " + manifoldName);
+			}
+			/**/
 			//return 3;
-			return Math.random();
+			//return Math.random();
 		}
 		
 	

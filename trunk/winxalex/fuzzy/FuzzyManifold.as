@@ -11,7 +11,7 @@ package winxalex.fuzzy
 		public var memberfunctions:Array;
 		public var maxRange:Number = Number.MIN_VALUE;
 		public var minRange:Number = Number.MAX_VALUE;
-	    private var _fazzificator:Fazzificatior = null;
+	    private var _fuzzificator:Fazzificatior = null;
 		
 		public function FuzzyManifold(name:String) 
 		{
@@ -22,26 +22,26 @@ package winxalex.fuzzy
 		public function addMember(funct:FuzzyMembershipFunction):void
 		{
 			memberfunctions[funct.linguisticTerm] = funct;
+			memberfunctions.length = memberfunctions.length + 1;
 			
 			if (funct.leftOffset < minRange)
 			minRange = funct.leftOffset;
 			
 			if (funct.rightOffset > maxRange)
-			minRange = funct.leftOffset;
+			maxRange = funct.rightOffset;
+			
+			trace("Membership function <" + funct.linguisticTerm + "> added to manifold {" + this.name+"} range["+minRange+","+maxRange+"]");
 			
 		}
 		
 		
 		internal function Fuzzify(value:Number):void
 		{
-			if (!_fazzificator)
-			{
-				throw new Error("Add Manifold to the Fazzificator and use Fazzificator.Fuzzyfy");
-			}
-			
+		
 			if (memberfunctions.length > 0)
 			{
-			
+				
+				
 				if (value<=maxRange && value>=minRange)
 				{
 								 
@@ -49,15 +49,29 @@ package winxalex.fuzzy
 					  {
 						    func.reset();
 							func.calculateDOM(value);
+							trace(this.name,FuzzyMembershipFunction(func).linguisticTerm,FuzzyMembershipFunction(func).degreeOfMembership);
 					  }
 				}
 				else
-				throw new Error("value out of range");
+				throw new Error("value :"+value+" out of range");
 			}
 			else
 			{
-				throw new Error("no membership function involved in manifold");
+				throw new Error("no membership function involved in manifold <"+this.name+">");
 			}
+		}
+		
+		public function toString():String
+		{
+			var s:String="";
+			 for each (var func:IFuzzyMembershipFunction in  this.memberfunctions)
+					  {
+						  
+						  s += func.toString()+"\n";
+							
+					  }
+					  
+					  return s;
 		}
 		
 	}
