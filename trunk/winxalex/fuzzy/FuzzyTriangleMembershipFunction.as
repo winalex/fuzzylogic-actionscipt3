@@ -8,6 +8,8 @@ package winxalex.fuzzy
 	public class FuzzyTriangleMembershipFunction extends FuzzyMembershipFunction implements  IFuzzyMembershipFunction //extends FuzzyMembershipFunction
 	{
 		
+		//domain value at the middle of
+		private var _averagePoint:Number=0;
 			
 		public function FuzzyTriangleMembershipFunction(linguisticQuantifier:String,peakPoint:Number=NaN,leftOffset:Number=NaN,rightOffset:Number=NaN) :void
 		{
@@ -48,6 +50,13 @@ package winxalex.fuzzy
 						degreeOfMembership= 0.0;
 					  }
 
+		}
+		
+		public function get averagePoint():Number { return leftMidPoint; }
+		
+		public function set averagePoint(value:Number):void 
+		{
+			_averagePoint = value;
 		}
 		
 	}
