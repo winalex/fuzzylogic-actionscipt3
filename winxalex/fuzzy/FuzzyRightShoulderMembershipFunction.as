@@ -9,7 +9,7 @@ package winxalex.fuzzy
 		
 		public function FuzzyRightShoulderMembershipFunction(linguisticTerm:String,leftOffset:Number=NaN,peakPoint:Number=NaN) :void//,rightOffset:Number=NaN
 		{
-			super(linguisticTerm,  leftOffset,peakPoint);
+			super(linguisticTerm,  leftOffset,peakPoint,peakPoint,Number.MAX_VALUE);
 		}
 		
 		public function calculateDOM(value:Number):void 
