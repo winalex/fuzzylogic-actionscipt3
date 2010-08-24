@@ -15,16 +15,26 @@ package winxalex.fuzzy
 		
 		
 		
-		private var _levelOfConfidence:Number=0;
-		private var _degreeOfMembership:Number = 0.0;
+		private var _levelOfConfidence:Number = 1;
+		private var _maximumDOM:Number=1;
+		private var _degreeOfMembership:Number = 0;
 		
 		
 		
 		public var linguisticTerm:String;
+		
+		
+		
+		//TODO make them private
 		public var  rightMidPoint:Number;
 		public var  leftOffset:Number;
         public var rightOffset:Number;
 		public var leftMidPoint:Number;
+		
+		private var  _rightMidPoint:Number;
+		private var  _leftOffset:Number;
+        private var _rightOffset:Number;
+		private var _leftMidPoint:Number;
 
 		
 		
@@ -36,6 +46,31 @@ package winxalex.fuzzy
 			this.rightOffset = rightOffset;
 			this.leftOffset = leftOffset;
 			this.leftMidPoint = leftMidPoint;
+			
+			save();
+		}
+		
+		
+		public function save():void
+		{
+			_rightMidPoint= rightMidPoint;
+			_rightOffset = rightOffset;
+			_leftOffset = leftOffset;
+			_leftMidPoint = leftMidPoint;
+			
+		}
+		
+		public function reset():void
+		{
+			_maximumDOM = 1;
+			
+			_degreeOfMembership = 0;
+			
+		
+			this.rightMidPoint= _rightMidPoint;
+			this.rightOffset = _rightOffset;
+			this.leftOffset = _leftOffset;
+			this.leftMidPoint = _leftMidPoint;
 		}
 		
 			
@@ -53,26 +88,23 @@ package winxalex.fuzzy
 			_levelOfConfidence = value;
 		}
 		
-		public function get maximum():Number { return _maximum; }
+		internal function get maximumDOM():Number { return _maximumDOM; }
+		internal function set maximumDOM(value:Number):void { _maximumDOM = value; }
 		
-		public function set maximum(value:Number):void 
-		{
-			_maximum = value;
-		}
+		
+		
+		
+		
 		
 		
 	
-		
-		public function reset():void
-		{
-			_degreeOfMembership = 0;
-		}
+	
 	
 		
 		public function toString():String 
 		{
 			
-			var s:String = "linguisticTerm=" + linguisticTerm + " DOM:" + _degreeOfMembership +" leftOffset=" + leftOffset+  " leftMidPoint=" + leftMidPoint + " rightMidPoint=" + rightMidPoint + " rightOffset=" + rightOffset;
+			var s:String = "linguisticTerm=" + linguisticTerm + " DOM:" + _degreeOfMembership +" LOC="+_levelOfConfidence+" leftOffset=" + leftOffset+  " leftMidPoint=" + leftMidPoint + " rightMidPoint=" + rightMidPoint + " rightOffset=" + rightOffset;
 			return  s;
 		}
 		

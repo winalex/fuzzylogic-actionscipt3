@@ -10,7 +10,8 @@ package winxalex.fuzzy
 	{
 		
 	 //a map of all the fuzzy variables this module uses
-     public  var fuzzymanifolds:Dictionary;
+     internal var inputFuzzymanifolds:Dictionary;
+	 internal var outputFuzzyManifolds:Dictionary;
   
 	 
 
@@ -25,7 +26,8 @@ package winxalex.fuzzy
 		
 		public function Fazzificatior() 
 		{
-			fuzzymanifolds = new Dictionary(true);
+			inputFuzzymanifolds = new Dictionary(true);
+			outputFuzzyManifolds = new Dictionary(true);
 			fuzzyRules = new Vector.<FuzzyRule>();
 		
 			
@@ -33,7 +35,21 @@ package winxalex.fuzzy
 		
 		public function addManifold(manifold:FuzzyManifold):void
 		{
-			fuzzymanifolds[manifold.name] = manifold;
+			if(manifold.input)
+				inputFuzzymanifolds[manifold.name] = manifold;
+			else
+				outputFuzzyManifolds[manifold.name] = manifold;
+			
+		}
+		
+		public function getManifold(name:String):FuzzyManifold
+		{
+			var manifold:FuzzyManifold;
+			manifold = inputFuzzymanifolds[name];
+			if(!manifold)
+			manifold=outputFuzzyManifolds[name];
+			
+			return manifold;
 		}
 	
 		
@@ -48,96 +64,150 @@ package winxalex.fuzzy
 		
 		
 		
-		public function connectInput(input:FuzzyInput,fm:FuzzyManifold):void
-		{
-			fm.input = input;
-		
-		}
-		
-		public function disconnecttInput(fm:FuzzyManifold):void
-		{
-			fm.input = null;
-		}
 		
 		
 		
 		public function Fuzzify():void
 		{
 			var fm:FuzzyManifold;
+			var ouputManifolds:Vector.<FuzzyManifold> = new Vector.<FuzzyManifold>;
 			
-			for each (fm in fuzzymanifolds)
+			for each (fm in inputFuzzymanifolds)
 			{
-				if(fm.input)
-				fm.Fuzzify(input.value);
+				
+				fm.Fuzzify();//calculate DOM
+				
 			}
 			
+			//evaluate rules
 			for each(var rule:FuzzyRule in fuzzyRules)
 			{
 				rule.evaluate();
 			}
+			
+		
+			
+			
 		}
 		
-		public function Defuzzify(method:uint,...args):FuzzyOutput
+		public function Defuzzify(method:uint,...args):Dictionary
 		{
 			//loop thru all manifolds that don't have inputs they are outputs
 			switch(method)
 			{
-				case DefuzzificationMethod.CENTROID:
-				return Centroid(args[0]);
+				case DefuzzificationMethod.CENTAR_OF_SUM:
+				if(args[0])
+				CoS(args[0]);
+				else
+				CoS();
+				return outputFuzzyManifolds;
 				break;
 				case DefuzzificationMethod.MAX_AVERAGED:
-				return MaxAv();
+				MaV();
+				return outputFuzzyManifolds;
 				break;
 				case DefuzzificationMethod.MEAN_OF_MAXIMUM:
-				return MoM();
+				MoM();
+				return outputFuzzyManifolds;
+				break;
+				case DefuzzificationMethod.CENTER_OF_AREA_CENTROID:
+				if(args[0])
+				CoA(args[0]);
+				else
+				CoA();
+				return outputFuzzyManifolds;
 				break;
 				
 			}
-			return 1;
+			
+			
+			throw new Error("Not supported Defuzzificaiton Method");
 		}
 		
 		
-		private function MoM():Number
+		private function MoM():void
+		{
+		    var fm:FuzzyManifold;
+			
+			var max:Number = 0;
+			var avg:Number;
+			
+			for each (fm in outputFuzzyManifolds)
+			{
+				
+				fm.clipToLOC();
+							
+							for each(var func:IFuzzyMembershipFunction in fm.memberfunctions)
+							{
+								if (func.maximumPoint > max)
+								{
+								max = func.maximumPoint;
+								avg = func.averagePoint;
+								}
+							}
+							
+							
+							fm.output = avg;
+			}
+		}
+		
+		
+		private function CoA(step:uint = 10):void
 		{
 			
 		}
 		
 		/**
 		 *    sum(input * xDOM(input))/sum of DOM(input)
-		 * @param	precission
+		 * @param	step
 		 * @return
-		 */
-		private function Centroid(precission:uint=10):Number
+		 *///
+		private function CoS(step:uint=10):void
 		{
 			var input:int = 0;
 			var fm:FuzzyManifold;
 			var currentDOM:Number;
+			var delta:Number;
+			var i:int;
 			
 			var s2:Number=0;
 			var s1:Number=0;
-			var sumDOMs:Number=0;
+			var sumDOMs:Number=0;//for input
 			
-			for each (fm in fuzzymanifolds)
+			for each (fm in outputFuzzyManifolds)
 			{
+				s1 = 0;
+				s2 = 0;
 				
-				if (!fm.input)
-				{
+				 fm.clipToLOC();
+				
+				
+				 fm.toString();
+				 
 						//get delta
-						delta = (fm.maxRange-fm.minRange) /precission;
-						for (var input = fm.minRange; input<= fm.maxRange; input=input+delta)
+						delta = (fm.maxRange-fm.minRange) / step;
+						input = fm.minRange+delta;
+						
+						for (i=1; i<=step; i++)
 						{
-							sumDOMs=0
+							sumDOMs = 0;
+							
 							for each(var func:IFuzzyMembershipFunction in fm.memberfunctions)
 							{
-								sumDOMs+=func.calculateDOM(input);
+								
+								sumDOMs += func.calculateDOM(input);
+								
+								trace(func.calculateDOM(input));
 							}
+							
+							trace(i, input, sumDOMs);
 							
 							s1 += input * sumDOMs;
 							s2 += sumDOMs;
 							
-							
+							input = input + delta;
 						}
-				}
+				
 				
 				
 				fm.output = s1 / s2;
@@ -147,9 +217,43 @@ package winxalex.fuzzy
 			
 		}
 		
-		private function MaxAv():Number
+		/**
+		 * 
+		 */
+		private function MaV():void
 		{
+			var fm:FuzzyManifold;
+			var sumLOC:Number;
+			var sumAvgMulLOC:Number;
+			var levelOfConfidence:Number;
+		
 			
+			for each (fm in outputFuzzyManifolds)
+			{
+				sumLOC = 0;
+				sumAvgMulLOC = 0;
+				
+				
+						
+							for each(var func:IFuzzyMembershipFunction in fm.memberfunctions)
+							{
+								func.reset();
+								
+								levelOfConfidence=FuzzyMembershipFunction(func).levelOfConfidence;
+								 sumAvgMulLOC+= func.averagePoint * levelOfConfidence;
+								
+								sumLOC += levelOfConfidence;
+								
+							
+							}
+							
+							
+				
+				
+				
+				fm.output = sumAvgMulLOC /sumLOC;
+				
+			}
 		}
 	}
 

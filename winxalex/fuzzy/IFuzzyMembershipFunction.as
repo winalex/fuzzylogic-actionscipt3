@@ -9,16 +9,20 @@ package winxalex.fuzzy
 	{
 		
 		
-		function calculateDOM(value:Number):void
+		function calculateDOM(value:Number):Number
 		
 		function reset():void;
 		
+		function clipToLOC():void;
 		
+		function save():void;
 	
 			
-	 function toString():String;
+		function toString():String;
 	 
-	 public function get averagePoint():Number;
+		function get averagePoint():Number;
+		
+		function get maximumPoint():Number
 	 
 	
 		

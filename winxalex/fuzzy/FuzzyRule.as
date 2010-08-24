@@ -410,7 +410,62 @@ package winxalex.fuzzy
 		
 	
 		
-		public function get isFired():Boolean { return _isFired; }
+	
+		
+		public function clone():FuzzyRule
+		{
+			var fr: FuzzyRule = new FuzzyRule(this._rule);
+			
+			if (this._antCompiledStek)
+			{
+			fr.antCompiledStek=this._antCompiledStek.concat();
+			fr.conCompiledStek = this._conCompiledStek.concat();
+			}
+			
+			return fr;
+		}
+		
+		private function getDOM(manifoldName:String,memberfunctionName:String):Number
+		{
+			var memberfunction:FuzzyMembershipFunction;
+			var manifold:FuzzyManifold;
+			var currentDOM:Number;
+			
+		    
+			manifold = _fuzzificator.inputFuzzymanifolds[manifoldName] 
+			if(!manifold) manifold=_fuzzificator.outputFuzzyManifolds[manifoldName] ;
+			
+			if (manifold)
+			{
+				memberfunction = manifold.memberfunctions[memberfunctionName];
+				if (memberfunction)
+				{
+					if (_isFired)//result is ready
+					{
+					    					
+						//OR new rule result with the previous result for rules in same membership function
+						memberfunction.degreeOfMembership = FuzzyOperator.fOR(memberfunction.degreeOfMembership, _result);
+						
+						return _result;
+					}
+					
+					return memberfunction.degreeOfMembership;
+				}
+				else
+				throw new Error(this.rule + " has not existing memeber function  <" + memberfunctionName + "> in manifold <"+manifoldName+">");
+				
+			}
+			else
+			{
+				throw new Error(this.rule + " has not existing manifold " + manifoldName);
+			}
+			/**/
+			//return 3;
+			//return Math.random();
+		}
+		
+		
+			public function get isFired():Boolean { return _isFired; }
 		
 		public function get antCompiledStek():Vector.<Token> { return _antCompiledStek; }
 		
@@ -436,58 +491,6 @@ package winxalex.fuzzy
 		public function get result():Number { return _result; }
 		
 	
-		
-		public function clone():FuzzyRule
-		{
-			var fr: FuzzyRule = new FuzzyRule(this._rule);
-			
-			if (this._antCompiledStek)
-			{
-			fr.antCompiledStek=this._antCompiledStek.concat();
-			fr.conCompiledStek = this._conCompiledStek.concat();
-			}
-			
-			return fr;
-		}
-		
-		private function getDOM(manifoldName:String,memberfunctionName:String):Number
-		{
-			var memberfunction:FuzzyMembershipFunction;
-			var manifold:FuzzyManifold;
-			var currentDOM:Number;
-			
-		    
-			manifold = _fuzzificator.fuzzymanifolds[manifoldName];
-			if (manifold)
-			{
-				memberfunction = manifold.memberfunctions[memberfunctionName];
-				if (memberfunction)
-				{
-					if (_isFired)
-					{
-					    currentDOM = memberfunction.degreeOfMembership;
-						
-						//OR new rule result with the previous result from rules in same membership function
-						memberfunction.degreeOfMembership = FuzzyOperator.fOR(currentDOM, _result);
-						
-						return _result;
-					}
-					
-					return memberfunction.degreeOfMembership;
-				}
-				else
-				throw new Error(this.rule + " has not existing memeber function  <" + memberfunctionName + "> in manifold <"+manifoldName+">");
-				
-			}
-			else
-			{
-				throw new Error(this.rule + " has not existing manifold " + manifoldName);
-			}
-			/**/
-			//return 3;
-			//return Math.random();
-		}
-		
 	
 		
 	}

@@ -1,6 +1,6 @@
 package winxalex.fuzzy 
 {
-	import winxalex.fuzzy.events.FuzzyOutput;
+	
 	
 	/**
 	 * ...
@@ -15,8 +15,7 @@ package winxalex.fuzzy
 		
 		
 		public var input:FuzzyInput;
-		private var _output:FuzzyOutput = new FuzzyOutput();
-		
+		private var _output:Number ;
 		
 	    private var _fuzzificator:Fazzificatior = null;
 		
@@ -25,20 +24,34 @@ package winxalex.fuzzy
 			this.name = name;
 			memberfunctions = new Array();
 		}
+	
 		
-		public function addMember(funct:FuzzyMembershipFunction):void
+		public function addMember(func:FuzzyMembershipFunction):void
 		{
-			memberfunctions[funct.linguisticTerm] = funct;
+			memberfunctions[func.linguisticTerm] = func;
 			memberfunctions.length = memberfunctions.length + 1;
 			
-			if (funct.leftOffset < minRange)
-			minRange = funct.leftOffset;
+			if (func.leftMidPoint-func.leftOffset < minRange)
+			minRange = func.leftMidPoint-func.leftOffset;
 			
-			if (funct.rightOffset > maxRange)
-			maxRange = funct.rightOffset;
+			if (func.rightMidPoint+func.rightOffset > maxRange)
+			maxRange = func.rightMidPoint+func.rightOffset;
 			
-			trace("Membership function <" + funct.linguisticTerm + "> added to manifold {" + this.name+"} range["+minRange+","+maxRange+"]");
+			trace("Membership function <" + func.linguisticTerm + "> added to manifold {" + this.name+"} range["+minRange+","+maxRange+"]");
 			
+		}
+		
+		internal function clipToLOC():void
+		{
+			  for each (var func:IFuzzyMembershipFunction in  this.memberfunctions)
+					  {
+						  FuzzyMembershipFunction(func).levelOfConfidence = FuzzyMembershipFunction(func).degreeOfMembership;
+						    func.reset();
+							func.save();
+							func.clipToLOC();
+							
+							
+					  }
 		}
 		
 		
@@ -49,7 +62,7 @@ package winxalex.fuzzy
 			{
 				
 				
-				if (value<=maxRange && value>=minRange)
+				if (input.value<=maxRange && input.value>=minRange)
 				{
 								 
 					  for each (var func:IFuzzyMembershipFunction in  this.memberfunctions)
@@ -60,7 +73,7 @@ package winxalex.fuzzy
 					  }
 				}
 				else
-				throw new Error("value :"+value+" out of range");
+				throw new Error("value :"+input.value+" out of range");
 			}
 			else
 			{
@@ -81,9 +94,9 @@ package winxalex.fuzzy
 					  return s;
 		}
 		
-		public function get output():FuzzyOutput { return _output; }
+		public function get output():Number { return _output; }
 		
-		public function set output(value:FuzzyOutput):void 
+		public function set output(value:Number):void 
 		{
 			_output = value;
 		}
