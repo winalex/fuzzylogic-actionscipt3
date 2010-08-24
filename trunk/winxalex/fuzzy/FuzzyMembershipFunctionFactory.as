@@ -50,12 +50,13 @@ package winxalex.fuzzy
 		
 		private static function createLeftShoulderFunction(...args):IFuzzyMembershipFunction
 		{
-			return new FuzzyLeftShoulderMembershipFunction(args[0], args[1], args[2],args[3]);
+			 return new FuzzyTrapezoidMembershipFunction(args[0], 0,args[1], args[2], args[3]);
 		}
 		
 		private static function createRightShoulderFunction(...args):IFuzzyMembershipFunction
 		{
-			return new FuzzyRightShoulderMembershipFunction(args[0], args[1], args[2],args[3]);
+			//return new FuzzyRightShoulderMembershipFunction(args[0], args[1], args[2], args[3]);
+			return new FuzzyTrapezoidMembershipFunction(args[0], args[1], args[2],args[3],0);
 		}
 		
 		private static function createQuadricFunction():IFuzzyMembershipFunction
