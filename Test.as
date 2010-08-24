@@ -147,18 +147,23 @@ package
 			
 			trace("OUTPUT MOM:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
+			
+			
+			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTAR_OF_SUM);
+			
+			trace("OUTPUT COS:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			
 			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.MAX_AVERAGED);
 			
 			trace("OUTPUT MAXAV:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
-			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTAR_OF_SUM);
+				fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTER_OF_AREA_CENTROID);
 			
-			trace("OUTPUT CENTROID:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			trace("CENTROID:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
-			/*
-			 * 
-			 * ammoStatusInput.value = 8;
-			distanceStatusInput.value = 200
+			
+			 ammoStatusInput.value = 15;
+			distanceStatusInput.value = 100;
 			
 			
 			
@@ -168,7 +173,7 @@ package
 			trace(fuz.getManifold("Desirability").toString());
 		
 			
-			var fuzzyManifolds:Dictionary = fuz.Defuzzify(DefuzzificationMethod.MEAN_OF_MAXIMUM);
+			fuzzyManifolds= fuz.Defuzzify(DefuzzificationMethod.MEAN_OF_MAXIMUM);
 			
 			trace("OUTPUT MOM:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
@@ -176,17 +181,53 @@ package
 			
 			trace("OUTPUT MAXAV:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
-			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTROID);
+			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTER_OF_AREA_CENTROID);
 			
 			trace("OUTPUT CENTROID:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
-			*/
-			//trace(fuz.getManifold("Desirability").toString());
 			
-			//TODO check with new input how would rule evaluate react.
 			
-			//TODO						FuzzyMembershipFunction(func).levelOfConfidence = 0;
+			ammoStatusInput.value = 8;
+			distanceStatusInput.value = 200;
+			
+			
+			
+			fuz.Fuzzify();
+			
+			
+			trace(fuz.getManifold("Desirability").toString());
+		
+			fuzzyManifolds= fuz.Defuzzify(DefuzzificationMethod.MEAN_OF_MAXIMUM);
+			
+			trace("OUTPUT MOM:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			
+			
+			
+			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTAR_OF_SUM);
+			
+			trace("OUTPUT COS:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			
+			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.MAX_AVERAGED);
+			
+			trace("OUTPUT MAXAV:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			
+				fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTER_OF_AREA_CENTROID);
+			
+			trace("CENTROID:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+		
+			
+		
 			
 		/*	
+
+		OUTPUT MOM:83.33333333333333
+		OUTPUT COS:61.85185185185184
+		OUTPUT MAXAV:60.41666666666667
+		CENTROID:63.913043478260875
+		
+		OUTPUT MOM:83.33333333333333
+		OUTPUT COS:60.11764705882353
+		OUTPUT MAXAV:57.89473684210526
+		CENTROID:61.780821917808204
 
 			//var rule:FuzzyRule;
 			//rule = new FuzzyRule("A IS A1 AND B IS B1 AND E IS E2 AND (B IS B2 AND C IS NOT C1 OR D IS VERY D1 OR ( E IS VERY E1 OR F IS E2 AND H IS NOT VERY H1 ) OR M IS SOMEWHAT M1) AND ((G IS G1 OR K IS K1) OR M IS M3) THEN V IS V3");
@@ -195,30 +236,7 @@ package
 			
 			//trace(result);
 			
-			//fuz.fuzzymanifolds[
-			//fuz.fuzzymanifolds[
-			
-
-			//factory.create(
-			//var func:FuzzyTrianlgeMembershipFunction;
-			/*
-			var manifold:FuzzyManifold
-			
-			fuz.addRule(new FuzzyRule());
-			
-			manifold = new FuzzyManifold("");
-			manifold.addMember(new FuzzyTrianlgeMembershipFunction(
-			manifold.addMember(new FuzzyTrianlgeMembershipFunction(
-			manifold.addMember(new FuzzyTrianlgeMembershipFunction(
-			
-			manifold = new FuzzyManifold("");
-			manifold.addMember(new FuzzyTrianlgeMembershipFunction(
-			manifold.addMember(new FuzzyTrianlgeMembershipFunction(
-			manifold.addMember(new FuzzyTrianlgeMembershipFunction(
-			fuz.addManifold(manifold);
-			
-			fuz.Fuzzify(*/
-			//trace(func.toString());
+		*/
 			
 			
 			

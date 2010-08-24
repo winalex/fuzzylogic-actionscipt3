@@ -16,8 +16,9 @@ package winxalex.fuzzy
 		
 		
 		private var _levelOfConfidence:Number = 1;
-		private var _maximumDOM:Number=1;
+		private var _maximumDOM:Number=0;
 		private var _degreeOfMembership:Number = 0;
+		
 		
 		
 		
@@ -25,7 +26,7 @@ package winxalex.fuzzy
 		
 		
 		
-		//TODO make them private
+		//TODO make them private???
 		public var  rightMidPoint:Number;
 		public var  leftOffset:Number;
         public var rightOffset:Number;
@@ -35,6 +36,8 @@ package winxalex.fuzzy
 		private var  _leftOffset:Number;
         private var _rightOffset:Number;
 		private var _leftMidPoint:Number;
+		
+		public var isLOCReseted:Boolean = false;
 
 		
 		
@@ -42,21 +45,19 @@ package winxalex.fuzzy
 		public function FuzzyMembershipFunction(linguisticTerm:String,leftOffset:Number=NaN,leftMidPoint:Number=NaN,rightMidPoint:Number=NaN,rightOffset:Number=NaN,...args) :void
 		{
 			this.linguisticTerm = linguisticTerm;
-			this.rightMidPoint= rightMidPoint;
-			this.rightOffset = rightOffset;
-			this.leftOffset = leftOffset;
-			this.leftMidPoint = leftMidPoint;
 			
-			save();
+			_rightMidPoint= rightMidPoint;
+			_rightOffset = rightOffset;
+			_leftOffset = leftOffset;
+			_leftMidPoint = leftMidPoint;
+			
+			maximumDOM = 1;
 		}
 		
 		
 		public function save():void
 		{
-			_rightMidPoint= rightMidPoint;
-			_rightOffset = rightOffset;
-			_leftOffset = leftOffset;
-			_leftMidPoint = leftMidPoint;
+			
 			
 		}
 		
@@ -66,12 +67,9 @@ package winxalex.fuzzy
 			
 			_degreeOfMembership = 0;
 			
-		
-			this.rightMidPoint= _rightMidPoint;
-			this.rightOffset = _rightOffset;
-			this.leftOffset = _leftOffset;
-			this.leftMidPoint = _leftMidPoint;
 		}
+		
+	
 		
 			
 		public function get degreeOfMembership():Number { return _degreeOfMembership; }
@@ -81,7 +79,7 @@ package winxalex.fuzzy
 			_degreeOfMembership = value;
 		}
 		
-		public function get levelOfConfidence():Number { return _levelOfConfidence; }
+		public function get levelOfConfidence():Number { return _levelOfConfidence; }  
 		
 		public function set levelOfConfidence(value:Number):void 
 		{
@@ -89,7 +87,42 @@ package winxalex.fuzzy
 		}
 		
 		internal function get maximumDOM():Number { return _maximumDOM; }
-		internal function set maximumDOM(value:Number):void { _maximumDOM = value; }
+		internal function set maximumDOM(value:Number):void
+		{
+			var newOffset:Number;
+			
+			if (value == _maximumDOM) return;
+			
+			_maximumDOM = value; 
+			
+			if (_maximumDOM == 1)
+			{
+			    this.rightMidPoint= _rightMidPoint;
+				this.rightOffset = _rightOffset;
+				this.leftOffset = _leftOffset;
+				this.leftMidPoint = _leftMidPoint;
+			    return;
+			}
+			
+			if (_leftOffset != 0 )//right shoulder
+			{
+			
+				newOffset =  _maximumDOM * _leftOffset;
+				leftMidPoint = _leftMidPoint - _leftOffset + newOffset;
+				leftOffset = newOffset;
+				
+			}
+			
+			if (rightOffset != 0)
+			{
+			
+				newOffset =  _maximumDOM * _rightOffset;
+				rightMidPoint = _rightMidPoint + _rightOffset - newOffset;
+				rightOffset = newOffset;
+			}
+		}
+		
+		
 		
 		
 		
