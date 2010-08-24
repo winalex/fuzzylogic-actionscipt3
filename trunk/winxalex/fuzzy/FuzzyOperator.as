@@ -37,12 +37,12 @@ package winxalex.fuzzy
 			var i:int = 1;
 			var currentvalue:Number;
 			var len:int = args.length;
-			var max:Number = args[0];
+			var max:Number = args[0];//args[0] is Number?args[0]:args[0].value
 			
 			
 			for (; i < len; i++)
 			{
-				currentvalue = args[i];
+				currentvalue = args[i];//args[0] is Number?args[0]:args[0].value
 								
 				if (currentvalue> max)
 				max = currentvalue;

@@ -13,11 +13,7 @@ package winxalex.fuzzy
 		
 		function reset():void;
 		
-		function clipToLOC():void;
-		
-		function save():void;
-	
-			
+					
 		function toString():String;
 	 
 		function get averagePoint():Number;

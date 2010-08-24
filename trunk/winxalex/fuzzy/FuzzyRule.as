@@ -46,6 +46,8 @@ package winxalex.fuzzy
 			_fuzzificator = fuzz;
 			_antCompiledStek =compileString(this.antecedent);
 			_conCompiledStek = compileString(this.consequence);
+			
+			 trace("COMPILED:"+toString(_antCompiledStek));
 		}
 	  
 		
@@ -199,7 +201,7 @@ package winxalex.fuzzy
 				 
 			
 				 
-				   stekToString(stek);
+				  
 				 
 				 
 				  
@@ -268,13 +270,14 @@ package winxalex.fuzzy
 		 * 
 		 * @param	stek
 		 */
-		private function stekToString(stek:Vector.<Token>):void
+		private function toString(stek:Vector.<Token>):String
 		{
 			var i:int = 0;
 			var j:int ;
 			var len:int = stek.length;
 			var args:Array;
 			var str:String;
+			var s:String="";
 			for (; i < len; i++)
 			{
 				args = stek[i].args;
@@ -283,6 +286,7 @@ package winxalex.fuzzy
 				
 				for (j = 0; j < args.length; j++) 
 				{
+					trace(args[j]);
 					if	(args[j] is Token)
 						str += args[j].id ;
 					else
@@ -291,8 +295,10 @@ package winxalex.fuzzy
 						if (j+1 < args.length)
 						str+= ",";
 				}
-				trace("("+i+")"+functionToString(stek[i].func) + " (" + str+ ") value: " + stek[i].value);
+				s =s+ "\n(?" + i + ")" + functionToString(stek[i].func) + " (" + str + ") value: " + stek[i].value;
 			}
+			
+			return s;
 		}
 		
 		
@@ -349,6 +355,7 @@ package winxalex.fuzzy
 			var str:String;
 			var token:Token;
 		    var args:Array;
+			var tokenArgs:Array;
 			var argsLen:int;
 			
 			len =stek.length;
@@ -357,23 +364,29 @@ package winxalex.fuzzy
 			{
 				token = stek[i];
 				
-				args = token.args;
+				tokenArgs = token.args;
 				
-				trace("(" + i + ") " + functionToString(token.func) + "( " + args.join() + ")=" );
+				trace("(" + i + ") " + functionToString(token.func) + "( " + tokenArgs.join() + ")=" );
 				
 				
-				if (!isNaN(Number(args[0])))
+				if (!isNaN(Number(tokenArgs[0])))//if first isn't number the rest aren't numbers but tokens
 				{
 				
-				argsLen = args.length;
+					//TODO improve this shit (better check type then create (new) and plus rearrange
+					args = new Array();
+				    argsLen = tokenArgs.length;
+				
 						
 				//pointer to Values
-				for (j = 0; j < argsLen; j++) { args[j] = stek[Number(args[j])].value; };
+				for (j = 0; j < argsLen; j++) { args[j] = stek[Number(tokenArgs[j])].value; };
+				
+				
+				tokenArgs = args;
 				
 				}
 				
 
-				token.value = token.func.apply(null, args );
+				token.value = token.func.apply(null, tokenArgs );//stek[Number(args[j])].value
 				
 				trace(token.value);
 				
@@ -394,6 +407,8 @@ package winxalex.fuzzy
 			if (_result)
 			{
 				_isFired = true;
+				
+				trace("EVALUATED:"+toString(_antCompiledStek));
 				
 				//result steak
 				_result=evaluateStek(_conCompiledStek);
@@ -433,7 +448,9 @@ package winxalex.fuzzy
 			
 		    
 			manifold = _fuzzificator.inputFuzzymanifolds[manifoldName] 
-			if(!manifold) manifold=_fuzzificator.outputFuzzyManifolds[manifoldName] ;
+			if (!manifold) manifold = _fuzzificator.outputFuzzyManifolds[manifoldName] ;
+			
+			
 			
 			if (manifold)
 			{
@@ -442,10 +459,15 @@ package winxalex.fuzzy
 				{
 					if (_isFired)//result is ready
 					{
-					    					
+						if (!memberfunction.isLOCReseted)
+						{
+							memberfunction.isLOCReseted = true;
+							memberfunction.levelOfConfidence =  _result;
+						}
+						else
 						//OR new rule result with the previous result for rules in same membership function
-						memberfunction.degreeOfMembership = FuzzyOperator.fOR(memberfunction.degreeOfMembership, _result);
-						
+						//memberfunction.degreeOfMembership = FuzzyOperator.fOR(memberfunction.degreeOfMembership, _result);
+						memberfunction.levelOfConfidence= FuzzyOperator.fOR(memberfunction.levelOfConfidence, _result);
 						return _result;
 					}
 					

@@ -16,45 +16,12 @@ package winxalex.fuzzy
 		
 		public function FuzzyTrapezoidMembershipFunction(linguisticTerm:String, leftOffset:Number = NaN,leftMidPoint:Number = NaN,rightMidPoint:Number=NaN, rightOffset:Number = NaN, ...args) 
 		{
-			
-			
+					
 			super(linguisticTerm, leftOffset, leftMidPoint,rightMidPoint, rightOffset);
 			
 		}
 		
-		public function clipToLOC():void
-		{
-			var grad:Number;
-			var newOffset:Number
-			
-			
-			
-			if (levelOfConfidence == maximumDOM) return;//no changes
-			
-			
-			maximumDOM = levelOfConfidence;
-			
-			if (leftOffset != 0)//right shoulder
-			{
-			
-				//grad = 1 / leftOffset;
-				//newOffset=levelOfConfidence/grad
-				newOffset = levelOfConfidence * leftOffset;
-				
-				leftMidPoint = leftMidPoint - leftOffset + newOffset;
-				leftOffset = newOffset;
-				
-			}
-			
-			if (rightOffset != 0)
-			{
-			
-				newOffset = levelOfConfidence * rightOffset;
-				rightMidPoint = rightMidPoint + rightOffset - newOffset;
-				rightOffset = newOffset;
-			}
-			
-		}
+		
 		
 		/* INTERFACE winxalex.fuzzy.IFuzzyMembershipFunction */
 		
@@ -63,7 +30,7 @@ package winxalex.fuzzy
 					
 			var grad:Number;
 			
-				
+						
 						//between mid points
 						   if  (value >= leftMidPoint  && value <=rightMidPoint) 
 						  {

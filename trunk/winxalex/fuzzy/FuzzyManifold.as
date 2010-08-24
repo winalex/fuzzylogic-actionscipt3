@@ -41,18 +41,7 @@ package winxalex.fuzzy
 			
 		}
 		
-		internal function clipToLOC():void
-		{
-			  for each (var func:IFuzzyMembershipFunction in  this.memberfunctions)
-					  {
-						  FuzzyMembershipFunction(func).levelOfConfidence = FuzzyMembershipFunction(func).degreeOfMembership;
-						    func.reset();
-							func.save();
-							func.clipToLOC();
-							
-							
-					  }
-		}
+		
 		
 		
 		internal function Fuzzify():void
