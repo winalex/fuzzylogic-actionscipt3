@@ -426,7 +426,7 @@ package winxalex.fuzzy
 			  _isFired = false;
 			  
 			  
-			  //trace("Rule:" + this.rule + " has fired " + _isFired.toString().toLocaleUpperCase()+ " with result:"+_result);
+			  trace("Rule:" + this.rule + " has fired " + _isFired.toString().toLocaleUpperCase()+ " with result:"+_result);
 			  
 			  return _result;
 		}

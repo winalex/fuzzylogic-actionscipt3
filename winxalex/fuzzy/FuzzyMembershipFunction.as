@@ -15,7 +15,7 @@ package winxalex.fuzzy
 		
 		
 		
-		private var _levelOfConfidence:Number = 1;
+		private var _levelOfConfidence:Number = 0;
 		private var _maximumDOM:Number=0;
 		private var _degreeOfMembership:Number = 0;
 		
