@@ -17,7 +17,7 @@ package winxalex.fuzzy
 		public var input:FuzzyInput;
 		private var _output:Number ;
 		
-	    private var _fuzzificator:Fazzificatior = null;
+	    private var _fuzzificator:Fuzzificator = null;
 		
 		public function FuzzyManifold(name:String) 
 		{

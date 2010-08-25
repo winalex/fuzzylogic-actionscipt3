@@ -10,7 +10,7 @@ package winxalex.fuzzy
 		public var consequence:String;
 		
 		private var _isFired:Boolean = false;
-		private var _fuzzificator:Fazzificatior;
+		private var _fuzzificator:Fuzzificator;
 		private var _antCompiledStek:Vector.<Token>=null;
 		private var _conCompiledStek:Vector.<Token> = null; //operation OR,AND,NOT,VERY,SOMEWHAT
 		private var _rule:String;
@@ -41,7 +41,7 @@ package winxalex.fuzzy
 		/**
 		 * 
 		 */
-		public function compile(fuzz:Fazzificatior):void
+		public function compile(fuzz:Fuzzificator):void
 		{
 			_fuzzificator = fuzz;
 			_antCompiledStek =compileString(this.antecedent);
@@ -134,7 +134,8 @@ package winxalex.fuzzy
 					
 					 if (hasOperator(currentmatch,"VERY"))
 					 {
-						 stek[stek.length] = new Token(stek.length,FuzzyOperator.VERY, [stek.length - 1]);
+						// stek[stek.length] = new Token(stek.length,FuzzyOperator.VERY, [stek.length - 1]);
+						 stek[stek.length] = new Token(stek.length,FuzzyOperator.VERY, [stek[stek.length - 1]]);
 						 traceString = "VERY," + traceString;
 					 }
 					 else
@@ -142,7 +143,8 @@ package winxalex.fuzzy
 						 
 						   if (hasOperator(currentmatch, "SOMEWHAT"))
 						   {
-							    stek[stek.length] = new Token(stek.length,FuzzyOperator.SOMEWHAT,[stek.length - 1]);
+							    //stek[stek.length] = new Token(stek.length,FuzzyOperator.SOMEWHAT,[stek.length - 1]);
+								stek[stek.length] = new Token(stek.length,FuzzyOperator.SOMEWHAT,[stek[stek.length - 1]]);
 								 traceString = "SOMEWHAT," + traceString;
 						   }
 						 
@@ -151,7 +153,8 @@ package winxalex.fuzzy
 					
 					 if (hasOperator(currentmatch,"NOT"))
 					 {
-						 stek[stek.length] = new Token(stek.length,FuzzyOperator.NOT,[stek.length - 1]);
+						 //stek[stek.length] = new Token(stek.length, FuzzyOperator.NOT, [stek.length - 1]);
+						  stek[stek.length] = new Token(stek.length,FuzzyOperator.NOT,[stek[stek.length - 1]]);
 						  traceString = "NOT," + traceString;
 					 }
 					 
@@ -241,6 +244,11 @@ package winxalex.fuzzy
 				   
 				   args = currentmatch.split(operation);
 				   
+				   //token only version (change numbers to Token pointers)
+				   for (j = 0; j < args.length; j++)
+				   {
+					   args[j] = stek[Number(args[j])];
+				   }
 				 
 				   
 				   stek[stek.length] = new Token(stek.length,FuzzyOperator[operation],args );
@@ -369,7 +377,7 @@ package winxalex.fuzzy
 				//trace("(" + i + ") " + functionToString(token.func) + "( " + tokenArgs.join() + ")=" );
 				
 				
-				if (!isNaN(Number(tokenArgs[0])))//if first isn't number the rest aren't numbers but tokens
+				/*if (!isNaN(Number(tokenArgs[0])))//if first isn't number the rest aren't numbers but tokens
 				{
 				
 					//TODO improve this shit (better check type then create (new) and plus rearrange
@@ -383,7 +391,7 @@ package winxalex.fuzzy
 				
 				tokenArgs = args;
 				
-				}
+				}*/
 				
 
 				token.value = token.func.apply(null, tokenArgs );//stek[Number(args[j])].value
