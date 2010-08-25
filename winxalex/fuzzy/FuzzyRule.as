@@ -47,7 +47,7 @@ package winxalex.fuzzy
 			_antCompiledStek =compileString(this.antecedent);
 			_conCompiledStek = compileString(this.consequence);
 			
-			 trace("COMPILED:"+toString(_antCompiledStek));
+			 //trace("COMPILED:"+toString(_antCompiledStek));
 		}
 	  
 		
@@ -157,11 +157,11 @@ package winxalex.fuzzy
 					 
 					 rule= rule.replace(currentmatch, stek.length-1);
 					 
-					  trace(traceString);
+					  //trace(traceString);
 					 
 				 }
 				 
-				trace("RULE:(after member stage):" +rule);
+				//trace("RULE:(after member stage):" +rule);
 				
 				//( A AND B OR C)
 				tempRegExp=/\((\s*\w+\s*)+\)/ig;
@@ -177,14 +177,14 @@ package winxalex.fuzzy
 					   traceString = "";
 					   currentmatch = String(matches[i]);
 					   
-					     trace("bracket match" +currentmatch);
+					     //trace("bracket match" +currentmatch);
 					   
 					   
 						matchOperation(  matchOperation( currentmatch, "AND",stek), "OR",stek);
 						
 						rule = rule.replace(currentmatch, stek.length - 1);
 						
-						  trace("RULE: after bracket: " +rule);
+						  //trace("RULE: after bracket: " +rule);
 					 }
 					 
 					 
@@ -247,7 +247,7 @@ package winxalex.fuzzy
 				   
 				  
 					 
-				   trace(text);
+				   //trace(text);
 				 }
 				 
 				 return text;
@@ -286,7 +286,7 @@ package winxalex.fuzzy
 				
 				for (j = 0; j < args.length; j++) 
 				{
-					trace(args[j]);
+					//trace(args[j]);
 					if	(args[j] is Token)
 						str += args[j].id ;
 					else
@@ -366,7 +366,7 @@ package winxalex.fuzzy
 				
 				tokenArgs = token.args;
 				
-				trace("(" + i + ") " + functionToString(token.func) + "( " + tokenArgs.join() + ")=" );
+				//trace("(" + i + ") " + functionToString(token.func) + "( " + tokenArgs.join() + ")=" );
 				
 				
 				if (!isNaN(Number(tokenArgs[0])))//if first isn't number the rest aren't numbers but tokens
@@ -388,7 +388,7 @@ package winxalex.fuzzy
 
 				token.value = token.func.apply(null, tokenArgs );//stek[Number(args[j])].value
 				
-				trace(token.value);
+				//trace(token.value);
 				
 				
 			}
@@ -408,7 +408,7 @@ package winxalex.fuzzy
 			{
 				_isFired = true;
 				
-				trace("EVALUATED:"+toString(_antCompiledStek));
+				//trace("EVALUATED:"+toString(_antCompiledStek));
 				
 				//result steak
 				_result=evaluateStek(_conCompiledStek);
@@ -418,23 +418,28 @@ package winxalex.fuzzy
 			  _isFired = false;
 			  
 			  
-			  trace("Rule:" + this.rule + " has fired " + _isFired.toString().toLocaleUpperCase()+ " with result:"+_result);
+			  //trace("Rule:" + this.rule + " has fired " + _isFired.toString().toLocaleUpperCase()+ " with result:"+_result);
 			  
 			  return _result;
 		}
 		
 	
-		
+		public function reset():void
+		{
+			_isFired = false;
+			_result = 0;
+		}
 	
 		
 		public function clone():FuzzyRule
 		{
 			var fr: FuzzyRule = new FuzzyRule(this._rule);
 			
-			if (this._antCompiledStek)
+			if (this._antCompiledStek)//if its compiled
 			{
-			fr.antCompiledStek=this._antCompiledStek.concat();
-			fr.conCompiledStek = this._conCompiledStek.concat();
+			//get reference to 
+			fr.antCompiledStek = this._antCompiledStek;// this._antCompiledStek.concat();
+			fr.conCompiledStek = this._conCompiledStek;// this._conCompiledStek.concat();
 			}
 			
 			return fr;
@@ -467,7 +472,7 @@ package winxalex.fuzzy
 						else
 						//OR new rule result with the previous result for rules in same membership function
 						//memberfunction.degreeOfMembership = FuzzyOperator.fOR(memberfunction.degreeOfMembership, _result);
-						memberfunction.levelOfConfidence= FuzzyOperator.fOR(memberfunction.levelOfConfidence, _result);
+						memberfunction.levelOfConfidence= memberfunction.levelOfConfidence>_result? memberfunction.levelOfConfidence: _result;
 						return _result;
 					}
 					
