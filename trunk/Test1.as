@@ -8,13 +8,15 @@ package
 	/**
 	 * ...
 	 * @author alex winx
+	 * 
+	 * desirablity to choose rocket luncher weapon depending of ammo and distance to enemy
 	 */
-	public class Test extends Sprite
+	public class Test1 extends Sprite
 	{
 		
-		public function Test() 
+		public function Test1() 
 		{
-			var fuz:Fazzificatior = new Fazzificatior();
+			var fuz:Fuzzificator= new Fuzzificator();
 			var factory:IFuzzyMembershipFunctionFactory = FuzzyMembershipFunctionFactory.getInstance();
 			var manifold:FuzzyManifold;
 			var func:FuzzyMembershipFunction;
