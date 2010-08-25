@@ -17,12 +17,12 @@ package winxalex.fuzzy
 			var i:int = 1;
 			var currentvalue:Number;
 			var len:int = args.length;
-			var min:Number = args[0];
+			var min:Number = args[0].value;
 			
 			
 			for (; i < len; i++)
 			{
-				currentvalue = args[i];
+				currentvalue = args[i].value;
 				
 				if (currentvalue < min)
 				min =currentvalue;
@@ -37,12 +37,12 @@ package winxalex.fuzzy
 			var i:int = 1;
 			var currentvalue:Number;
 			var len:int = args.length;
-			var max:Number = args[0];//args[0] is Number?args[0]:args[0].value
+			var max:Number = args[0].value;//args[0] is Number?args[0]:args[0].value
 			
 			
 			for (; i < len; i++)
 			{
-				currentvalue = args[i];//args[0] is Number?args[0]:args[0].value
+				currentvalue = args[i].value;//args[0] is Number?args[0]:args[0].value
 								
 				if (currentvalue> max)
 				max = currentvalue;
@@ -54,21 +54,21 @@ package winxalex.fuzzy
 		
 		public static function fVERY(...args):Number
 		{
-			var currentvalue:Number = args[0];
+			var currentvalue:Number = args[0].value;//args[0] is Number?args[0]:args[0].value
 				
 			return currentvalue*currentvalue;
 		}
 		
 		public static function fSOMEWHAT(...args):Number
 		{
-			var currentvalue:Number = args[0];
+			var currentvalue:Number = args[0].value;//args[0] is Number?args[0]:args[0].value
 				
 			return Math.sqrt(currentvalue);
 		}
 		
 		public static function fNOT(...args):Number
 		{
-			var currentvalue:Number = args[0];
+			var currentvalue:Number = args[0].value;//args[0] is Number?args[0]:args[0].value
 				
 			return 1 - currentvalue;
 		}

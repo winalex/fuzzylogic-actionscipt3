@@ -6,7 +6,7 @@ package winxalex.fuzzy
 	 * ...
 	 * @author alex winx
 	 */
-	public  class Fazzificatior
+	public  class Fuzzificator
 	{
 		
 	 //a map of all the fuzzy variables this module uses
@@ -24,7 +24,7 @@ package winxalex.fuzzy
   
 		
 		
-		public function Fazzificatior() 
+		public function Fuzzificator() 
 		{
 			inputFuzzymanifolds = new Dictionary(true);
 			outputFuzzyManifolds = new Dictionary(true);
