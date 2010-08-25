@@ -129,7 +129,7 @@ package
 												
 			
 			
-			
+			trace(fuz.getManifold("Desirability").toString());
 			
 		
 			ammoStatusInput.value = 8;
@@ -161,7 +161,7 @@ package
 			
 			trace("CENTROID:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
-			
+			trace(fuz.getManifold("Desirability").toString());
 			 ammoStatusInput.value = 15;
 			distanceStatusInput.value = 100;
 			
@@ -183,7 +183,7 @@ package
 			
 			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTER_OF_AREA_CENTROID);
 			
-			trace("OUTPUT CENTROID:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			trace("OUTPUT CENTROID:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);/**/
 			
 			
 			ammoStatusInput.value = 8;
@@ -219,16 +219,18 @@ package
 			
 		/*	
 
-		OUTPUT MOM:83.33333333333333
-		OUTPUT COS:61.85185185185184
-		OUTPUT MAXAV:60.41666666666667
-		CENTROID:63.913043478260875
+Distance_to_Target Close 0
+Distance_to_Target Far 0.3333333333333333
+Distance_to_Target Medium 0.6666666666666666
+Ammo_Status Low 0.2
+Ammo_Status Loads 0
+Ammo_Status Okey 0.8
+OUTPUT MOM:83.33333333333333
+OUTPUT COS:61.85185185185184
+OUTPUT MAXAV:60.41666666666667
+CENTROID:63.913043478260875
 		
-		OUTPUT MOM:83.33333333333333
-		OUTPUT COS:60.11764705882353
-		OUTPUT MAXAV:57.89473684210526
-		CENTROID:61.780821917808204
-
+		
 			//var rule:FuzzyRule;
 			//rule = new FuzzyRule("A IS A1 AND B IS B1 AND E IS E2 AND (B IS B2 AND C IS NOT C1 OR D IS VERY D1 OR ( E IS VERY E1 OR F IS E2 AND H IS NOT VERY H1 ) OR M IS SOMEWHAT M1) AND ((G IS G1 OR K IS K1) OR M IS M3) THEN V IS V3");
 			//fuz.addRule(rule);

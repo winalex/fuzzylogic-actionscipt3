@@ -82,6 +82,7 @@ package winxalex.fuzzy
 			//evaluate rules
 			for each(var rule:FuzzyRule in fuzzyRules)
 			{
+				rule.reset();
 				rule.evaluate();
 			}
 			
@@ -148,7 +149,7 @@ package winxalex.fuzzy
 								}
 								
 								
-								FuzzyMembershipFunction( func).isLOCReseted = false;
+								 FuzzyMembershipFunction( func).reset();
 								
 							}
 							
@@ -195,9 +196,7 @@ package winxalex.fuzzy
 								if (max < currentDOM) max = currentDOM;
 								
 							  
-								  FuzzyMembershipFunction( func).maximumDOM = 1;
-								  
-								  FuzzyMembershipFunction( func).isLOCReseted = false;
+								  FuzzyMembershipFunction( func).reset();
 								
 								
 							}
@@ -254,9 +253,10 @@ package winxalex.fuzzy
 														
 							   FuzzyMembershipFunction( func).maximumDOM = FuzzyMembershipFunction( func).levelOfConfidence;
 								sumDOMs += func.calculateDOM(input);
-								  FuzzyMembershipFunction( func).maximumDOM = 1;
+								  FuzzyMembershipFunction( func).reset();
+								 
 								  
-								  FuzzyMembershipFunction( func).isLOCReseted = false;
+								
 								
 								
 							}
@@ -298,7 +298,7 @@ package winxalex.fuzzy
 						
 							for each(var func:IFuzzyMembershipFunction in fm.memberfunctions)
 							{
-								
+								if(FuzzyMembershipFunction( func).maximumDOM<1)
 								 FuzzyMembershipFunction( func).maximumDOM = 1;
 								levelOfConfidence=FuzzyMembershipFunction(func).levelOfConfidence;
 								sumAvgMulLOC+= func.averagePoint * levelOfConfidence;

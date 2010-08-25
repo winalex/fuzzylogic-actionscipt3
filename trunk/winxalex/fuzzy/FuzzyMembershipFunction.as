@@ -54,18 +54,15 @@ package winxalex.fuzzy
 			maximumDOM = 1;
 		}
 		
-		
-		public function save():void
-		{
-			
-			
-		}
+	
 		
 		public function reset():void
 		{
-			_maximumDOM = 1;
+			maximumDOM = 1;
 			
 			_degreeOfMembership = 0;
+					
+			isLOCReseted = false;
 			
 		}
 		
