@@ -132,24 +132,26 @@ package winxalex.fuzzy
 			
 			var max:Number = 0;
 			var avg:Number;
+			var func:FuzzyMembershipFunction;
 			
 			for each (fm in outputFuzzyManifolds)
 			{
 				
 				
 							
-							for each(var func:IFuzzyMembershipFunction in fm.memberfunctions)
+							for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
 							{
-								  FuzzyMembershipFunction( func).maximumDOM =  FuzzyMembershipFunction( func).levelOfConfidence;
+									func = FuzzyMembershipFunction( ifunc);
+								   func.maximumDOM =   func.levelOfConfidence;
 								  
-								if (func.maximumPoint > max)
+								if (ifunc.maximumPoint > max)
 								{
-								max = func.maximumPoint;
-								avg = func.averagePoint;
+								max = ifunc.maximumPoint;
+								avg = ifunc.averagePoint;
 								}
 								
 								
-								 FuzzyMembershipFunction( func).reset();
+								 func.reset();
 								
 							}
 							
@@ -170,6 +172,7 @@ package winxalex.fuzzy
 			var s2:Number=0;
 			var s1:Number=0;
 			var max:Number = 0;
+			var func:FuzzyMembershipFunction;
 			
 			for each (fm in outputFuzzyManifolds)
 			{
@@ -188,15 +191,13 @@ package winxalex.fuzzy
 							
 							max = 0;
 							
-							for each(var func:IFuzzyMembershipFunction in fm.memberfunctions)
+							for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
 							{
-														
-							   FuzzyMembershipFunction( func).maximumDOM = FuzzyMembershipFunction( func).levelOfConfidence;
-							   currentDOM = func.calculateDOM(input);
+							func = FuzzyMembershipFunction( ifunc);						
+							  func.maximumDOM = func.levelOfConfidence;
+							   currentDOM = ifunc.calculateDOM(input);
 								if (max < currentDOM) max = currentDOM;
-								
-							  
-								  FuzzyMembershipFunction( func).reset();
+								 func.reset();
 								
 								
 							}
@@ -231,7 +232,8 @@ package winxalex.fuzzy
 			
 			var s2:Number=0;
 			var s1:Number=0;
-			var sumDOMs:Number=0;//for input
+			var sumDOMs:Number = 0;//for input
+			var func:FuzzyMembershipFunction;
 			
 			for each (fm in outputFuzzyManifolds)
 			{
@@ -248,12 +250,12 @@ package winxalex.fuzzy
 						{
 							sumDOMs = 0;
 							
-							for each(var func:IFuzzyMembershipFunction in fm.memberfunctions)
+							for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
 							{
-														
-							   FuzzyMembershipFunction( func).maximumDOM = FuzzyMembershipFunction( func).levelOfConfidence;
-								sumDOMs += func.calculateDOM(input);
-								  FuzzyMembershipFunction( func).reset();
+								func = FuzzyMembershipFunction( ifunc);
+							    func.maximumDOM =  func.levelOfConfidence;
+								sumDOMs += ifunc.calculateDOM(input);
+								  func.reset();
 								 
 								  
 								
@@ -287,6 +289,7 @@ package winxalex.fuzzy
 			var sumLOC:Number;
 			var sumAvgMulLOC:Number;
 			var levelOfConfidence:Number;
+			var func:FuzzyMembershipFunction;
 		
 			
 			for each (fm in outputFuzzyManifolds)
@@ -296,14 +299,15 @@ package winxalex.fuzzy
 				
 				
 						
-							for each(var func:IFuzzyMembershipFunction in fm.memberfunctions)
+							for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
 							{
-								if(FuzzyMembershipFunction( func).maximumDOM<1)
-								 FuzzyMembershipFunction( func).maximumDOM = 1;
-								levelOfConfidence=FuzzyMembershipFunction(func).levelOfConfidence;
-								sumAvgMulLOC+= func.averagePoint * levelOfConfidence;
+								func = FuzzyMembershipFunction( ifunc);
+								if(func.maximumDOM<1)
+								 func.maximumDOM = 1;
 								
-								sumLOC += levelOfConfidence;
+								sumAvgMulLOC+= ifunc.averagePoint *func.levelOfConfidence;
+								
+								sumLOC += func.levelOfConfidence;
 								
 							
 							}
