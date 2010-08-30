@@ -19,8 +19,8 @@ package winxalex.fuzzy
  
 	
 
-  //a vector containing all the fuzzy rules
-  private var fuzzyRules:Vector.<FuzzyRule>;
+  //a list containing all the fuzzy rules
+  private var fuzzyRules:SLinkedList;
   
 		
 		
@@ -28,7 +28,7 @@ package winxalex.fuzzy
 		{
 			inputFuzzymanifolds = new Dictionary(true);
 			outputFuzzyManifolds = new Dictionary(true);
-			fuzzyRules = new Vector.<FuzzyRule>();
+			fuzzyRules = new SLinkedList();
 		
 			
 		}
@@ -57,13 +57,97 @@ package winxalex.fuzzy
 	   //adds a rule to the fazificator
 		public function addRule(rule:FuzzyRule):void
 		{
-			fuzzyRules[fuzzyRules.length] = rule;
+			fuzzyRules.append(rule);
 			rule.compile(this);
 			
 		}
 		
-		
-		
+		/**
+		 *  simple Comb, additivly separable or inseparable
+		 */
+		public function reduce():void
+		{
+			//var  termsMatches:RegExp;
+			//var fm:FuzzyManifold;
+			//var inputMatches:Array;
+			//var outputMatches:Array;
+			//var currentMatch:String;
+			//var i:int = 0;
+			//var node:SListNode;
+			//var rule:FuzzyRule;
+			//var membershipName:String;
+			//var manifoldName:String;
+			//var fm:FuzzyManifold;
+			//var func:IFuzzyMembershipFunction;
+			//var manifoldRegExp:RegExp=/^(\w+)/gi;
+			//var membershipRegExp:RegExp = /(\w+)$/gi;
+			//var rules:SLinkedList;
+			//var numNewRules:int=0;
+			//
+			//
+			//numRules = fuzzyRules.size;
+			//
+			//termsMatches =/\w+\s+IS\s+(NOT\s+)?((VERY|SOMEWHAT)\s+)?\w+/ig;
+			//
+			//node = fuzzyRules.head;
+			//
+			//while(node!=fuzzyRules.tail)
+				//{
+					//rule = FuzzyRule(node.data);
+						//
+				        //inputMatches = rule.antecedent.match(termsMatches);
+						//
+						//outputMatches=rule.consequence.match(termsMatches);
+						//
+						//
+						//for (i = 0; i < inputMatches.length; i++)
+						//{
+							//currentMatch = inputMatches[i];
+							//
+							//membershipName = currentMatch.match(membershipRegExp)[0];
+							//manifoldName = currentMatch(manifoldRegExp)[0];
+							//
+							//fm = FuzzyManifold(inputFuzzymanifolds[manifoldName]);
+							//func = FuzzyMembershipFunction(fm[membershipName]);
+							//
+							//currentMatch = outputMatches[0];
+							//membershipName.currentMatch.match (membershipRegExp)[0];
+							//manifoldName = currentMatch(manifoldRegExp)[0];
+							//fm = FuzzyManifold(outputFuzzyManifolds[manifoldName]);
+							//
+							//func.tendence += IFuzzyMembershipFunction(fm[membershipName]).averagePoint
+							//func.numTendences++;
+							//func.currentMatch
+							//func.data.tendence
+							//func.data.
+							//
+							//
+						//}
+						//
+					//node = node.next;
+				//}
+				//
+				//
+				//node = fuzzyRules.head;
+				//for each(fm in inputFuzzymanifolds)
+				//{
+					//for each(func in fm.memberfunctions)
+					//{
+					   //rule = node.data;
+					   //rule.antecedent=
+					   //node = node.next;
+					   //
+					   //numNewRules++;
+					//}
+				//}
+				//
+				//memberfunctions.length
+				//while (fuzzyRules.size != numNewRules)
+				//{
+					//fuzzyRules.removeTail();
+				//}
+	
+		}
 		
 		
 		
@@ -71,6 +155,8 @@ package winxalex.fuzzy
 		{
 			var fm:FuzzyManifold;
 			var ouputManifolds:Vector.<FuzzyManifold> = new Vector.<FuzzyManifold>;
+			var node:SListNode;
+			var rule:FuzzyRule;
 			
 			for each (fm in inputFuzzymanifolds)
 			{
@@ -80,10 +166,14 @@ package winxalex.fuzzy
 			}
 			
 			//evaluate rules
-			for each(var rule:FuzzyRule in fuzzyRules)
+			//for each(var rule:FuzzyRule in fuzzyRules)
+			node = fuzzyRules.head;
+			while(node!=fuzzyRules.tail)
 			{
+				rule = FuzzyRule(node.data);
 				rule.reset();
 				rule.evaluate();
+				node = node.next;
 			}
 			
 		
@@ -193,16 +283,16 @@ package winxalex.fuzzy
 							
 							for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
 							{
-							func = FuzzyMembershipFunction( ifunc);						
-							  func.maximumDOM = func.levelOfConfidence;
-							   currentDOM = ifunc.calculateDOM(input);
-								if (max < currentDOM) max = currentDOM;
-								 func.reset();
+								func = FuzzyMembershipFunction( ifunc);						
+								  func.maximumDOM = func.levelOfConfidence;
+								   currentDOM = ifunc.calculateDOM(input);
+									if (max < currentDOM) max = currentDOM;
+									 func.reset();
 								
 								
 							}
 							
-						  
+						
 							
 							s1 += input * max;
 							s2 += max;
@@ -218,7 +308,7 @@ package winxalex.fuzzy
 		}
 		
 		/**
-		 *    sum(input * xDOM(input))/sum of DOM(input)
+		 *    sum(input * xDOM(input))/sum of DOM(input)  COG or CENTROID
 		 * @param	step
 		 * @return
 		 *///

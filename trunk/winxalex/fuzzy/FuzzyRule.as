@@ -47,7 +47,7 @@ package winxalex.fuzzy
 			_antCompiledStek =compileString(this.antecedent);
 			_conCompiledStek = compileString(this.consequence);
 			
-			 //trace("COMPILED:"+toString(_antCompiledStek));
+			 trace("COMPILED:"+toString(_antCompiledStek));
 		}
 	  
 		
@@ -67,8 +67,10 @@ package winxalex.fuzzy
 			var i:int;
 			var len:int;
 			var tempRegExp:RegExp = new RegExp("", "ig");
-			var traceString:String;
-			var stek:Vector.<Token>=new Vector.<Token>;
+			//var traceString:String;
+			var stek:Vector.<Token> = new Vector.<Token>;
+			var manifoldRegExp:RegExp=/^(\w+)/gi;
+			var membershipRegExp:RegExp= /(\w+)$/gi;
 			
 			  
 			   
@@ -96,24 +98,24 @@ package winxalex.fuzzy
 					
 					
 					
-					traceString = "";
+					//traceString = "";
 					 
-					 tempRegExp = /^(\w+)/gi;
+				
 					
+					 //remove try for speed
 					 try
 					 {
-					 manifold = currentmatch.match(tempRegExp)[0];
+					 manifold = currentmatch.match(manifoldRegExp)[0];
 					 }
 					 catch(e:Error)
 					 {
 						 throw new Error("Cant find <Manifold> in :" + currentmatch);
 					 }
 					 
-					  tempRegExp = /(\w+)$/gi;
 					 
 					  try
 					 {
-					     memberFunction = currentmatch.match(tempRegExp)[0];
+					     memberFunction = currentmatch.match(membershipRegExp)[0];
 						 
 					 }
 					 catch(e:Error)
@@ -129,14 +131,14 @@ package winxalex.fuzzy
 					  stek[stek.length] = new Token(stek.length,getDOM, [manifold, memberFunction]);
 					  
 						  
-					  traceString = "DOM("+manifold +"," + memberFunction+")";
+					  //traceString = "DOM("+manifold +"," + memberFunction+")";
 					  
 					
 					 if (hasOperator(currentmatch,"VERY"))
 					 {
 						// stek[stek.length] = new Token(stek.length,FuzzyOperator.VERY, [stek.length - 1]);
 						 stek[stek.length] = new Token(stek.length,FuzzyOperator.VERY, [stek[stek.length - 1]]);
-						 traceString = "VERY," + traceString;
+						 //traceString = "VERY," + //traceString;
 					 }
 					 else
 					 {
@@ -145,7 +147,7 @@ package winxalex.fuzzy
 						   {
 							    //stek[stek.length] = new Token(stek.length,FuzzyOperator.SOMEWHAT,[stek.length - 1]);
 								stek[stek.length] = new Token(stek.length,FuzzyOperator.SOMEWHAT,[stek[stek.length - 1]]);
-								 traceString = "SOMEWHAT," + traceString;
+								 //traceString = "SOMEWHAT," + //traceString;
 						   }
 						 
 					 }
@@ -155,12 +157,12 @@ package winxalex.fuzzy
 					 {
 						 //stek[stek.length] = new Token(stek.length, FuzzyOperator.NOT, [stek.length - 1]);
 						  stek[stek.length] = new Token(stek.length,FuzzyOperator.NOT,[stek[stek.length - 1]]);
-						  traceString = "NOT," + traceString;
+						  //traceString = "NOT," + //traceString;
 					 }
 					 
 					 rule= rule.replace(currentmatch, stek.length-1);
 					 
-					  //trace(traceString);
+					  //trace(//traceString);
 					 
 				 }
 				 
@@ -177,7 +179,7 @@ package winxalex.fuzzy
 					   
 					 for (i=0; i < len; i++)
 				     {
-					   traceString = "";
+					   //traceString = "";
 					   currentmatch = String(matches[i]);
 					   
 					     //trace("bracket match" +currentmatch);
