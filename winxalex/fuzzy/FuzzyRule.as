@@ -8,6 +8,7 @@ package winxalex.fuzzy
 	{
 		public var antecedent:String;
 		public var consequence:String;
+		private var _weight:Number;
 		
 		private var _isFired:Boolean = false;
 		private var _fuzzificator:Fuzzificator;
@@ -15,6 +16,10 @@ package winxalex.fuzzy
 		private var _conCompiledStek:Vector.<Token> = null; //operation OR,AND,NOT,VERY,SOMEWHAT
 		private var _rule:String;
 		private var _result:Number = 0;
+		private static const _termRegExp:RegExp =/\w+\s+IS\s+(NOT\s+)?((VERY|SOMEWHAT)\s+)?\w+/ig;
+		private static	const _manifoldRegExp:RegExp=/^(\w+)/gi;
+		private	static const _membershipRegExp:RegExp = /(\w+)$/gi;
+		private static const _weightRegExp:RegExp =/(WEIGHT|W)=\d+(\.?\d+)?/gi;
 		
 		
 		
@@ -44,6 +49,9 @@ package winxalex.fuzzy
 		public function compile(fuzz:Fuzzificator):void
 		{
 			_fuzzificator = fuzz;
+			
+		
+			
 			_antCompiledStek =compileString(this.antecedent);
 			_conCompiledStek = compileString(this.consequence);
 			
@@ -51,6 +59,24 @@ package winxalex.fuzzy
 		}
 	  
 		
+		/**
+		 * parse consequence to find weight
+		 */
+		private function setWeight():void
+		{
+				var match:Array = this.consequence.match(FuzzyRule._weightRegExp);
+			if(match.length == 1)
+			{
+				_weight = Number(String(match[0]).split("=")[1]);
+				
+				//remove
+				this.consequence=this.consequence.replace(match, "");
+			}
+			else
+			{
+				_weight = 1;
+			}
+		}
 		
 		/**
 		 * 
@@ -66,23 +92,23 @@ package winxalex.fuzzy
 			var memberFunction:String;
 			var i:int;
 			var len:int;
-			var tempRegExp:RegExp = new RegExp("", "ig");
+			var termRegExp:RegExp = FuzzyRule._termRegExp;
 			//var traceString:String;
 			var stek:Vector.<Token> = new Vector.<Token>;
-			var manifoldRegExp:RegExp=/^(\w+)/gi;
-			var membershipRegExp:RegExp= /(\w+)$/gi;
+			var manifoldRegExp:RegExp = FuzzyRule._manifoldRegExp;
+			var membershipRegExp:RegExp = FuzzyRule._membershipRegExp;
 			
 			  
 			   
 			   //check for numbers (avoided for speed)
-			   //tempRegExp =/(\b\d+)?/ig;
-			   // matches = rule.match(tempRegExp);
+			   //termRegExp =/(\b\d+)?/ig;
+			   // matches = rule.match(termRegExp);
 			   
 			  stek = new Vector.<Token>;
 			
 			    //A IS A1
-				tempRegExp =/\w+\s+IS\s+(NOT\s+)?((VERY|SOMEWHAT)\s+)?\w+/ig;
-				 matches = rule.match(tempRegExp);
+				
+				 matches = rule.match(termRegExp);
 				 
 				 if (!matches.length)
 				 {
@@ -169,8 +195,8 @@ package winxalex.fuzzy
 				//trace("RULE:(after member stage):" +rule);
 				
 				//( A AND B OR C)
-				tempRegExp=/\((\s*\w+\s*)+\)/ig;
-				  matches = rule.match(tempRegExp);
+				termRegExp=/\((\s*\w+\s*)+\)/ig;
+				  matches = rule.match(termRegExp);
 				  
 				  //while there are braces
 				  while (matches.length)
@@ -194,7 +220,7 @@ package winxalex.fuzzy
 					 
 					 
 					  
-					  matches = rule.match(tempRegExp); 
+					  matches = rule.match(termRegExp); 
 					  
 					  
 				  }
@@ -231,9 +257,9 @@ package winxalex.fuzzy
 			 var i:int;
 			 var j:int
 			 var currentmatch:String;
-				var tempRegExp:RegExp = new RegExp("\\d+(\\s+" + operation + "\\s+\\d+)+", "ig");
+				var termRegExp:RegExp = new RegExp("\\d+(\\s+" + operation + "\\s+\\d+)+", "ig");
 				
-				 matches = text.match(tempRegExp);
+				 matches = text.match(termRegExp);
 				 
 				 len = matches.length;
 				 
@@ -252,7 +278,7 @@ package winxalex.fuzzy
 					   args[j] = stek[Number(args[j])];
 				   }
 				 
-				   
+				   //_fuzzificator.implicationType
 				   stek[stek.length] = new Token(stek.length,FuzzyOperator[operation],args );
 				   
 				  
@@ -482,6 +508,9 @@ package winxalex.fuzzy
 						else
 						//OR new rule result with the previous result for rules in same membership function
 						//memberfunction.degreeOfMembership = FuzzyOperator.fOR(memberfunction.degreeOfMembership, _result);
+						
+						//MIN-MAX implication or PRODUCT-SUM
+					
 						memberfunction.levelOfConfidence= memberfunction.levelOfConfidence>_result? memberfunction.levelOfConfidence: _result;
 						return _result;
 					}
@@ -526,6 +555,10 @@ package winxalex.fuzzy
 		}
 		
 		public function get result():Number { return _result; }
+		
+		public function get weight():Number { return _weight; }
+		
+	
 		
 	
 	

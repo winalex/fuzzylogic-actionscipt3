@@ -14,7 +14,9 @@ package winxalex.fuzzy
 		public static const SQUARE:uint = 5;
 		
 		
-		
+		/**
+		 * level of confidence (firing strenght)
+		 */
 		private var _levelOfConfidence:Number = 0;
 		private var _maximumDOM:Number=0;
 		private var _degreeOfMembership:Number = 0;
