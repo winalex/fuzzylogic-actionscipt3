@@ -177,6 +177,16 @@ package
 			
 			trace(fuz.getManifold("BreakForce").toString());
 			
+			/*OUTPUT MOM:75
+			OUTPUT COS:63.794466403162055
+			OUTPUT MAXAV:66.98717948717949
+			CENTROID:63.646408839779006
+			linguisticTerm=VeryLight DOM:0 LOC=0 leftOffset=0 leftMidPoint=0 rightMidPoint=0 rightOffset=25
+			linguisticTerm=Normal DOM:0 LOC=0.4166666666666667 leftOffset=25 leftMidPoint=50 rightMidPoint=50 rightOffset=25
+			linguisticTerm=VeryHeavy DOM:0 LOC=0.3 leftOffset=25 leftMidPoint=75 rightMidPoint=75 rightOffset=0
+			linguisticTerm=Light DOM:0 LOC=0 leftOffset=25 leftMidPoint=25 rightMidPoint=25 rightOffset=25
+			linguisticTerm=Heavy DOM:0 LOC=0.5833333333333334 leftOffset=25 leftMidPoint=75 rightMidPoint=75 rightOffset=25*/
+			
 		}
 		
 	}

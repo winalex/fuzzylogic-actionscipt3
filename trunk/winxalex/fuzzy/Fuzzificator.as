@@ -5,6 +5,42 @@ package winxalex.fuzzy
 	/**
 	 * ...
 	 * @author alex winx
+	 * 
+	 * 
+	 * Advantages of the Sugeno Method
+
+    *
+
+      It is computationally efficient.
+    *
+
+      It works well with linear techniques (e.g., PID control).
+    *
+
+      It works well with optimization and adaptive techniques.
+    *
+
+      It has guaranteed continuity of the output surface.
+    *
+
+      It is well suited to mathematical analysis.
+
+	  
+	  
+		Advantages of the Mamdani Method
+
+    *
+
+      It is intuitive.
+    *
+
+      It has widespread acceptance.
+    *
+
+      It is well suited to human input.
+	 * 
+	 * 
+	 * 
 	 */
 	public  class Fuzzificator
 	{
@@ -13,8 +49,8 @@ package winxalex.fuzzy
      internal var inputFuzzymanifolds:Dictionary;
 	 internal var outputFuzzyManifolds:Dictionary;
   
-	 
-
+	 public var implicationType:uint = 0;
+     public var 
 
  
 	
@@ -84,7 +120,7 @@ package winxalex.fuzzy
 			//var rules:SLinkedList;
 			//var numNewRules:int=0;
 			//
-			//
+			//[p then (r and s)] is equivalent to [(p then r) and (p then s)] (5)
 			//numRules = fuzzyRules.size;
 			//
 			//termsMatches =/\w+\s+IS\s+(NOT\s+)?((VERY|SOMEWHAT)\s+)?\w+/ig;
@@ -306,6 +342,9 @@ package winxalex.fuzzy
 				
 			}
 		}
+		
+		
+		private function 
 		
 		/**
 		 *    sum(input * xDOM(input))/sum of DOM(input)  COG or CENTROID
