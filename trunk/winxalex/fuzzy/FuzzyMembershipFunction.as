@@ -33,6 +33,8 @@ package winxalex.fuzzy
 		public var  leftOffset:Number;
         public var rightOffset:Number;
 		public var leftMidPoint:Number;
+		public var scaleX:Number = 1;
+		public var scaleY:Number = 1;
 		
 		private var  _rightMidPoint:Number;
 		private var  _leftOffset:Number;
@@ -94,7 +96,9 @@ package winxalex.fuzzy
 			
 			_maximumDOM = value; 
 			
-			if (_maximumDOM == 1)
+			
+			
+			if (_maximumDOM == 1)//restore
 			{
 			    this.rightMidPoint= _rightMidPoint;
 				this.rightOffset = _rightOffset;
@@ -103,7 +107,11 @@ package winxalex.fuzzy
 			    return;
 			}
 			
-			if (_leftOffset != 0 )//right shoulder
+		    if (scaleY < 1) return;
+			
+			
+			//CLIPPING
+			if (_leftOffset != 0 )
 			{
 			
 				newOffset =  _maximumDOM * _leftOffset;
@@ -112,6 +120,7 @@ package winxalex.fuzzy
 				
 			}
 			
+			//CLIPPING
 			if (rightOffset != 0)
 			{
 			

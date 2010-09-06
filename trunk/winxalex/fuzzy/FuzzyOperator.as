@@ -9,12 +9,21 @@ package winxalex.fuzzy
 	public class  FuzzyOperator
 	{
 		public static const NOT:Function = fNOT;
-		public static const OR:Function = fOR;
-		public static const AND:Function =fAND;
+		public static const MAX:Function = fMAX;
+		public static const MIN:Function =fMIN;
 		public static const VERY:Function = fVERY;
 		public static const SOMEWHAT:Function = fSOMEWHAT;
+		public static const PRODUCT:Function = fPRODUCT;
+		public static const PROBSUM:Function = fPROBSUM;
+		public static const SUM:Function = fSUM;
 		
-		  public static function fAND(...args):Number
+		
+		   /**
+		    * 
+		    * @param	...args
+		    * @return
+		    */
+		  public static function fMIN(...args):Number
 		{
 			var i:int = 1;
 			var currentvalue:Number;
@@ -36,13 +45,18 @@ package winxalex.fuzzy
 		}
 		
 		
+		/**
+		 * x*y
+		 * @param	...args
+		 * @return
+		 */
 		public static function fPRODUCT(...args):Number
 		{
 			var i:int = 1;
 			var currentvalue:Number=Token(args[0]).value;
 			var len:int = args.length;
 		
-			
+			trace("PRODUCT:" + currentvalue + "*" + Token(args[1]).value + "=" + (currentvalue * Token(args[1]).value));
 			if (len == 2)  return currentvalue * Token(args[1]).value;
 			if (len == 3)  return currentvalue* Token(args[1]).value*Token(args[2]).value ;
 			
@@ -63,7 +77,7 @@ package winxalex.fuzzy
 	    * @param	...args
 	    * @return
 	    */
-		public static function fPROBOR(...args):Number
+		public static function fPROBSUM(...args):Number
 		{
 			var i:int = 1;
 		
@@ -83,6 +97,12 @@ package winxalex.fuzzy
 			
 		}
 		
+		
+		/**
+		 * min(x+y,1)
+		 * @param	...args
+		 * @return
+		 */
 		public static function fSUM(...args):Number
 		{
 			var i:int = 1;
@@ -91,13 +111,14 @@ package winxalex.fuzzy
 			var currentvalue:Number =Token(args[0]).value;//args[0] is Number?args[0]:args[0].value
 			
 			if (len == 2)  return currentvalue + args[1].value > 1? 1: currentvalue + args[1].value;
+				if (len == 3)  return currentvalue + args[1].value+args[2] > 1? 1: currentvalue + args[1].value+args[2] ;
 			
 			
 			for (; i < len; i++)
 			{
 				currentvalue+= Token(args[i]).value;
 								
-				
+				if (currentvalue >= 1) return 1;
 				
 			}
 			
@@ -109,11 +130,11 @@ package winxalex.fuzzy
     
 		
 		/**
-		 *     *
+		 *     max
 		* @param	...args
 		 * @return
 		 */
-		public static function fOR(...args):Number
+		public static function fMAX(...args):Number
 		{
 			var i:int = 1;
 			var currentvalue:Number;

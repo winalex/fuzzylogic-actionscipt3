@@ -16,10 +16,13 @@ package winxalex.fuzzy
 		private var _conCompiledStek:Vector.<Token> = null; //operation OR,AND,NOT,VERY,SOMEWHAT
 		private var _rule:String;
 		private var _result:Number = 0;
+		private var _prevAggregation:Token = new Token();
+		private var _nextAggregation:Token = new Token();
 		private static const _termRegExp:RegExp =/\w+\s+IS\s+(NOT\s+)?((VERY|SOMEWHAT)\s+)?\w+/ig;
 		private static	const _manifoldRegExp:RegExp=/^(\w+)/gi;
 		private	static const _membershipRegExp:RegExp = /(\w+)$/gi;
 		private static const _weightRegExp:RegExp =/(WEIGHT|W)=\d+(\.?\d+)?/gi;
+		
 		
 		
 		
@@ -50,10 +53,10 @@ package winxalex.fuzzy
 		{
 			_fuzzificator = fuzz;
 			
-		
+				setWeight();
 			
 			_antCompiledStek =compileString(this.antecedent);
-			_conCompiledStek = compileString(this.consequence);
+			_conCompiledStek = compileString(this.consequence);//Change so DOM
 			
 			 trace("COMPILED:"+toString(_antCompiledStek));
 		}
@@ -211,7 +214,8 @@ package winxalex.fuzzy
 					     //trace("bracket match" +currentmatch);
 					   
 					   
-						matchOperation(  matchOperation( currentmatch, "AND",stek), "OR",stek);
+						//matchOperation(  matchOperation( currentmatch, "AND",stek), "OR",stek);
+						matchOperation(  matchOperation( currentmatch, "AND",stek,_fuzzificator.AND), "OR",stek,_fuzzificator.OR);
 						
 						rule = rule.replace(currentmatch, stek.length - 1);
 						
@@ -227,7 +231,7 @@ package winxalex.fuzzy
 				
 			
 				 
-				matchOperation(  matchOperation( rule, "AND",stek), "OR",stek);
+				matchOperation(  matchOperation( rule, "AND",stek,_fuzzificator.AND), "OR",stek,_fuzzificator.OR);
 			
 				 
 			
@@ -248,7 +252,7 @@ package winxalex.fuzzy
 		 * @param	stek
 		 * @return
 		 */
-		private function matchOperation(text:String,operation:String,stek:Vector.<Token>):String
+		private function matchOperation(text:String,operation:String,stek:Vector.<Token>,operatorFunc:Function):String
 		{
 			
 			 var matches:Array;
@@ -278,8 +282,8 @@ package winxalex.fuzzy
 					   args[j] = stek[Number(args[j])];
 				   }
 				 
-				   //_fuzzificator.implicationType
-				   stek[stek.length] = new Token(stek.length,FuzzyOperator[operation],args );
+				 
+				   stek[stek.length] = new Token(stek.length,operatorFunc,args );
 				   
 				  
 					 
@@ -351,11 +355,14 @@ package winxalex.fuzzy
 				return "DOM";
 				break;
 				
-				case FuzzyOperator.fOR:
+				case FuzzyOperator.fPROBSUM:
+				case FuzzyOperator.fMIN:
+				case FuzzyOperator.fSUM:
 				return "OR";
 				break;
 				
-				case FuzzyOperator.fAND:
+				case FuzzyOperator.fMAX:
+				case FuzzyOperator.fPRODUCT:
 				return "AND";
 				break;
 				
@@ -405,22 +412,7 @@ package winxalex.fuzzy
 				//trace("(" + i + ") " + functionToString(token.func) + "( " + tokenArgs.join() + ")=" );
 				
 				
-				/*if (!isNaN(Number(tokenArgs[0])))//if first isn't number the rest aren't numbers but tokens
-				{
-				
-					//TODO improve this shit (better check type then create (new) and plus rearrange
-					args = new Array();
-				    argsLen = tokenArgs.length;
-				
 						
-				//pointer to Values
-				for (j = 0; j < argsLen; j++) { args[j] = stek[Number(tokenArgs[j])].value; };
-				
-				
-				tokenArgs = args;
-				
-				}*/
-				
 
 				token.value = token.func.apply(null, tokenArgs );//stek[Number(args[j])].value
 				
@@ -447,7 +439,10 @@ package winxalex.fuzzy
 				//trace("EVALUATED:"+toString(_antCompiledStek));
 				
 				//result steak
-				_result=evaluateStek(_conCompiledStek);
+				_result = evaluateStek(_conCompiledStek);
+				
+				//this is commented for speed cos fMIN(_result,1)=_result(+clipping) and fPROD(_result,1)=_result(+scaling)
+				//_result=_fuzzificator.implication(_result, 1);
 				
 			}
 			else
@@ -504,14 +499,25 @@ package winxalex.fuzzy
 						{
 							memberfunction.isLOCReseted = true;
 							memberfunction.levelOfConfidence =  _result;
+							memberfunction.scaleY = 1;
 						}
 						else
+						{
 						//OR new rule result with the previous result for rules in same membership function
 						//memberfunction.degreeOfMembership = FuzzyOperator.fOR(memberfunction.degreeOfMembership, _result);
 						
-						//MIN-MAX implication or PRODUCT-SUM
+						//TODO test _result*	this.weight
+						_nextAggregation.value = _result*this.weight;
+						_prevAggregation.value = memberfunction.levelOfConfidence;
+						
 					
-						memberfunction.levelOfConfidence= memberfunction.levelOfConfidence>_result? memberfunction.levelOfConfidence: _result;
+						
+							memberfunction.levelOfConfidence = _fuzzificator.aggregation(_prevAggregation, _nextAggregation);
+							
+						if (_fuzzificator.implication == FuzzyOperator.fPRODUCT)
+						memberfunction.scaleY = memberfunction.levelOfConfidence;
+						}
+						//memberfunction.levelOfConfidence= memberfunction.levelOfConfidence>_result? memberfunction.levelOfConfidence: _result;
 						return _result;
 					}
 					
@@ -525,9 +531,7 @@ package winxalex.fuzzy
 			{
 				throw new Error(this.rule + " has not existing manifold " + manifoldName);
 			}
-			/**/
-			//return 3;
-			//return Math.random();
+		
 		}
 		
 		
