@@ -8,14 +8,15 @@ package winxalex.fuzzy
 	 */
 	public class  FuzzyOperator
 	{
-		public static const NOT:Function = fNOT;
+		/*public static const NOT:Function = fNOT;
 		public static const MAX:Function = fMAX;
 		public static const MIN:Function =fMIN;
 		public static const VERY:Function = fVERY;
 		public static const SOMEWHAT:Function = fSOMEWHAT;
 		public static const PRODUCT:Function = fPRODUCT;
 		public static const PROBSUM:Function = fPROBSUM;
-		public static const SUM:Function = fSUM;
+		public static const SUM:Function = fSUM;*/
+	
 		
 		
 		   /**
@@ -28,21 +29,53 @@ package winxalex.fuzzy
 			var i:int = 1;
 			var currentvalue:Number;
 			var len:int = args.length;
-			var min:Number = Token(args[0]).value;
+			var min1:Number;
+			var min2:Number;
+			var pointer1:int;
+			var pointer2:int;
+			var npoint1:int;
+			var npoint2:int;
+			var calc1:Number;
+			var calc2:Number;
 			
-			if (len == 2)  return min > Token(args[1]).value? Token(args[1]).value:min;
+			if (len == 2)  return Token(args[0]).value > Token(args[1]).value? Token(args[1]).value:Token(args[0]).value;
+			if (len == 3)  return Token(args[0]).value > Token(args[1]).value? (Token(args[1]).value>Token(args[2]).value? Token(args[2]).value:Token(args[1]).value):Token(args[0]).value;
 			
-			for (; i < len; i++)
+			
+			pointer1 = 1;
+			pointer2 = len - 2;
+			
+			min1 = Token(args[0]).value;
+			min2 = Token(args[len-1]).value;
+			
+			while (pointer1  <= pointer2)
 			{
-				currentvalue = Token(args[i]).value;
 				
-				if (currentvalue < min)
-				min =currentvalue;
+				if (min1 > Token(args[pointer1]).value)
+				min1 = Token(args[pointer1]).value;
 				
+			
+				if (pointer1 <pointer2)
+				{
+				  if (min2 > Token(args[pointer2]).value)
+				  min2 = Token(args[pointer2]).value;
+				  pointer2 = pointer2 - 1;
+				}
+				
+				
+				
+				pointer1 = pointer1 + 1;
+				
+				
+				//trace(min1, min2);
+				//trace("loop pass");
+			  
 			}
 			
-			return min;
-		}
+			
+					return min1 > min2?min2:min1;
+		
+			}
 		
 		
 		/**
@@ -53,21 +86,51 @@ package winxalex.fuzzy
 		public static function fPRODUCT(...args):Number
 		{
 			var i:int = 1;
-			var currentvalue:Number=Token(args[0]).value;
-			var len:int = args.length;
 		
-			trace("PRODUCT:" + currentvalue + "*" + Token(args[1]).value + "=" + (currentvalue * Token(args[1]).value));
-			if (len == 2)  return currentvalue * Token(args[1]).value;
-			if (len == 3)  return currentvalue* Token(args[1]).value*Token(args[2]).value ;
+			var len:int = args.length;
+			var prod1:Number;
+			var prod2:Number;
+			var pointer1:int;
+			var pointer2:int;
+		
+			trace("PRODUCT:");
+			if (len == 2)  return Token(args[0]).value * Token(args[1]).value;
+			if (len == 3)  return Token(args[0]).value * Token(args[1]).value * Token(args[2]).value ;
+			if (len == 4)  return Token(args[0]).value * Token(args[1]).value * Token(args[2]).value * Token(args[3]).value ;
+		   //...add more for speed or switch
 			
-			for (; i < len; i++)
+			
+			pointer1 = 1;
+			pointer2 = len - 2;
+			
+			prod1 = Token(args[0]).value;
+			prod2 = Token(args[len-1]).value;
+			
+			while (pointer1  <= pointer2)
 			{
-				currentvalue *= Token(args[i]).value;
 				
 				
+				prod1*= Token(args[pointer1]).value;
+				
+			
+				if (pointer1 <pointer2)
+				{
+				 
+				  prod2 *= Token(args[pointer2]).value;
+				  pointer2 = pointer2 - 1;
+				}
+				
+				
+				
+				pointer1 = pointer1 + 1;
+				
+				
+				trace(prod1, prod2);
+				//trace("loop pass");
+			  
 			}
 			
-			return currentvalue;
+			return prod1*prod2;
 		}
 		
 		
@@ -80,20 +143,47 @@ package winxalex.fuzzy
 		public static function fPROBSUM(...args):Number
 		{
 			var i:int = 1;
-		
+		    var prod1:Number;
+			var prod2:Number;
+			var pointer1:int;
+			var pointer2:int;
 			var len:int = args.length;
-			var currentvalue:Number = Token(args[0]).value;//args[0] is Number?args[0]:args[0].value
-			
-			if (len == 2)  return currentvalue + Token(args[1]).value-currentvalue * Token(args[1]).value;
 			
 			
-			for (; i < len; i++)
+			if (len == 2)  return Token(args[0]).value + Token(args[1]).value- Token(args[0]).value * Token(args[1]).value;
+			
+			
+			pointer1 = 1;
+			pointer2 = len - 2;
+			
+			prod1 = Token(args[0]).value;
+			prod2 = Token(args[len-1]).value;
+			
+			while (pointer1  <= pointer2)
 			{
-				currentvalue = currentvalue + Token(args[i]).value-currentvalue * Token(args[i]).value;
 				
+				
+				prod1=prod1 + Token(args[pointer1]).value-prod1*Token(args[pointer1]).value;
+				
+			
+				if (pointer1 <pointer2)
+				{
+				 
+				 prod2=prod2 + Token(args[pointer2]).value-prod2*Token(args[pointer2]).value;
+				  pointer2 = pointer2 - 1;
+				}
+				
+				
+				
+				pointer1 = pointer1 + 1;
+				
+				
+				trace(prod1, prod2);
+				//trace("loop pass");
+			  
 			}
 			
-			return currentvalue;
+			return prod1+prod2-prod1*prod2;
 			
 		}
 		
@@ -108,21 +198,60 @@ package winxalex.fuzzy
 			var i:int = 1;
 			
 			var len:int = args.length;
-			var currentvalue:Number =Token(args[0]).value;//args[0] is Number?args[0]:args[0].value
+			var sum1:Number;
+			var sum2:Number;
+			var pointer1:int;
+			var pointer2:int;
+		
 			
-			if (len == 2)  return currentvalue + args[1].value > 1? 1: currentvalue + args[1].value;
-				if (len == 3)  return currentvalue + args[1].value+args[2] > 1? 1: currentvalue + args[1].value+args[2] ;
-			
-			
-			for (; i < len; i++)
+			if (len == 2) 
 			{
-				currentvalue+= Token(args[i]).value;
-								
-				if (currentvalue >= 1) return 1;
-				
+				sum1=Token(args[0]).value + args[1].value
+				return  sum1 > 1? 1: sum1;
 			}
 			
-			return currentvalue>1 ? 1:currentvalue;
+				if (len == 3)
+				{ 
+					sum1=Token(args[0]).value + args[1].value+args[2]
+					return  sum1> 1? 1: sum1 ;
+				}
+		
+			
+			
+			pointer1 = 1;
+			pointer2 = len - 2;
+			
+			sum1 = Token(args[0]).value;
+			sum2 = Token(args[len-1]).value;
+			
+			while (pointer1  <= pointer2)
+			{
+				
+				
+				sum1 += Token(args[pointer1]).value;
+				
+				if(sum1 > 1) return 1;
+				
+			
+				if (pointer1 <pointer2)
+				{
+				 
+				  sum2 += Token(args[pointer2]).value;
+				  if (sum2 > 1) return 1;
+				  pointer2 = pointer2 - 1;
+				}
+				
+				
+				
+				pointer1 = pointer1 + 1;
+				
+				
+				//trace(sum1, sum2);
+				//trace("loop pass");
+			  
+			}
+			sum1 += sum2;
+			return sum1>1? 1:sum1;
 		}
     
     
@@ -139,21 +268,47 @@ package winxalex.fuzzy
 			var i:int = 1;
 			var currentvalue:Number;
 			var len:int = args.length;
-			var max:Number = Token(args[0]).value;//args[0] is Number?args[0]:args[0].value
+			var max1:Number;
+			var max2:Number;
+			var pointer1:int;
+			var pointer2:int;
+		
 			
-			if (len == 2)  return max < Token(args[1]).value? Token(args[1]).value:max;
+			if (len == 2)  return Token(args[0]).value < Token(args[1]).value? Token(args[1]).value: Token(args[0]).value;
+			if (len == 3)  return Token(args[0]).value < Token(args[1]).value? (Token(args[2]).value < Token(args[1]).value?Token(args[1]).value:Token(args[2]).value ): Token(args[0]).value;
 			
+		   	pointer1 = 1;
+			pointer2 = len - 2;
 			
-			for (; i < len; i++)
+			max1 = Token(args[0]).value;
+			max2 = Token(args[len-1]).value;
+			
+			while (pointer1  <= pointer2)
 			{
-				currentvalue = Token(args[i]).value;//args[0] is Number?args[0]:args[0].value
-								
-				if (currentvalue> max)
-				max = currentvalue;
 				
+				if (max1 < Token(args[pointer1]).value)
+				max1 = Token(args[pointer1]).value;
+				
+			
+				if (pointer1 <pointer2)
+				{
+				  if (max2 < Token(args[pointer2]).value)
+				  max2 = Token(args[pointer2]).value;
+				  pointer2 = pointer2 - 1;
+				}
+				
+				
+				
+				pointer1 = pointer1 + 1;
+				
+				
+				//trace(min1, min2);
+				//trace("loop pass");
+			  
 			}
 			
-			return max;
+			
+			return max1>max2?max1:max2;
 		}
 		
 		public static function fVERY(...args):Number

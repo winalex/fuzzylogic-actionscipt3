@@ -165,7 +165,7 @@ package
 			
 			trace("OUTPUT COS:" + FuzzyManifold(fuzzyManifolds["BreakForce"]).output);
 			
-			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.MAX_AVERAGED);
+			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod. AVERAGE_OF_MAXIMA);
 			
 			trace("OUTPUT MAXAV:" + FuzzyManifold(fuzzyManifolds["BreakForce"]).output);
 			

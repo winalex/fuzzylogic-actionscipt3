@@ -32,14 +32,26 @@ package winxalex.fuzzy
 	 /**
 	  *     default MIN, other popular PRODUCT
 	  */
-	 public var AND:Function =FuzzyOperator.fMIN;
+	 //private var _AND:FunctionProxy = //new FunctionProxy(FuzzyOperator.fMIN);
 	 
 	 /**
 	  *  default MAX, other popular SUM
 	  */
-	 public var OR:Function = FuzzyOperator.fMAX;
+	 private var _OR:Function = FuzzyOperator.fMAX;
+	 
+	 
+	 private var _AND:Function = FuzzyOperator.fMIN;
     
 	
+	internal function fAND(...args):Number
+	 {
+		 return _AND.apply(null, args);
+	 }
+	 
+	 internal function fOR(...args):Number
+	 {
+		 return _OR.apply(null, args);
+	 }
 
 
   //a list containing all the fuzzy rules
@@ -489,6 +501,20 @@ package winxalex.fuzzy
 				fm.output = sumAvgMulLOC /sumLOC;
 				
 			}
+		}
+		
+		public function get AND():Function { return _AND; }
+		
+		public function set AND(value:Function):void 
+		{
+			_AND = value;
+		}
+		
+		public function get OR():Function { return _OR; }
+		
+		public function set OR(value:Function):void 
+		{
+			_OR = value;
 		}
 	}
 
