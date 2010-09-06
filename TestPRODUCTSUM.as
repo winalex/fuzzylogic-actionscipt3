@@ -11,10 +11,10 @@ package
 	 * 
 	 * desirablity to choose rocket luncher weapon depending of ammo and distance to enemy
 	 */
-	public class Test1 extends Sprite
+	public class TestPRODUCTSUM extends Sprite
 	{
 		
-		public function Test1() 
+		public function TestPRODUCTSUM() 
 		{
 			var fuz:Fuzzificator= new Fuzzificator();
 			var factory:IFuzzyMembershipFunctionFactory = FuzzyMembershipFunctionFactory.getInstance();
@@ -191,9 +191,17 @@ package
 			ammoStatusInput.value = 8;
 			distanceStatusInput.value = 200;
 			
-			
-			
+		
+			//fuz.OR = FuzzyOperator.fSUM;
+			fuz.AND = FuzzyOperator.fPRODUCT;
+			fuz.implication = FuzzyOperator.fPRODUCT;
+			fuz.aggregation = FuzzyOperator.fSUM;
 			fuz.Fuzzify();
+			
+			//OUTPUT MOM:83.33333333333333
+			//OUTPUT COS:58.54503464203232
+			//OUTPUT MAXAV:53.57142857142858
+			//CENTROID:59.919571045576404
 			
 			
 			trace(fuz.getManifold("Desirability").toString());
@@ -217,7 +225,36 @@ package
 			trace("CENTROID:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 		
 			
+		ammoStatusInput.value = 8;
+			distanceStatusInput.value = 200
+			
+			
+			
+			fuz.implication = FuzzyOperator.fMIN;
+			fuz.aggregation = FuzzyOperator.fMAX;
+			fuz.Fuzzify();
+			
+			
+			
 		
+			
+			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.MEAN_OF_MAXIMUM);
+			
+			trace("OUTPUT MOM:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			
+			
+			
+			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTAR_OF_SUM);
+			
+			trace("OUTPUT COS:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			
+			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod. AVERAGE_OF_MAXIMA);
+			
+			trace("OUTPUT MAXAV:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			
+				fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTER_OF_AREA_CENTROID);
+			
+			trace("CENTROID:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
 		/*	
 

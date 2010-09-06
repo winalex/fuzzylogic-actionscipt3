@@ -166,7 +166,7 @@ package winxalex.fuzzy
 					 if (hasOperator(currentmatch,"VERY"))
 					 {
 						// stek[stek.length] = new Token(stek.length,FuzzyOperator.VERY, [stek.length - 1]);
-						 stek[stek.length] = new Token(stek.length,FuzzyOperator.VERY, [stek[stek.length - 1]]);
+						 stek[stek.length] = new Token(stek.length,FuzzyOperator.fVERY, [stek[stek.length - 1]]);
 						 //traceString = "VERY," + //traceString;
 					 }
 					 else
@@ -175,7 +175,7 @@ package winxalex.fuzzy
 						   if (hasOperator(currentmatch, "SOMEWHAT"))
 						   {
 							    //stek[stek.length] = new Token(stek.length,FuzzyOperator.SOMEWHAT,[stek.length - 1]);
-								stek[stek.length] = new Token(stek.length,FuzzyOperator.SOMEWHAT,[stek[stek.length - 1]]);
+								stek[stek.length] = new Token(stek.length,FuzzyOperator.fSOMEWHAT,[stek[stek.length - 1]]);
 								 //traceString = "SOMEWHAT," + //traceString;
 						   }
 						 
@@ -185,7 +185,7 @@ package winxalex.fuzzy
 					 if (hasOperator(currentmatch,"NOT"))
 					 {
 						 //stek[stek.length] = new Token(stek.length, FuzzyOperator.NOT, [stek.length - 1]);
-						  stek[stek.length] = new Token(stek.length,FuzzyOperator.NOT,[stek[stek.length - 1]]);
+						  stek[stek.length] = new Token(stek.length,FuzzyOperator.fNOT,[stek[stek.length - 1]]);
 						  //traceString = "NOT," + //traceString;
 					 }
 					 
@@ -215,7 +215,7 @@ package winxalex.fuzzy
 					   
 					   
 						//matchOperation(  matchOperation( currentmatch, "AND",stek), "OR",stek);
-						matchOperation(  matchOperation( currentmatch, "AND",stek,_fuzzificator.AND), "OR",stek,_fuzzificator.OR);
+						matchOperation(  matchOperation( currentmatch, "AND",stek,_fuzzificator.fAND), "OR",stek,_fuzzificator.fOR);
 						
 						rule = rule.replace(currentmatch, stek.length - 1);
 						
@@ -231,7 +231,7 @@ package winxalex.fuzzy
 				
 			
 				 
-				matchOperation(  matchOperation( rule, "AND",stek,_fuzzificator.AND), "OR",stek,_fuzzificator.OR);
+				matchOperation(  matchOperation( rule, "AND",stek,_fuzzificator.fAND), "OR",stek,_fuzzificator.fOR);
 			
 				 
 			
@@ -412,7 +412,7 @@ package winxalex.fuzzy
 				//trace("(" + i + ") " + functionToString(token.func) + "( " + tokenArgs.join() + ")=" );
 				
 				
-						
+					
 
 				token.value = token.func.apply(null, tokenArgs );//stek[Number(args[j])].value
 				
@@ -438,6 +438,7 @@ package winxalex.fuzzy
 				
 				//trace("EVALUATED:"+toString(_antCompiledStek));
 				
+							
 				//result steak
 				_result = evaluateStek(_conCompiledStek);
 				
