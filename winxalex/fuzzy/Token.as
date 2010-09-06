@@ -12,7 +12,7 @@ package  winxalex.fuzzy
 		public var value:Number = NaN;
 		public var id:int;
 		
-		public function Token(id:int,func:Function = null, args:Array = null) 
+		public function Token(id:int=-1,func:Function = null, args:Array = null) 
 		{
 			this.id = id;
 			this.args = args;

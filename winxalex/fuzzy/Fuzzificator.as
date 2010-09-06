@@ -7,37 +7,6 @@ package winxalex.fuzzy
 	 * @author alex winx
 	 * 
 	 * 
-	 * Advantages of the Sugeno Method
-
-    *
-
-      It is computationally efficient.
-    *
-
-      It works well with linear techniques (e.g., PID control).
-    *
-
-      It works well with optimization and adaptive techniques.
-    *
-
-      It has guaranteed continuity of the output surface.
-    *
-
-      It is well suited to mathematical analysis.
-
-	  
-	  
-		Advantages of the Mamdani Method
-
-    *
-
-      It is intuitive.
-    *
-
-      It has widespread acceptance.
-    *
-
-      It is well suited to human input.
 	 * 
 	 * 
 	 * 
@@ -49,11 +18,29 @@ package winxalex.fuzzy
      internal var inputFuzzymanifolds:Dictionary;
 	 internal var outputFuzzyManifolds:Dictionary;
   
-	 public var implicationType:uint = 0;
-     public var 
-
- 
+	 
+	 /**
+	  * default MIN, other popular PRODUCT,... see FuzzyOperator for other options
+	  */
+	 public var implication:Function = FuzzyOperator.fMIN;//implication, activation
+	 
+	 /**
+	  *  default MAX, other popular SUM, PROBSUM
+	  */
+     public var aggregation:Function =FuzzyOperator.fMAX ;//combination
+    
+	 /**
+	  *     default MIN, other popular PRODUCT
+	  */
+	 public var AND:Function =FuzzyOperator.fMIN;
+	 
+	 /**
+	  *  default MAX, other popular SUM
+	  */
+	 public var OR:Function = FuzzyOperator.fMAX;
+    
 	
+
 
   //a list containing all the fuzzy rules
   private var fuzzyRules:SLinkedList;
@@ -66,7 +53,6 @@ package winxalex.fuzzy
 			outputFuzzyManifolds = new Dictionary(true);
 			fuzzyRules = new SLinkedList();
 		
-			
 		}
 		
 		public function addManifold(manifold:FuzzyManifold):void
@@ -224,24 +210,24 @@ package winxalex.fuzzy
 			{
 				case DefuzzificationMethod.CENTAR_OF_SUM:
 				if(args[0])
-				CoS(args[0]);
+				CoS(outputFuzzyManifolds,args[0]);
 				else
-				CoS();
+				CoS(outputFuzzyManifolds);
 				return outputFuzzyManifolds;
 				break;
-				case DefuzzificationMethod.MAX_AVERAGED:
-				MaV();
+				case DefuzzificationMethod. AVERAGE_OF_MAXIMA:
+				AVMAX(outputFuzzyManifolds);
 				return outputFuzzyManifolds;
 				break;
 				case DefuzzificationMethod.MEAN_OF_MAXIMUM:
-				MoM();
+				MoM(outputFuzzyManifolds);
 				return outputFuzzyManifolds;
 				break;
 				case DefuzzificationMethod.CENTER_OF_AREA_CENTROID:
 				if(args[0])
-				CoA(args[0]);
+				CoA(outputFuzzyManifolds,args[0]);
 				else
-				CoA();
+				CoA(outputFuzzyManifolds);
 				return outputFuzzyManifolds;
 				break;
 				
@@ -252,7 +238,7 @@ package winxalex.fuzzy
 		}
 		
 		
-		private function MoM():void
+		private static function MoM(outputFuzzyManifolds:Dictionary):void
 		{
 		    var fm:FuzzyManifold;
 			
@@ -287,7 +273,7 @@ package winxalex.fuzzy
 		}
 		
 		
-		private function CoA(step:uint = 10):void
+		private static function CoA(outputFuzzyManifolds:Dictionary,step:Number = 0.1):void
 		{
 			var input:int = 0;
 			var fm:FuzzyManifold;
@@ -299,6 +285,7 @@ package winxalex.fuzzy
 			var s1:Number=0;
 			var max:Number = 0;
 			var func:FuzzyMembershipFunction;
+			var stepBoundary:Number = step * 100;
 			
 			for each (fm in outputFuzzyManifolds)
 			{
@@ -308,10 +295,10 @@ package winxalex.fuzzy
 				
 				 
 						//get delta
-						delta = (fm.maxRange-fm.minRange) / step;
+						delta = (fm.maxRange-fm.minRange) * step;
 						input = fm.minRange+delta;
 						
-						for (i=1; i<=step; i++)
+						for (i=1; i<=stepBoundary; i++)
 						{
 							
 							
@@ -344,14 +331,7 @@ package winxalex.fuzzy
 		}
 		
 		
-		private function 
-		
-		/**
-		 *    sum(input * xDOM(input))/sum of DOM(input)  COG or CENTROID
-		 * @param	step
-		 * @return
-		 *///
-		private function CoS(step:uint=10):void
+	/*	private function todoX(step:Number = 10)
 		{
 			var input:int = 0;
 			var fm:FuzzyManifold;
@@ -376,6 +356,67 @@ package winxalex.fuzzy
 						input = fm.minRange+delta;
 						
 						for (i=1; i<=step; i++)
+						{
+							sumDOMs = 0;
+							
+							for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
+							{
+								
+							   currentDOM = ifunc.calculateDOM(input);
+								s1 += func.weight *currentDOM;
+											 
+								s2 += currentDOM;
+								
+								
+								
+							}
+							
+						
+							
+							
+						
+							
+							input = input + delta;
+						}
+				
+				
+				
+				fm.output = s1 / s2;
+				
+			}
+		}*/
+		
+		/**
+		 *    sum(input * xDOM(input))/sum of DOM(input)  COG or CENTROID
+		 * @param	step (0.1 is every 10th)
+		 * @return
+		 *///
+		private static function CoS(outputFuzzyManifolds:Dictionary,step:Number=0.1):void
+		{
+			var input:int = 0;
+			var fm:FuzzyManifold;
+			var currentDOM:Number;
+			var delta:Number;
+			var i:int;
+			
+			var s2:Number=0;
+			var s1:Number=0;
+			var sumDOMs:Number = 0;//for input
+			var func:FuzzyMembershipFunction;
+			var stepBoundary:Number = step * 100;
+			
+			for each (fm in outputFuzzyManifolds)
+			{
+				s1 = 0;
+				s2 = 0;
+				
+				
+				 
+						//get delta
+						delta = (fm.maxRange-fm.minRange) * step;
+						input = fm.minRange+delta;
+						
+						for (i=1; i<=stepBoundary; i++)
 						{
 							sumDOMs = 0;
 							
@@ -412,7 +453,7 @@ package winxalex.fuzzy
 		/**
 		 * 
 		 */
-		private function MaV():void
+		private static function AVMAX(outputFuzzyManifolds:Dictionary):void
 		{
 			var fm:FuzzyManifold;
 			var sumLOC:Number;
@@ -432,7 +473,7 @@ package winxalex.fuzzy
 							{
 								func = FuzzyMembershipFunction( ifunc);
 								if(func.maximumDOM<1)
-								 func.maximumDOM = 1;
+								 func.maximumDOM = 1;//it is reset
 								
 								sumAvgMulLOC+= ifunc.averagePoint *func.levelOfConfidence;
 								
