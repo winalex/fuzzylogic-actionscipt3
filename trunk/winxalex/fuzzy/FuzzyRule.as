@@ -55,8 +55,8 @@ package winxalex.fuzzy
 			
 				setWeight();
 			
-			_antCompiledStek =compileString(this.antecedent);
-			_conCompiledStek = compileString(this.consequence);//Change so DOM
+			_antCompiledStek =compileString(this.antecedent,getDOM);
+			_conCompiledStek = compileString(this.consequence,implicate);//Change so DOM
 			
 			 trace("COMPILED:"+toString(_antCompiledStek));
 		}
@@ -86,7 +86,7 @@ package winxalex.fuzzy
 		 * @param	rule
 		 * @return
 		 */
-		private function compileString(rule:String):Vector.<Token>
+		private function compileString(rule:String,termFunction:Function):Vector.<Token>
 		{
 			var matches:Array;
 			var node:Token;
@@ -157,8 +157,8 @@ package winxalex.fuzzy
 				  throw new Error("Erroruos rule: " +currentmatch);
 					 
 				   
-					  stek[stek.length] = new Token(stek.length,getDOM, [manifold, memberFunction]);
-					  
+					 // stek[stek.length] = new Token(stek.length,getDOM, [manifold, memberFunction]);
+					  stek[stek.length] = new Token(stek.length,termFunction, [manifold, memberFunction]);
 						  
 					  //traceString = "DOM("+manifold +"," + memberFunction+")";
 					  
@@ -440,7 +440,7 @@ package winxalex.fuzzy
 				
 							
 				//result steak
-				_result = evaluateStek(_conCompiledStek);
+				evaluateStek(_conCompiledStek);
 				
 				//this is commented for speed cos fMIN(_result,1)=_result(+clipping) and fPROD(_result,1)=_result(+scaling)
 				//_result=_fuzzificator.implication(_result, 1);
@@ -477,21 +477,19 @@ package winxalex.fuzzy
 			return fr;
 		}
 		
-		private function getDOM(manifoldName:String,memberfunctionName:String):Number
+		
+		private function implicate(manifoldName:String,memberfunctionName:String):void
 		{
 			var memberfunction:FuzzyMembershipFunction;
 			var manifold:FuzzyManifold;
-			var currentDOM:Number;
 			
-		    
-			manifold = _fuzzificator.inputFuzzymanifolds[manifoldName] 
-			if (!manifold) manifold = _fuzzificator.outputFuzzyManifolds[manifoldName] ;
-			
-			
+			 manifold = _fuzzificator.outputFuzzyManifolds[manifoldName] ;
+			//if(_fuzzificator.type==FuzzificatorType.SUGENO)
 			
 			if (manifold)
 			{
 				memberfunction = manifold.memberfunctions[memberfunctionName];
+				
 				if (memberfunction)
 				{
 					if (_isFired)//result is ready
@@ -500,7 +498,7 @@ package winxalex.fuzzy
 						{
 							memberfunction.isLOCReseted = true;
 							memberfunction.levelOfConfidence =  _result;
-							memberfunction.scaleY = 1;
+							memberfunction.isScaled = false;
 						}
 						else
 						{
@@ -515,12 +513,47 @@ package winxalex.fuzzy
 						
 							memberfunction.levelOfConfidence = _fuzzificator.aggregation(_prevAggregation, _nextAggregation);
 							
-						if (_fuzzificator.implication == FuzzyOperator.fPRODUCT)
-						memberfunction.scaleY = memberfunction.levelOfConfidence;
+							
+							if (_fuzzificator.implication == FuzzyOperator.fPRODUCT)
+						memberfunction.isScaled = true;
+						
 						}
-						//memberfunction.levelOfConfidence= memberfunction.levelOfConfidence>_result? memberfunction.levelOfConfidence: _result;
-						return _result;
+						
 					}
+					
+					
+				}
+				else
+				throw new Error(this.rule + " has not existing memeber function  <" + memberfunctionName + "> in manifold <"+manifoldName+">");
+				
+			}
+			else
+			{
+				throw new Error(this.rule + " has not existing manifold " + manifoldName);
+			}
+			
+				
+			
+			
+			
+			
+		}
+		
+		private function getDOM(manifoldName:String,memberfunctionName:String):Number
+		{
+			var memberfunction:FuzzyMembershipFunction;
+			var manifold:FuzzyManifold;
+			var currentDOM:Number;
+			
+		    
+			manifold = _fuzzificator.inputFuzzymanifolds[manifoldName] 
+			
+			if (manifold)
+			{
+				memberfunction = manifold.memberfunctions[memberfunctionName];
+				if (memberfunction)
+				{
+					
 					
 					return memberfunction.degreeOfMembership;
 				}

@@ -33,8 +33,8 @@ package winxalex.fuzzy
 		public var  leftOffset:Number;
         public var rightOffset:Number;
 		public var leftMidPoint:Number;
-		public var scaleX:Number = 1;
-		public var scaleY:Number = 1;
+		public var isScaled:Boolean = false;
+		
 		
 		private var  _rightMidPoint:Number;
 		private var  _leftOffset:Number;
@@ -107,7 +107,7 @@ package winxalex.fuzzy
 			    return;
 			}
 			
-		    if (scaleY < 1) return;
+		    if (isScaled) return;//NO clipping
 			
 			
 			//CLIPPING

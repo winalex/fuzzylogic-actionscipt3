@@ -19,6 +19,8 @@ package winxalex.fuzzy
 	 internal var outputFuzzyManifolds:Dictionary;
   
 	 
+	 public var type:uint = FuzzificatorType.MAMDANI;
+	 
 	 /**
 	  * default MIN, other popular PRODUCT,... see FuzzyOperator for other options
 	  */
@@ -92,6 +94,7 @@ package winxalex.fuzzy
 		public function addRule(rule:FuzzyRule):void
 		{
 			fuzzyRules.append(rule);
+			
 			rule.compile(this);
 			
 		}
@@ -101,85 +104,87 @@ package winxalex.fuzzy
 		 */
 		public function reduce():void
 		{
-			//var  termsMatches:RegExp;
-			//var fm:FuzzyManifold;
-			//var inputMatches:Array;
-			//var outputMatches:Array;
-			//var currentMatch:String;
-			//var i:int = 0;
-			//var node:SListNode;
-			//var rule:FuzzyRule;
-			//var membershipName:String;
-			//var manifoldName:String;
-			//var fm:FuzzyManifold;
-			//var func:IFuzzyMembershipFunction;
-			//var manifoldRegExp:RegExp=/^(\w+)/gi;
-			//var membershipRegExp:RegExp = /(\w+)$/gi;
-			//var rules:SLinkedList;
-			//var numNewRules:int=0;
-			//
-			//[p then (r and s)] is equivalent to [(p then r) and (p then s)] (5)
-			//numRules = fuzzyRules.size;
-			//
-			//termsMatches =/\w+\s+IS\s+(NOT\s+)?((VERY|SOMEWHAT)\s+)?\w+/ig;
-			//
-			//node = fuzzyRules.head;
-			//
-			//while(node!=fuzzyRules.tail)
-				//{
-					//rule = FuzzyRule(node.data);
-						//
-				        //inputMatches = rule.antecedent.match(termsMatches);
-						//
-						//outputMatches=rule.consequence.match(termsMatches);
-						//
-						//
-						//for (i = 0; i < inputMatches.length; i++)
-						//{
-							//currentMatch = inputMatches[i];
-							//
-							//membershipName = currentMatch.match(membershipRegExp)[0];
-							//manifoldName = currentMatch(manifoldRegExp)[0];
-							//
-							//fm = FuzzyManifold(inputFuzzymanifolds[manifoldName]);
-							//func = FuzzyMembershipFunction(fm[membershipName]);
-							//
-							//currentMatch = outputMatches[0];
-							//membershipName.currentMatch.match (membershipRegExp)[0];
-							//manifoldName = currentMatch(manifoldRegExp)[0];
-							//fm = FuzzyManifold(outputFuzzyManifolds[manifoldName]);
-							//
-							//func.tendence += IFuzzyMembershipFunction(fm[membershipName]).averagePoint
-							//func.numTendences++;
-							//func.currentMatch
-							//func.data.tendence
-							//func.data.
-							//
-							//
-						//}
-						//
-					//node = node.next;
-				//}
-				//
-				//
-				//node = fuzzyRules.head;
-				//for each(fm in inputFuzzymanifolds)
-				//{
-					//for each(func in fm.memberfunctions)
-					//{
-					   //rule = node.data;
-					   //rule.antecedent=
-					   //node = node.next;
-					   //
-					   //numNewRules++;
-					//}
-				//}
-				//
-				//memberfunctions.length
-				//while (fuzzyRules.size != numNewRules)
-				//{
-					//fuzzyRules.removeTail();
-				//}
+			
+			trace("rules should have form A IS A1 AND B IS B1 THEN C IS C1");
+			/*var  termsMatches:RegExp;
+			var fm:FuzzyManifold;
+			var inputMatches:Array;
+			var outputMatches:Array;
+			var currentMatch:String;
+			var i:int = 0;
+			var node:SListNode;
+			var rule:FuzzyRule;
+			var membershipName:String;
+			var manifoldName:String;
+			var fm:FuzzyManifold;
+			var func:IFuzzyMembershipFunction;
+			var manifoldRegExp:RegExp=/^(\w+)/gi;
+			var membershipRegExp:RegExp = /(\w+)$/gi;
+			var rules:SLinkedList;
+			var numNewRules:int=0;
+			
+			[p then (r and s)] is equivalent to [(p then r) and (p then s)] (5)
+			numRules = fuzzyRules.size;
+			
+			termsMatches =/\w+\s+IS\s+(NOT\s+)?((VERY|SOMEWHAT)\s+)?\w+/ig;
+			
+			node = fuzzyRules.head;
+			
+			while(node!=fuzzyRules.tail)
+				{
+					rule = FuzzyRule(node.data);
+						
+				        inputMatches = rule.antecedent.match(termsMatches);
+						
+						outputMatches=rule.consequence.match(termsMatches);
+						
+						
+						for (i = 0; i < inputMatches.length; i++)
+						{
+							currentMatch = inputMatches[i];
+							
+							membershipName = currentMatch.match(membershipRegExp)[0];
+							manifoldName = currentMatch(manifoldRegExp)[0];
+							
+							fm = FuzzyManifold(inputFuzzymanifolds[manifoldName]);
+							func = FuzzyMembershipFunction(fm[membershipName]);
+							
+							currentMatch = outputMatches[0];
+							membershipName.currentMatch.match (membershipRegExp)[0];
+							manifoldName = currentMatch(manifoldRegExp)[0];
+							fm = FuzzyManifold(outputFuzzyManifolds[manifoldName]);
+							
+							func.tendence += IFuzzyMembershipFunction(fm[membershipName]).averagePoint
+							func.numTendences++;
+							func.currentMatch
+							func.data.tendence
+							func.data.
+							
+							
+						}
+						
+					node = node.next;
+				}
+				
+				
+				node = fuzzyRules.head;
+				for each(fm in inputFuzzymanifolds)
+				{
+					for each(func in fm.memberfunctions)
+					{
+					   rule = node.data;
+					   rule.antecedent=
+					   node = node.next;
+					   
+					   numNewRules++;
+					}
+				}
+				
+				memberfunctions.length
+				while (fuzzyRules.size != numNewRules)
+				{
+					fuzzyRules.removeTail();
+				}*/
 	
 		}
 		
@@ -192,6 +197,8 @@ package winxalex.fuzzy
 			var node:SListNode;
 			var rule:FuzzyRule;
 			
+			trace(this.fuzzyRules.dump());
+			
 			for each (fm in inputFuzzymanifolds)
 			{
 				
@@ -202,8 +209,11 @@ package winxalex.fuzzy
 			//evaluate rules
 			//for each(var rule:FuzzyRule in fuzzyRules)
 			node = fuzzyRules.head;
-			while(node!=fuzzyRules.tail)
+			
+			trace("Num of rules:"+fuzzyRules.size);
+			while(node!=fuzzyRules.tail.next)
 			{
+				
 				rule = FuzzyRule(node.data);
 				rule.reset();
 				rule.evaluate();
