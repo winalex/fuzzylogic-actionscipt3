@@ -24,6 +24,28 @@ package winxalex.fuzzy
 			this.name = name;
 			memberfunctions = new Array();
 		}
+		
+		public function getMaxDOM(input:Number):Number
+		{
+			//same principal as in fMax
+		/*	func = FuzzyMembershipFunction( ifunc);						
+								  func.maximumDOM = func.levelOfConfidence;
+								   currentDOM = ifunc.calculateDOM(input);
+									if (max < currentDOM) max = currentDOM;
+									 func.reset();*/
+	
+		}
+		
+		
+		public  function getSumDom(input:Number):Number
+		{
+			//same principal as in fSum
+			
+					/*func = FuzzyMembershipFunction( ifunc);
+							    func.maximumDOM =  func.levelOfConfidence;
+								sumDOMs += ifunc.calculateDOM(input);
+								  func.reset();*/
+		}
 	
 		
 		public function addMember(func:FuzzyMembershipFunction):void

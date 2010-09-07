@@ -53,6 +53,9 @@ package winxalex.fuzzy
 			var k:int = args.length;
 			
 			var node:SListNode = new SListNode(args[0]);
+			
+			trace("append");
+			
 			if (head)
 			{
 				tail.next = node;
@@ -983,11 +986,13 @@ package winxalex.fuzzy
 			var node:SListNode;
 			
 			var s:String = "SLinkedList: has " + _count + " node" + (_count == 1 ? "" : "s") + "\n|< Head\n";
+			node = head;
 			
-			while (node != tail)
+			while (node != tail.next)
 			{
-				node= node.next;
+				
 				s += "\t" +node.data + "\n";
+				node= node.next;
 			}
 			
 			s += "Tail >|";
