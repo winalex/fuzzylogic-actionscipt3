@@ -93,7 +93,7 @@ package winxalex.fuzzy
 			var pointer1:int;
 			var pointer2:int;
 		
-			trace("PRODUCT:");
+			
 			if (len == 2)  return Token(args[0]).value * Token(args[1]).value;
 			if (len == 3)  return Token(args[0]).value * Token(args[1]).value * Token(args[2]).value ;
 			if (len == 4)  return Token(args[0]).value * Token(args[1]).value * Token(args[2]).value * Token(args[3]).value ;
@@ -275,7 +275,7 @@ package winxalex.fuzzy
 		
 			
 			if (len == 2)  return Token(args[0]).value < Token(args[1]).value? Token(args[1]).value: Token(args[0]).value;
-			if (len == 3)  return Token(args[0]).value < Token(args[1]).value? (Token(args[2]).value < Token(args[1]).value?Token(args[1]).value:Token(args[2]).value ): Token(args[0]).value;
+			if (len == 3)  return Token(args[0]).value < Token(args[1]).value? (Token(args[2]).value < Token(args[1]).value ? Token(args[1]).value:Token(args[2]).value ): Token(args[0]).value>Token(args[2]).value?Token(args[0]).value:Token(args[2]).value ;
 			
 		   	pointer1 = 1;
 			pointer2 = len - 2;

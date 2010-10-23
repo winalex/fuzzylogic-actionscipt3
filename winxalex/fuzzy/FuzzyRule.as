@@ -498,6 +498,9 @@ package winxalex.fuzzy
 						{
 							memberfunction.isLOCReseted = true;
 							memberfunction.levelOfConfidence =  _result;
+						
+							
+						
 							memberfunction.isScaled = false;
 						}
 						else
@@ -505,13 +508,14 @@ package winxalex.fuzzy
 						//OR new rule result with the previous result for rules in same membership function
 						//memberfunction.degreeOfMembership = FuzzyOperator.fOR(memberfunction.degreeOfMembership, _result);
 						
-						//TODO test _result*	this.weight
+						
 						_nextAggregation.value = _result*this.weight;
 						_prevAggregation.value = memberfunction.levelOfConfidence;
 						
 					
 						
 							memberfunction.levelOfConfidence = _fuzzificator.aggregation(_prevAggregation, _nextAggregation);
+							
 							
 							
 							if (_fuzzificator.implication == FuzzyOperator.fPRODUCT)

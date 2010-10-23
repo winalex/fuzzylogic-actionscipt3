@@ -23,6 +23,7 @@ package
 			var rule:FuzzyRule;
 			var ammoStatusInput:FuzzyInput;
 			var distanceStatusInput:FuzzyInput;
+			var fuzzyManifolds:Dictionary;
 			
 			ammoStatusInput = new FuzzyInput();
 			distanceStatusInput = new FuzzyInput();
@@ -144,26 +145,30 @@ package
 			
 			
 		
-			
-			var fuzzyManifolds:Dictionary = fuz.Defuzzify(DefuzzificationMethod.MEAN_OF_MAXIMUM);
+				fuz.getManifold("Desirability").reset();
+			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.MEAN_OF_MAXIMUM);
 			
 			trace("OUTPUT MOM:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
 			
-			
+				fuz.getManifold("Desirability").reset();
 			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTAR_OF_SUM);
 			
 			trace("OUTPUT COS:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
+				fuz.getManifold("Desirability").reset();
 			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod. AVERAGE_OF_MAXIMA);
 			
 			trace("OUTPUT MAXAV:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
+				fuz.getManifold("Desirability").reset();
 				fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTER_OF_AREA_CENTROID);
 			
 			trace("CENTROID:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
 			trace(fuz.getManifold("Desirability").toString());
+			
+			
 			 ammoStatusInput.value = 15;
 			distanceStatusInput.value = 100;
 			
@@ -174,18 +179,20 @@ package
 			
 			trace(fuz.getManifold("Desirability").toString());
 		
-			
+				fuz.getManifold("Desirability").reset();
 			fuzzyManifolds= fuz.Defuzzify(DefuzzificationMethod.MEAN_OF_MAXIMUM);
 			
 			trace("OUTPUT MOM:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
+			fuz.getManifold("Desirability").reset();
 			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod. AVERAGE_OF_MAXIMA);
 			
 			trace("OUTPUT MAXAV:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
+			fuz.getManifold("Desirability").reset();
 			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTER_OF_AREA_CENTROID);
 			
-			trace("OUTPUT CENTROID:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);/**/
+			trace("OUTPUT CENTROID:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
 			
 			ammoStatusInput.value = 8;
@@ -198,19 +205,26 @@ package
 			
 			trace(fuz.getManifold("Desirability").toString());
 		
+			fuz.getManifold("Desirability").reset();
 			fuzzyManifolds= fuz.Defuzzify(DefuzzificationMethod.MEAN_OF_MAXIMUM);
 			
 			trace("OUTPUT MOM:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
-			
-			
+			fuz.getManifold("Desirability").reset();
+		
 			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTAR_OF_SUM);
 			
 			trace("OUTPUT COS:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
-			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod. AVERAGE_OF_MAXIMA);
+			
+				fuz.getManifold("Desirability").reset();
+				
+		/**/	fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod. AVERAGE_OF_MAXIMA);
 			
 			trace("OUTPUT MAXAV:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			
+			
+				fuz.getManifold("Desirability").reset();
 			
 				fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTER_OF_AREA_CENTROID);
 			
@@ -231,6 +245,19 @@ OUTPUT MOM:83.33333333333333
 OUTPUT COS:61.85185185185184
 OUTPUT MAXAV:60.41666666666667
 CENTROID:63.913043478260875
+
+
+
+10 max:0.3333333333333333
+20 max:0.3333333333333333
+30 max:0.3333333333333333
+40 max:0.3333333333333333
+50 max:0.2
+60 max:0.40000000000000036
+70 max:0.6666666666666666
+80 max:0.6666666666666666
+90 max:0.6666666666666666
+100 max:0.6666666666666666
 		
 		
 			//var rule:FuzzyRule;

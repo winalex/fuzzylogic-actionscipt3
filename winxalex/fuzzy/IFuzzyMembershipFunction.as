@@ -9,7 +9,7 @@ package winxalex.fuzzy
 	{
 		
 		
-		function calculateDOM(value:Number):Number
+		function calculateDOM(value:Number,clipping:Boolean=false):Number
 		
 		function reset():void;
 		
@@ -17,8 +17,11 @@ package winxalex.fuzzy
 		function toString():String;
 	 
 		function get averagePoint():Number;
+		function set averagePoint(value:Number):void;
 		
+		//point in which DOM is MAX
 		function get maximumPoint():Number
+		function set maximumPoint(value:Number):void;
 	 
 	
 		

@@ -28,7 +28,7 @@ package winxalex.fuzzy
 		
 		
 		
-		//TODO make them private???
+		
 		public var  rightMidPoint:Number;
 		public var  leftOffset:Number;
         public var rightOffset:Number;
@@ -36,10 +36,10 @@ package winxalex.fuzzy
 		public var isScaled:Boolean = false;
 		
 		
-		private var  _rightMidPoint:Number;
-		private var  _leftOffset:Number;
-        private var _rightOffset:Number;
-		private var _leftMidPoint:Number;
+		public var  _rightMidPoint:Number;
+		public var  _leftOffset:Number;
+        public var _rightOffset:Number;
+		public var _leftMidPoint:Number;
 		
 		public var isLOCReseted:Boolean = false;
 
@@ -90,12 +90,8 @@ package winxalex.fuzzy
 		internal function get maximumDOM():Number { return _maximumDOM; }
 		internal function set maximumDOM(value:Number):void
 		{
-			var newOffset:Number;
 			
-			if (value == _maximumDOM) return;
-			
-			_maximumDOM = value; 
-			
+		    _maximumDOM = value;
 			
 			
 			if (_maximumDOM == 1)//restore
@@ -104,32 +100,8 @@ package winxalex.fuzzy
 				this.rightOffset = _rightOffset;
 				this.leftOffset = _leftOffset;
 				this.leftMidPoint = _leftMidPoint;
-			    return;
-			}
-			
-		    if (isScaled) return;//NO clipping
-			
-			
-			//CLIPPING
-			if (_leftOffset != 0 )
-			{
-			
-				newOffset =  _maximumDOM * _leftOffset;
-				leftMidPoint = _leftMidPoint - _leftOffset + newOffset;
-				leftOffset = newOffset;
-				
-			}
-			
-			//CLIPPING
-			if (rightOffset != 0)
-			{
-			
-				newOffset =  _maximumDOM * _rightOffset;
-				rightMidPoint = _rightMidPoint + _rightOffset - newOffset;
-				rightOffset = newOffset;
 			}
 		}
-		
 		
 		
 		
