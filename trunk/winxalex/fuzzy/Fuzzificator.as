@@ -102,7 +102,7 @@ package winxalex.fuzzy
 		/**
 		 *  simple Comb, additivly separable or inseparable
 		 */
-		public function reduce():void
+		public function reduce(dumpOnly:Boolean):void
 		{
 			
 			trace("rules should have form A IS A1 AND B IS B1 THEN C IS C1");
@@ -271,12 +271,15 @@ package winxalex.fuzzy
 			for each (fm in outputFuzzyManifolds)
 			{
 				
-				
+				     
 							
-							for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
+						/**/	
+						/*for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
 							{
 									func = FuzzyMembershipFunction( ifunc);
 								   func.maximumDOM =   func.levelOfConfidence;
+								 
+								 trace(func.maximumDOM);
 								  
 								if (ifunc.maximumPoint > max)
 								{
@@ -285,12 +288,12 @@ package winxalex.fuzzy
 								}
 								
 								
-								 func.reset();
+								// func.reset();
 								
-							}
+							}*/
 							
 							
-							fm.output = avg;
+							fm.output = fm.getMOM();
 			}
 		}
 		
@@ -326,7 +329,8 @@ package winxalex.fuzzy
 							
 							max = 0;
 							
-							for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
+						/*	
+						for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
 							{
 								func = FuzzyMembershipFunction( ifunc);						
 								  func.maximumDOM = func.levelOfConfidence;
@@ -335,10 +339,11 @@ package winxalex.fuzzy
 									 func.reset();
 								
 								
-							}
+							}*/
 							
+							max = fm.getMaxDOM(input);
 						
-							
+							//trace(input,"max:" + max);
 							s1 += input * max;
 							s2 += max;
 							
@@ -442,18 +447,19 @@ package winxalex.fuzzy
 						{
 							sumDOMs = 0;
 							
-							for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
+						/*	
+						for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
 							{
 								func = FuzzyMembershipFunction( ifunc);
 							    func.maximumDOM =  func.levelOfConfidence;
 								sumDOMs += ifunc.calculateDOM(input);
-								  func.reset();
-								 
-								  
-								
-								
-								
+								 func.reset();
 							}
+							*/
+							
+							
+							sumDOMs=fm.getSumDOM(input);
+							
 							
 						
 							
@@ -472,9 +478,13 @@ package winxalex.fuzzy
 			
 		}
 		
-		/**
-		 * 
-		 */
+	/**
+	 * 
+	 * @param	outputFuzzyManifolds
+	 * 
+	 * sum(representative * LOC)/sum(LOC))
+	 * The maximum or representative value of a fuzzy set is the value where membership in that set is 1
+	 */
 		private static function AVMAX(outputFuzzyManifolds:Dictionary):void
 		{
 			var fm:FuzzyManifold;
@@ -491,24 +501,24 @@ package winxalex.fuzzy
 				
 				
 						
-							for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
+						/*	for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
 							{
 								func = FuzzyMembershipFunction( ifunc);
 								if(func.maximumDOM<1)
 								 func.maximumDOM = 1;//it is reset
 								
-								sumAvgMulLOC+= ifunc.averagePoint *func.levelOfConfidence;
+								sumAvgMulLOC+= ifunc.maximumPoint *func.levelOfConfidence;
 								
 								sumLOC += func.levelOfConfidence;
 								
 							
-							}
+							}*/
 							
 							
 				
+				fm.output = fm.getMaxAv();
 				
-				
-				fm.output = sumAvgMulLOC /sumLOC;
+				//fm.output = sumAvgMulLOC /sumLOC;
 				
 			}
 		}
