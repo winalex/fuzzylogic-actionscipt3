@@ -324,10 +324,10 @@ package winxalex.fuzzy
 			{
 				
 			
-			   max1 =  IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input,true);
+			   max1 =  IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input);
 			
 			
-			    max2 =  IFuzzyMembershipFunction(memberfunctions[1]).calculateDOM(input, true);
+			    max2 =  IFuzzyMembershipFunction(memberfunctions[1]).calculateDOM(input);
 					
 				return max1 > max2? memberfunctions[0]:memberfunctions[1];
 			}
@@ -335,14 +335,14 @@ package winxalex.fuzzy
 			{
 				
 					
-			    max1 = IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input,true);
+			    max1 = IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input);
 			
 			
 			   
-			    max2 =IFuzzyMembershipFunction(memberfunctions[1]).calculateDOM(input,true);
+			    max2 =IFuzzyMembershipFunction(memberfunctions[1]).calculateDOM(input);
 				
 				
-			    max3 =  IFuzzyMembershipFunction(memberfunctions[2]).calculateDOM(input,true);
+			    max3 =  IFuzzyMembershipFunction(memberfunctions[2]).calculateDOM(input);
 			
 								
 				return max1 > max2? (max1 > max3? FuzzyMembershipFunction(memberfunctions[0]): FuzzyMembershipFunction(memberfunctions[2]) )     :    (max2 > max3? FuzzyMembershipFunction(memberfunctions[1]):FuzzyMembershipFunction(memberfunctions[2]));

@@ -100,13 +100,13 @@ package winxalex.fuzzy
 		}
 		
 		/**
-		 *  simple Comb, additivly separable or inseparable
+		 *  simple Comb1, simpleComb2, additivly separable or inseparable ///dumpOnly:Boolean
 		 */
-		public function reduce(dumpOnly:Boolean):void
+		public function reduce(method:uint=0):void
 		{
 			
-			trace("rules should have form A IS A1 AND B IS B1 THEN C IS C1");
-			/*var  termsMatches:RegExp;
+			//trace("rules should have form A IS A1 AND B IS B1 THEN C IS C1");
+		var  termsMatches:RegExp;
 			var fm:FuzzyManifold;
 			var inputMatches:Array;
 			var outputMatches:Array;
@@ -116,27 +116,97 @@ package winxalex.fuzzy
 			var rule:FuzzyRule;
 			var membershipName:String;
 			var manifoldName:String;
-			var fm:FuzzyManifold;
 			var func:IFuzzyMembershipFunction;
 			var manifoldRegExp:RegExp=/^(\w+)/gi;
 			var membershipRegExp:RegExp = /(\w+)$/gi;
 			var rules:SLinkedList;
-			var numNewRules:int=0;
+			var numNewRules:int = 0;
+			var numRules:int = 0;
+			var dict:Dictionary = new Dictionary(true);
+			var element:FuzzyReductionElement;
+			var newAverage:Number=NaN;
 			
-			[p then (r and s)] is equivalent to [(p then r) and (p then s)] (5)
+			//[p then (r and s)] is equivalent to [(p then r) and (p then s)] (5)
 			numRules = fuzzyRules.size;
 			
 			termsMatches =/\w+\s+IS\s+(NOT\s+)?((VERY|SOMEWHAT)\s+)?\w+/ig;
 			
 			node = fuzzyRules.head;
 			
-			while(node!=fuzzyRules.tail)
+			
+			
+			while(node!=fuzzyRules.tail.next)
 				{
 					rule = FuzzyRule(node.data);
+					
+					 inputMatches = rule.antecedent.match(termsMatches);
 						
-				        inputMatches = rule.antecedent.match(termsMatches);
+					outputMatches = rule.consequence.match(termsMatches);
+					
+						for (i = 0; i < inputMatches.length; i++)
+						{
+							
+							
+							
+							currentMatch = outputMatches[0];
+							membershipName=currentMatch.match (membershipRegExp)[0];
+							manifoldName = currentMatch.match(manifoldRegExp)[0];
+							fm = FuzzyManifold(outputFuzzyManifolds[manifoldName]);
+							
+							currentMatch = inputMatches[i];
+							
+							if (dict[currentMatch])
+							{
+								element = FuzzyReductionElement(dict[currentMatch]);
+								
+								newAverage = IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averagePoint;
+									//trace(currentMatch + " :" + membershipName + " avg:" +newAverage + " was:" + element.average);
+									
+								element.average += newAverage;
+							
+								
+								//method 0
+							/*	if (element.average ^ newAverage)//element.average!=newAverage
+								{
+									newAverage = (newAverage - element.average) / 2;
+									trace(newAverage);
+									element.average += newAverage;// newAverage < 0 ? -newAverage:newAverage;
+									trace("Calc: "+currentMatch + " :" +element.average);
+								}*/
+							}
+							else
+							{
+								//trace(fm, membershipName);
+								//trace(
+								//trace(currentMatch,IFuzzyMembershipFunction(fm[membershipName]));
+								
+								dict[currentMatch] = new FuzzyReductionElement(fm, IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averagePoint);
+								numNewRules++;
+							}
+						}
+					
+					node = node.next;
+				}
+			
+				
+				for (var key:String in dict)
+				{
+					
+					
+					element = FuzzyReductionElement(dict[key]);
+					
+					//method 1
+					trace("average:"+(element.average/element.consequentManifold.memberfunctions.length)+"   rule:" +key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.average/element.consequentManifold.memberfunctions.length).linguisticTerm);
+					
+					//method 0
+					//trace("average:"+element.average+"   rule:" +key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm);
+					trace();
+				}
+				/*while(node!=fuzzyRules.tail)
+				{
+				
 						
-						outputMatches=rule.consequence.match(termsMatches);
+				       
 						
 						
 						for (i = 0; i < inputMatches.length; i++)
