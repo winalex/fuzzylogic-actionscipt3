@@ -9,10 +9,10 @@ package
 	 * ...
 	 * @author alex winx
 	 */
-	public class Test4ReduceComb extends Sprite
+	public class Test5ReduceComb extends Sprite
 	{
 		
-		public function Test4ReduceComb() 
+		public function Test5ReduceComb() 
 		{
 			var fuz:Fuzzificator= new Fuzzificator();
 			var factory:IFuzzyMembershipFunctionFactory = FuzzyMembershipFunctionFactory.getInstance();
@@ -139,12 +139,13 @@ package
 		
 		// fuz.addRule(rule);
 		trace("--------------------Reduction SIMPLE_1---------------");
-		 fuz.reduce(ReductionMethod.SIMPLE_1);
+		 fuz.reduce(ReductionMethod.SIMPLE_1, false);
+		trace( fuz.toString());
 		 trace("----------------------------------------------------------");
-		trace("--------------------Reduction SIMPLE_2---------------");
+/*		trace("--------------------Reduction SIMPLE_2---------------");
 		 fuz.reduce(ReductionMethod.SIMPLE_2);
 		  trace("----------------------------------------------------------");
-			
+			*/
 /*		 
  --------------------Reduction SIMPLE_1---------------
 rule=new Rule(Distance_to_Target IS Far THEN Desirability IS Undesirable)
