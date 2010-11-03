@@ -91,10 +91,11 @@ package winxalex.fuzzy
 		
 		
 	   //adds a rule to the fazificator
-		public function addRule(rule:FuzzyRule):void
+		public function addRule(rule:FuzzyRule,compile:Boolean=true):void
 		{
 			fuzzyRules.append(rule);
 			
+			if (compile)
 			rule.compile(this);
 			
 		}
@@ -102,7 +103,7 @@ package winxalex.fuzzy
 		/**
 		 *  simple Comb1, simpleComb2, additivly separable or inseparable ///dumpOnly:Boolean
 		 */
-		public function reduce(method:uint=0):void
+		public function reduce(method:uint=0,dump:Boolean=true):void
 		{
 			
 			//trace("rules should have form A IS A1 AND B IS B1 THEN C IS C1");
@@ -113,6 +114,7 @@ package winxalex.fuzzy
 			var currentMatch:String;
 			var i:int = 0;
 			var node:SListNode;
+			var prev:SListNode;
 			var rule:FuzzyRule;
 			var membershipName:String;
 			var manifoldName:String;
@@ -137,16 +139,19 @@ package winxalex.fuzzy
 			
 			while(node!=fuzzyRules.tail.next)
 				{
+					//get Rule
 					rule = FuzzyRule(node.data);
 					
+					//get antecendents terms
 					 inputMatches = rule.antecedent.match(termsMatches);
 						
+					 //get consequence terms
 					outputMatches = rule.consequence.match(termsMatches);
 					
+					
+					//for every antecendents Terms
 						for (i = 0; i < inputMatches.length; i++)
 						{
-							
-							
 							
 							currentMatch = outputMatches[0];
 							membershipName=currentMatch.match (membershipRegExp)[0];
@@ -155,24 +160,34 @@ package winxalex.fuzzy
 							
 							currentMatch = inputMatches[i];
 							
+							//if "antecendents Term THEN concequent" Term exist => calculate
 							if (dict[currentMatch])
 							{
 								element = FuzzyReductionElement(dict[currentMatch]);
 								
-								newAverage = IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averagePoint;
+								
+								switch(method)
+								{
+									case ReductionMethod.SIMPLE_1:
+									newAverage = IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averagePoint;
+										if (element.average ^ newAverage)//element.average!=newAverage
+										{
+										newAverage = (newAverage - element.average) / 2;
+										//trace(newAverage);
+										element.average += newAverage;// newAverage < 0 ? -newAverage:newAverage;
+										//trace("Calc: "+currentMatch + " :" +element.average);
+										}
+									break;
+									case ReductionMethod.SIMPLE_2:
+										newAverage = IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averagePoint;
 									//trace(currentMatch + " :" + membershipName + " avg:" +newAverage + " was:" + element.average);
 									
-								element.average += newAverage;
-							
+										element.average += newAverage;
+									break;
+								}
 								
-								//method 0
-							/*	if (element.average ^ newAverage)//element.average!=newAverage
-								{
-									newAverage = (newAverage - element.average) / 2;
-									trace(newAverage);
-									element.average += newAverage;// newAverage < 0 ? -newAverage:newAverage;
-									trace("Calc: "+currentMatch + " :" +element.average);
-								}*/
+							
+							
 							}
 							else
 							{
@@ -180,6 +195,7 @@ package winxalex.fuzzy
 								//trace(
 								//trace(currentMatch,IFuzzyMembershipFunction(fm[membershipName]));
 								
+								//save found unique antescendent assocated with consequent fuzzyManifold and averagePoint
 								dict[currentMatch] = new FuzzyReductionElement(fm, IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averagePoint);
 								numNewRules++;
 							}
@@ -187,6 +203,10 @@ package winxalex.fuzzy
 					
 					node = node.next;
 				}
+				
+				
+				
+					node = fuzzyRules.head;
 			
 				
 				for (var key:String in dict)
@@ -195,66 +215,64 @@ package winxalex.fuzzy
 					
 					element = FuzzyReductionElement(dict[key]);
 					
-					//method 1
-					trace("average:"+(element.average/element.consequentManifold.memberfunctions.length)+"   rule:" +key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.average/element.consequentManifold.memberfunctions.length).linguisticTerm);
+				
 					
-					//method 0
-					//trace("average:"+element.average+"   rule:" +key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm);
-					trace();
-				}
-				/*while(node!=fuzzyRules.tail)
-				{
-				
-						
-				       
-						
-						
-						for (i = 0; i < inputMatches.length; i++)
-						{
-							currentMatch = inputMatches[i];
-							
-							membershipName = currentMatch.match(membershipRegExp)[0];
-							manifoldName = currentMatch(manifoldRegExp)[0];
-							
-							fm = FuzzyManifold(inputFuzzymanifolds[manifoldName]);
-							func = FuzzyMembershipFunction(fm[membershipName]);
-							
-							currentMatch = outputMatches[0];
-							membershipName.currentMatch.match (membershipRegExp)[0];
-							manifoldName = currentMatch(manifoldRegExp)[0];
-							fm = FuzzyManifold(outputFuzzyManifolds[manifoldName]);
-							
-							func.tendence += IFuzzyMembershipFunction(fm[membershipName]).averagePoint
-							func.numTendences++;
-							func.currentMatch
-							func.data.tendence
-							func.data.
-							
-							
-						}
-						
-					node = node.next;
-				}
-				
-				
-				node = fuzzyRules.head;
-				for each(fm in inputFuzzymanifolds)
-				{
-					for each(func in fm.memberfunctions)
+					switch(method)
 					{
-					   rule = node.data;
-					   rule.antecedent=
-					   node = node.next;
-					   
-					   numNewRules++;
+						case ReductionMethod.SIMPLE_1:
+						   if (dump)
+						   {
+						   //	trace("average:"+element.average+"   rule:" +key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm);
+		                  trace("rule=new Rule(" +key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm+")");
+						   }
+						  else
+						   {
+							rule = FuzzyRule(node.data);
+							rule.antecedent = key;
+							rule.consequence = element.consequentManifold.name + " IS " + element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm;
+							 rule.rule = rule.antecedent +" THEN "+ rule.consequence;
+							rule.compile(this);
+						   }
+							
+						break;
+						
+						case ReductionMethod.SIMPLE_2:
+								if (dump)
+								{
+								//trace("average:"+(element.average/element.consequentManifold.memberfunctions.length)+"   rule:" +key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.average/element.consequentManifold.memberfunctions.length).linguisticTerm);
+								trace("rule=new Rule("+key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.average/element.consequentManifold.memberfunctions.length).linguisticTerm+")");
+								}
+								else
+								{
+									rule = FuzzyRule(node.data);
+									rule.antecedent = key;
+									rule.consequence = element.consequentManifold.name + " IS " + element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm;
+							      	rule.rule = rule.antecedent +" THEN "+ rule.consequence;
+									rule.compile(this);
+								}
+												
+						break;
 					}
+					
+					
+					
+					prev = node;
+					node = node.next;
+					
+					
 				}
 				
-				memberfunctions.length
-				while (fuzzyRules.size != numNewRules)
-				{
-					fuzzyRules.removeTail();
-				}*/
+			
+				if (!dump)
+					{
+						fuzzyRules.sliceAfter(prev);
+						
+					}
+				
+				
+		
+				
+		
 	
 		}
 		
@@ -605,6 +623,23 @@ package winxalex.fuzzy
 		public function set OR(value:Function):void 
 		{
 			_OR = value;
+		}
+		
+		public function toString():String
+		{
+			var node:SListNode;
+			var s:String;
+			node = fuzzyRules.head;
+			
+			s="-------------------Fuzzificatior data -----------------------\n"
+			
+			while(node!=fuzzyRules.tail.next)
+				{
+					s += FuzzyRule(node.data).rule+'\n';// 
+					node = node.next;
+				}
+			
+			return s;
 		}
 	}
 

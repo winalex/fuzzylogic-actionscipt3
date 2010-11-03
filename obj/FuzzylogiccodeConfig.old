@@ -14,7 +14,7 @@
     </define>
     <define>
       <name>CONFIG::timeStamp</name>
-      <value>'25.10.2010 02:17'</value>
+      <value>'04.11.2010 00:45'</value>
     </define>
     <source-path append="true">
       <path-element>D:\Projects\Inlineshuffleboard\gameDev\fuzzylogiccode</path-element>
@@ -24,7 +24,7 @@
     </source-path>
   </compiler>
   <file-specs>
-    <path-element>D:\Projects\Inlineshuffleboard\gameDev\fuzzylogiccode\Test4ReduceComb.as</path-element>
+    <path-element>D:\Projects\Inlineshuffleboard\gameDev\fuzzylogiccode\Test5ReduceComb.as</path-element>
   </file-specs>
   <default-background-color>#FFFFFF</default-background-color>
   <default-frame-rate>30</default-frame-rate>
