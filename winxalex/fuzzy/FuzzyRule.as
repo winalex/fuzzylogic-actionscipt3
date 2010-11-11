@@ -18,10 +18,20 @@ package winxalex.fuzzy
 		private var _result:Number = 0;
 		private var _prevAggregation:Token = new Token();
 		private var _nextAggregation:Token = new Token();
-		private static const _termRegExp:RegExp =/\w+\s+IS\s+(NOT\s+)?((VERY|SOMEWHAT)\s+)?\w+/ig;
-		private static	const _manifoldRegExp:RegExp=/^(\w+)/gi;
-		private	static const _membershipRegExp:RegExp = /(\w+)$/gi;
+		public static const _termRegExp:RegExp =/\w+\s+(IS)\s+((NOT)\s+)?((VERY|SOMEWHAT)\s+)?\w+/ig;
+		public static	const _manifoldRegExp:RegExp=/^(\w+)/gi;
+		public	static const _membershipRegExp:RegExp = /(\w+)$/gi;
 		private static const _weightRegExp:RegExp =/(WEIGHT|W)=\d+(\.?\d+)?/gi;
+		
+		private static const _andCaseRegExp:RegExp =/And/ig;
+		private static const _orCaseRegExp:RegExp =/Or/ig;
+		private static const  _andOperationTermRegExp:RegExp =/\d+(\s+AND\s+\d+)+/ig;
+		private static const  _orOperationTermRegExp:RegExp =/\d+(\s+OR\s+\d+)+/ig;
+	//	private static const _notCaseRegExp:RegExp =/(Not|not)/g;
+		
+		private static const _thenCaseRegExp:RegExp =/Then/ig;
+		private static const _punctuationCaseRegExp:RegExp =/(,|\.|;)/g;
+		
 		
 		
 		
@@ -33,8 +43,13 @@ package winxalex.fuzzy
 		 */
 		public function FuzzyRule(rule:String):void
 		{
+			var match:Array;
+			rule = cleanCase(rule);
+		
+			match=rule.split(_thenCaseRegExp,2);
 			
-			var match:Array=rule.split("THEN",2);
+			if (!match.length || match.length>2) throw(new Error(" Rule Error: 'Then' not found in the rule or more then one 'Then' "));
+
 			
 			
 			_rule = rule;
@@ -42,6 +57,9 @@ package winxalex.fuzzy
 			
 			this.consequence = match[1];
 			this.antecedent = match[0];
+			
+			//trace(this.consequence, this.antecedent);
+			
 				
 		}
 		
@@ -201,6 +219,9 @@ package winxalex.fuzzy
 				termRegExp=/\((\s*\w+\s*)+\)/ig;
 				  matches = rule.match(termRegExp);
 				  
+				  
+				 trace( toString(stek));
+				  
 				  //while there are braces
 				  while (matches.length)
 				  {
@@ -215,7 +236,9 @@ package winxalex.fuzzy
 					   
 					   
 						//matchOperation(  matchOperation( currentmatch, "AND",stek), "OR",stek);
-						matchOperation(  matchOperation( currentmatch, "AND",stek,_fuzzificator.fAND), "OR",stek,_fuzzificator.fOR);
+						//matchOperation(  matchOperation( currentmatch, "AND|And|and", stek, _fuzzificator.fAND), "OR|Or|or", stek, _fuzzificator.fOR);
+						matchOperation(  matchOperation( rule, FuzzyRule._andOperationTermRegExp,FuzzyRule._andCaseRegExp,stek,_fuzzificator.fAND), FuzzyRule._orOperationTermRegExp,FuzzyRule._orCaseRegExp,stek,_fuzzificator.fOR);
+		
 						
 						rule = rule.replace(currentmatch, stek.length - 1);
 						
@@ -231,7 +254,7 @@ package winxalex.fuzzy
 				
 			
 				 
-				matchOperation(  matchOperation( rule, "AND",stek,_fuzzificator.fAND), "OR",stek,_fuzzificator.fOR);
+				matchOperation(  matchOperation( rule, FuzzyRule._andOperationTermRegExp,FuzzyRule._andCaseRegExp,stek,_fuzzificator.fAND), FuzzyRule._orOperationTermRegExp,FuzzyRule._orCaseRegExp,stek,_fuzzificator.fOR);
 			
 				 
 			
@@ -252,7 +275,7 @@ package winxalex.fuzzy
 		 * @param	stek
 		 * @return
 		 */
-		private function matchOperation(text:String,operation:String,stek:Vector.<Token>,operatorFunc:Function):String
+		private function matchOperation(text:String,operationTermRegExp:RegExp,operationSpliter:RegExp,stek:Vector.<Token>,operatorFunc:Function):String
 		{
 			
 			 var matches:Array;
@@ -261,22 +284,35 @@ package winxalex.fuzzy
 			 var i:int;
 			 var j:int
 			 var currentmatch:String;
-				var termRegExp:RegExp = new RegExp("\\d+(\\s+" + operation + "\\s+\\d+)+", "ig");
+			 
+				//operation=operation.toUpperCase();
+			 
+				//var termRegExp:RegExp = new RegExp("\\d+(\\s+" + operation + "\\s+\\d+)+", "ig");
 				
-				 matches = text.match(termRegExp);
+				 matches = text.match(operationTermRegExp);
 				 
 				 len = matches.length;
 				 
+				 
+				// trace("matchOperation>opperation:"+ operation);
+				 				 
 				 for (i=0; i < len; i++)
 				 {
 					
 					currentmatch = String(matches[i]);
+					
+					trace("matchOperation>currentmatch:"+ currentmatch);
 			     	  
+					//replace ex. 0 and 1(ref0 <opperation> ref1 => ref2) in the steak with reference/pointers
+
 				   text = text.replace(currentmatch, stek.length);
 				   
-				   args = currentmatch.split(operation);
+				   trace(text);
+				   args = currentmatch.split(operationSpliter);
 				   
-				   //token only version (change numbers to Token pointers)
+				   trace(args.join(','));
+				   
+				   //token only version (change numbers to Token pointers/references)
 				   for (j = 0; j < args.length; j++)
 				   {
 					   args[j] = stek[Number(args[j])];
@@ -455,6 +491,20 @@ package winxalex.fuzzy
 			  return _result;
 		}
 		
+		
+		private function cleanCase(rule:String):String
+		{
+			
+			//rule = rule.replace(_andCaseRegExp, "AND");
+			//trace(rule);
+			//rule = rule.replace(_orCaseRegExp, "OR");
+			//trace(rule);
+			rule = rule.replace(_punctuationCaseRegExp, "");
+			//trace(rule);
+			
+			return rule;
+		}
+		
 	
 		public function reset():void
 		{
@@ -593,7 +643,7 @@ package winxalex.fuzzy
 		
 		public function set rule(value:String):void 
 		{
-			_rule = value;
+			_rule = cleanCase(value);
 		}
 		
 		public function get result():Number { return _result; }

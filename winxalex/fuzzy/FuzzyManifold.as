@@ -414,7 +414,7 @@ package winxalex.fuzzy
 			maxRange = func.rightMidPoint+func.rightOffset;
 			
 			trace("Membership function <" + func.linguisticTerm + "> added to manifold {" + this.name+"} range["+minRange+","+maxRange+"]");
-			
+		
 		}
 		
 		
