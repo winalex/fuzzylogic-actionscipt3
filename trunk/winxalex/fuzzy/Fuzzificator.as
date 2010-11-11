@@ -119,8 +119,8 @@ package winxalex.fuzzy
 			var membershipName:String;
 			var manifoldName:String;
 			var func:IFuzzyMembershipFunction;
-			var manifoldRegExp:RegExp=/^(\w+)/gi;
-			var membershipRegExp:RegExp = /(\w+)$/gi;
+			var manifoldRegExp:RegExp=FuzzyRule._manifoldRegExp;
+			var membershipRegExp:RegExp =FuzzyRule._membershipRegExp;
 			var rules:SLinkedList;
 			var numNewRules:int = 0;
 			var numRules:int = 0;
@@ -131,7 +131,7 @@ package winxalex.fuzzy
 			//[p then (r and s)] is equivalent to [(p then r) and (p then s)] (5)
 			numRules = fuzzyRules.size;
 			
-			termsMatches =/\w+\s+IS\s+(NOT\s+)?((VERY|SOMEWHAT)\s+)?\w+/ig;
+			termsMatches = FuzzyRule._termRegExp; ///\w+\s+IS\s+(NOT\s+)?((VERY|SOMEWHAT)\s+)?\w+/ig;
 			
 			node = fuzzyRules.head;
 			
@@ -144,10 +144,12 @@ package winxalex.fuzzy
 					
 					//get antecendents terms
 					 inputMatches = rule.antecedent.match(termsMatches);
+					 
+					 //trace("in:"+inputMatches.join(','),rule.antecedent);
 						
 					 //get consequence terms
 					outputMatches = rule.consequence.match(termsMatches);
-					
+					// trace("out:"+outputMatches.join(','),rule.consequence);
 					
 					//for every antecendents Terms
 						for (i = 0; i < inputMatches.length; i++)
@@ -156,8 +158,10 @@ package winxalex.fuzzy
 							currentMatch = outputMatches[0];
 							membershipName=currentMatch.match (membershipRegExp)[0];
 							manifoldName = currentMatch.match(manifoldRegExp)[0];
-							fm = FuzzyManifold(outputFuzzyManifolds[manifoldName]);
 							
+						
+							fm = FuzzyManifold(outputFuzzyManifolds[manifoldName]);
+						
 							currentMatch = inputMatches[i];
 							
 							//if "antecendents Term THEN concequent" Term exist => calculate
@@ -191,7 +195,7 @@ package winxalex.fuzzy
 							}
 							else
 							{
-								//trace(fm, membershipName);
+								//trace(fm.name, membershipName);
 								//trace(
 								//trace(currentMatch,IFuzzyMembershipFunction(fm[membershipName]));
 								
@@ -205,16 +209,16 @@ package winxalex.fuzzy
 				}
 				
 				
-				
+				trace("fuzzyRules", fuzzyRules);
+				trace("fuzzyRules", fuzzyRules.head);
 					node = fuzzyRules.head;
-			
+			trace("node", node.data);
 				
 				for (var key:String in dict)
 				{
 					
 					
 					element = FuzzyReductionElement(dict[key]);
-					
 				
 					
 					switch(method)
@@ -227,11 +231,22 @@ package winxalex.fuzzy
 						   }
 						  else
 						   {
-							rule = FuzzyRule(node.data);
-							rule.antecedent = key;
-							rule.consequence = element.consequentManifold.name + " IS " + element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm;
-							 rule.rule = rule.antecedent +" THEN "+ rule.consequence;
-							rule.compile(this);
+							   
+							 /*  if (!node) 
+									{
+										this.addRule(new FuzzyRule("IF " + key + " THEN " + element.consequentManifold.name + " IS " + element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm),true);
+									}
+									else
+									{*/
+									if (!node) 
+									throw new Error("Too few rules to make reduction. Insert every with every combinaction rules");
+										rule = FuzzyRule(node.data);
+										rule.antecedent = key;
+										rule.consequence = element.consequentManifold.name + " IS " + element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm;
+										 rule.rule = "IF "+rule.antecedent +" THEN "+ rule.consequence;
+										rule.compile(this);
+									//}
+							
 						   }
 							
 						break;
@@ -245,10 +260,20 @@ package winxalex.fuzzy
 								else
 								{
 									rule = FuzzyRule(node.data);
+									/*if (!node) 
+									{
+									this.addRule(new FuzzyRule("IF "+key+" THEN "+element.consequentManifold.name + " IS " + element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm), true);
+									
+									}
+									else
+									{*/
+									if (!node) 
+									throw new Error("Too few rules to make reduction. Insert every with every combinaction rules");
 									rule.antecedent = key;
 									rule.consequence = element.consequentManifold.name + " IS " + element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm;
-							      	rule.rule = rule.antecedent +" THEN "+ rule.consequence;
+							      	rule.rule = "IF "+rule.antecedent +" THEN "+ rule.consequence;
 									rule.compile(this);
+									//}
 								}
 												
 						break;
@@ -263,7 +288,7 @@ package winxalex.fuzzy
 				}
 				
 			
-				if (!dump)
+				if (!dump && prev)
 					{
 						fuzzyRules.sliceAfter(prev);
 						
@@ -286,6 +311,14 @@ package winxalex.fuzzy
 			var rule:FuzzyRule;
 			
 			trace(this.fuzzyRules.dump());
+			
+			
+			if (!inputFuzzymanifolds.length)
+			throw new Error("No input manifolds. Please add create FuzzyInputs and attach them to some manifolds");
+			
+			if (!outputFuzzyManifolds.length)
+			throw new Error("No output manifolds. ");
+			
 			
 			for each (fm in inputFuzzymanifolds)
 			{
