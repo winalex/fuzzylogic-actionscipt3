@@ -344,26 +344,39 @@ package winxalex.fuzzy
 				
 			    max3 =  IFuzzyMembershipFunction(memberfunctions[2]).calculateDOM(input);
 			
+			
 								
 				return max1 > max2? (max1 > max3? FuzzyMembershipFunction(memberfunctions[0]): FuzzyMembershipFunction(memberfunctions[2]) )     :    (max2 > max3? FuzzyMembershipFunction(memberfunctions[1]):FuzzyMembershipFunction(memberfunctions[2]));
 			}
 			
-			//TODO Test for more then 3 function
+			
+		
+			
+			//TODO Alerady partually tested
 			pointer1 = 1;
 			pointer2 = len - 2;
 			
+			//pointer1=0
 			func1 = IFuzzyMembershipFunction(memberfunctions[0]);
-			max1 = func1.calculateDOM(input,true);
+			trace(FuzzyMembershipFunction(func1).toString());
+			max1 = func1.calculateDOM(input);
 			
 			
+			
+			//pointer1=len-1
 			func2=IFuzzyMembershipFunction(memberfunctions[len - 1]);
-			max2 = func2.calculateDOM(input,true);
+			max2 = func2.calculateDOM(input);
+			
+			
+			
+			
+			//trace(max1, max2);
 			
 			while (pointer1  <= pointer2)
 			{
 				
-				
-				if (max1 <  IFuzzyMembershipFunction(memberfunctions[pointer1]).calculateDOM(input,true))
+			
+				if (max1 <  IFuzzyMembershipFunction(memberfunctions[pointer1]).calculateDOM(input))
 				{
 				func1 = memberfunctions[pointer1];
 				max1 = FuzzyMembershipFunction(func1).degreeOfMembership;
@@ -374,7 +387,7 @@ package winxalex.fuzzy
 				if (pointer1 <pointer2)
 				{
 					
-				  if (max2 < IFuzzyMembershipFunction(memberfunctions[pointer2]).calculateDOM(input,true))
+				  if (max2 < IFuzzyMembershipFunction(memberfunctions[pointer2]).calculateDOM(input))
 				  {
 					  func2 = memberfunctions[pointer2];
 					  max2 = FuzzyMembershipFunction(func2).degreeOfMembership;
@@ -389,8 +402,8 @@ package winxalex.fuzzy
 				pointer1 = pointer1 + 1;
 				
 				
-				//trace(max1, max2);
-				//trace("loop pass");
+			//	trace(max1, max2);
+			//	trace("loop pass");
 			  
 			}
 			

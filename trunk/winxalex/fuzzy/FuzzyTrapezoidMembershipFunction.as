@@ -35,7 +35,9 @@ package winxalex.fuzzy
 			{
 						maximumDOM = levelOfConfidence;
 			}
-			     
+			
+		
+			  
 			    
 						//between mid points
 						   if  (value >= leftMidPoint  && value <=rightMidPoint) 
@@ -47,7 +49,7 @@ package winxalex.fuzzy
 					  
 								  grad = value - leftMidPoint + leftOffset;//value - (leftMidPoint - leftOffset)
 								  
-								  
+								
 
 									  //find DOM if left of left mid point
 									  if ( (value < leftMidPoint) && grad>0 )
@@ -124,7 +126,7 @@ package winxalex.fuzzy
 			}
 			
 			//CLIPPING
-			if (rightOffset != 0)
+			if (_rightOffset != 0)
 			{
 			
 				newOffset =  super.maximumDOM * _rightOffset;

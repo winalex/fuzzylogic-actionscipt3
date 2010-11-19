@@ -53,9 +53,7 @@ package winxalex.fuzzy
 			var k:int = args.length;
 			
 			var node:SListNode = new SListNode(args[0]);
-			
-			trace("append");
-			
+						
 			if (head)
 			{
 				tail.next = node;
