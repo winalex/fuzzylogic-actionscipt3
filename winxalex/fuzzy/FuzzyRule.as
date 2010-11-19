@@ -76,7 +76,7 @@ package winxalex.fuzzy
 			_antCompiledStek =compileString(this.antecedent,getDOM);
 			_conCompiledStek = compileString(this.consequence,implicate);//Change so DOM
 			
-			 trace("COMPILED:"+toString(_antCompiledStek));
+			// trace("COMPILED:"+toString(_antCompiledStek));
 		}
 	  
 		
@@ -220,7 +220,7 @@ package winxalex.fuzzy
 				  matches = rule.match(termRegExp);
 				  
 				  
-				 trace( toString(stek));
+				// trace( toString(stek));
 				  
 				  //while there are braces
 				  while (matches.length)

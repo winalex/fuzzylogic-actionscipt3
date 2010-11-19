@@ -50,6 +50,7 @@ package winxalex.fuzzy
 		
 		private static function createLeftShoulderFunction(...args):IFuzzyMembershipFunction
 		{
+			
 			 return new FuzzyTrapezoidMembershipFunction(args[0], 0,args[1], args[2], args[3]);
 		}
 		

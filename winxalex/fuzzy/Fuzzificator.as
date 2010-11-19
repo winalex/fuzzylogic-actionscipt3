@@ -142,6 +142,8 @@ package winxalex.fuzzy
 					//get Rule
 					rule = FuzzyRule(node.data);
 					
+				trace(rule.antecedent+rule.consequence);
+					
 					//get antecendents terms
 					 inputMatches = rule.antecedent.match(termsMatches);
 					 
@@ -164,6 +166,8 @@ package winxalex.fuzzy
 						
 							currentMatch = inputMatches[i];
 							
+							//trace(currentMatch);
+							
 							//if "antecendents Term THEN concequent" Term exist => calculate
 							if (dict[currentMatch])
 							{
@@ -174,17 +178,31 @@ package winxalex.fuzzy
 								{
 									case ReductionMethod.SIMPLE_1:
 									newAverage = IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averagePoint;
-										if (element.average ^ newAverage)//element.average!=newAverage
+									trace("-----------------------------------------------");
+									  trace(membershipName);
+									trace(">"+element.average, newAverage);
+										if (element.average!=newAverage)//element.average ^ newAverage)//element.average!=newAverage
 										{
+											
+										trace("REDUCING>>" + currentMatch + " THEN " + membershipName + " Average between 2 average points:(" + newAverage + "-" + element.average + ")/2=" + ( (newAverage - element.average) / 2) + " new SUM:(" + element.average +"+"+ (newAverage - element.average) / 2+")="+(element.average+(newAverage - element.average) / 2));
+								
 										newAverage = (newAverage - element.average) / 2;
 										//trace(newAverage);
 										element.average += newAverage;// newAverage < 0 ? -newAverage:newAverage;
 										//trace("Calc: "+currentMatch + " :" +element.average);
+										
+								
 										}
 									break;
 									case ReductionMethod.SIMPLE_2:
+									
+									   // trace(fm.memberfunctions[membershipName].toString());
+									   
+									   trace(membershipName);
+									
 										newAverage = IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averagePoint;
-									//trace(currentMatch + " :" + membershipName + " avg:" +newAverage + " was:" + element.average);
+										
+									trace("REDUCING>>"+currentMatch + " THEN " + membershipName + " Average point sum:(" + element.average+"+"+newAverage+")="+(element.average +newAverage));
 									
 										element.average += newAverage;
 									break;
@@ -196,12 +214,15 @@ package winxalex.fuzzy
 							else
 							{
 								//trace(fm.name, membershipName);
-								//trace(
+								//trace('add');
 								//trace(currentMatch,IFuzzyMembershipFunction(fm[membershipName]));
-								
+								trace("REDUCING >> INIT ");
+								  trace(membershipName);
 								//save found unique antescendent assocated with consequent fuzzyManifold and averagePoint
 								dict[currentMatch] = new FuzzyReductionElement(fm, IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averagePoint);
 								numNewRules++;
+								
+								// trace(fm.memberfunctions[membershipName].toString());
 							}
 						}
 					
@@ -209,10 +230,10 @@ package winxalex.fuzzy
 				}
 				
 				
-				trace("fuzzyRules", fuzzyRules);
-				trace("fuzzyRules", fuzzyRules.head);
+				//trace("fuzzyRules", fuzzyRules);
+				//trace("fuzzyRules", fuzzyRules.head);
 					node = fuzzyRules.head;
-			trace("node", node.data);
+			//trace("node", node.data);
 				
 				for (var key:String in dict)
 				{
@@ -226,20 +247,28 @@ package winxalex.fuzzy
 						case ReductionMethod.SIMPLE_1:
 						   if (dump)
 						   {
+							   	trace("REDUCED>>");
 						   //	trace("average:"+element.average+"   rule:" +key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm);
 		                  trace("rule=new Rule(" +key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm+")");
 						   }
 						  else
 						   {
-							   
+							   	trace("REDUCED>>");
 							 /*  if (!node) 
 									{
 										this.addRule(new FuzzyRule("IF " + key + " THEN " + element.consequentManifold.name + " IS " + element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm),true);
 									}
 									else
 									{*/
+									
+									
+									
 									if (!node) 
-									throw new Error("Too few rules to make reduction. Insert every with every combinaction rules");
+									throw new Error("Too few rules to make reduction. Insert every with every input combination rules");
+									
+									trace(key + " to AVERAGE POINTS SUM=" + element.average );
+							
+									
 										rule = FuzzyRule(node.data);
 										rule.antecedent = key;
 										rule.consequence = element.consequentManifold.name + " IS " + element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm;
@@ -254,11 +283,17 @@ package winxalex.fuzzy
 						case ReductionMethod.SIMPLE_2:
 								if (dump)
 								{
-								//trace("average:"+(element.average/element.consequentManifold.memberfunctions.length)+"   rule:" +key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.average/element.consequentManifold.memberfunctions.length).linguisticTerm);
+									
+									//trace(element.consequentManifold.memberfunctions["VeryLow"].toString());
+									trace("REDUCED>>" + key + " to AVERAGE POINTS SUM =" + element.average + "/" + element.consequentManifold.memberfunctions.length + "=" + (element.average / element.consequentManifold.memberfunctions.length));
+							
+								
 								trace("rule=new Rule("+key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.average/element.consequentManifold.memberfunctions.length).linguisticTerm+")");
 								}
 								else
 								{
+									
+									trace("REDUCED>>");
 									rule = FuzzyRule(node.data);
 									/*if (!node) 
 									{
@@ -268,9 +303,11 @@ package winxalex.fuzzy
 									else
 									{*/
 									if (!node) 
-									throw new Error("Too few rules to make reduction. Insert every with every combinaction rules");
+									throw new Error("Too few rules to make reduction. Insert every with every input combination rules");
+									
+									trace(key + " to AVERAGE POINTS SUM=" + element.average + "/" + element.consequentManifold.memberfunctions.length + "=" + (element.average / element.consequentManifold.memberfunctions.length));
 									rule.antecedent = key;
-									rule.consequence = element.consequentManifold.name + " IS " + element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm;
+									rule.consequence = element.consequentManifold.name + " IS " +element.consequentManifold.getMaxDOMFunc(element.average/element.consequentManifold.memberfunctions.length).linguisticTerm;
 							      	rule.rule = "IF "+rule.antecedent +" THEN "+ rule.consequence;
 									rule.compile(this);
 									//}
@@ -664,8 +701,10 @@ package winxalex.fuzzy
 			var s:String;
 			node = fuzzyRules.head;
 			
-			s="-------------------Fuzzificatior data -----------------------\n"
+			s="-------------------------- Fuzzificatior data -----------------------\n"
 			
+			
+			s="-------------------------- RULES -----------------------\n"
 			while(node!=fuzzyRules.tail.next)
 				{
 					s += FuzzyRule(node.data).rule+'\n';// 
