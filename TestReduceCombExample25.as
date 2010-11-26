@@ -1,6 +1,7 @@
 package
 {
 	import flash.display.Sprite;
+	import flash.geom.Matrix3D;
 	import flash.utils.Dictionary;
 	import winxalex.fuzzy.*;
 	
@@ -168,7 +169,7 @@ package
 												fuz.addRule(rule);
 												rule = new FuzzyRule( "IF AgeInYears is Youthful  THEN Premium is Moderate ");
 												fuz.addRule(rule);
-												
+											
 												
 											rule = new FuzzyRule( "IF AgeInYears is Young Then..; Premium is Low");
 										fuz.addRule(rule);
