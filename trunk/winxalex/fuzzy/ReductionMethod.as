@@ -18,6 +18,9 @@ package winxalex.fuzzy
 		//2. final value is used to find consequent memeberfunction (func. getMaxDOM) with max DOM
 		public static const SIMPLE_2:uint = 1;
 		
+		//SVD singular value decomposition
+		public static const SVD:uint = 2;
+		
 	
 		
 	}

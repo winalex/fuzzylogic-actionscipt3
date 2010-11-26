@@ -1,7 +1,10 @@
 package winxalex.fuzzy 
 {
 	
+	
+	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
+	
 	/**
 	 * ...
 	 * @author alex winx
@@ -15,7 +18,7 @@ package winxalex.fuzzy
 	{
 		
 	 //a map of all the fuzzy variables this module uses
-     internal var inputFuzzymanifolds:Dictionary;
+     internal var inputFuzzymanifolds:AssociativeArray;   ///Dictionary;
 	 internal var outputFuzzyManifolds:Dictionary;
   
 	 
@@ -58,12 +61,15 @@ package winxalex.fuzzy
 
   //a list containing all the fuzzy rules
   private var fuzzyRules:SLinkedList;
+  private var _ruleMatrix:Vector.<*> ; //Vector.<Vector.<Number>>;
+  private var _nInputManifolds:int=0;
+  private var _nOutputManifolds:int=0;
   
 		
 		
 		public function Fuzzificator() 
 		{
-			inputFuzzymanifolds = new Dictionary(true);
+			inputFuzzymanifolds = new AssociativeArray();// new Dictionary(true);
 			outputFuzzyManifolds = new Dictionary(true);
 			fuzzyRules = new SLinkedList();
 		
@@ -71,10 +77,16 @@ package winxalex.fuzzy
 		
 		public function addManifold(manifold:FuzzyManifold):void
 		{
-			if(manifold.input)
+			if (manifold.input)
+			{
 				inputFuzzymanifolds[manifold.name] = manifold;
+				_nInputManifolds++;
+			}
 			else
+			{
 				outputFuzzyManifolds[manifold.name] = manifold;
+				_nOutputManifolds++;
+			}
 			
 		}
 		
@@ -135,6 +147,8 @@ package winxalex.fuzzy
 			
 			node = fuzzyRules.head;
 			
+		
+			
 			
 			
 			while(node!=fuzzyRules.tail.next)
@@ -180,15 +194,15 @@ package winxalex.fuzzy
 									newAverage = IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averagePoint;
 									trace("-----------------------------------------------");
 									  trace(membershipName);
-									trace(">"+element.average, newAverage);
-										if (element.average!=newAverage)//element.average ^ newAverage)//element.average!=newAverage
+									trace(">"+element.data, newAverage);
+										if (element.data!=newAverage)//element.average ^ newAverage)//element.average!=newAverage
 										{
 											
-										trace("REDUCING>>" + currentMatch + " THEN " + membershipName + " Average between 2 average points:(" + newAverage + "-" + element.average + ")/2=" + ( (newAverage - element.average) / 2) + " new SUM:(" + element.average +"+"+ (newAverage - element.average) / 2+")="+(element.average+(newAverage - element.average) / 2));
+										trace("REDUCING>>" + currentMatch + " THEN " + membershipName + " Average between 2 average points:(" + newAverage + "-" + element.data + ")/2=" + ( (newAverage - element.data) / 2) + " new SUM:(" + element.data +"+"+ (newAverage - element.data) / 2+")="+(element.data+(newAverage - element.data) / 2));
 								
-										newAverage = (newAverage - element.average) / 2;
+										newAverage = (newAverage - element.data) / 2;
 										//trace(newAverage);
-										element.average += newAverage;// newAverage < 0 ? -newAverage:newAverage;
+										element.data += newAverage;// newAverage < 0 ? -newAverage:newAverage;
 										//trace("Calc: "+currentMatch + " :" +element.average);
 										
 								
@@ -202,9 +216,9 @@ package winxalex.fuzzy
 									
 										newAverage = IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averagePoint;
 										
-									trace("REDUCING>>"+currentMatch + " THEN " + membershipName + " Average point sum:(" + element.average+"+"+newAverage+")="+(element.average +newAverage));
+									trace("REDUCING>>"+currentMatch + " THEN " + membershipName + " Average point sum:(" + element.data+"+"+newAverage+")="+(element.data +newAverage));
 									
-										element.average += newAverage;
+										element.data += newAverage;
 									break;
 								}
 								
@@ -249,7 +263,7 @@ package winxalex.fuzzy
 						   {
 							   	trace("REDUCED>>");
 						   //	trace("average:"+element.average+"   rule:" +key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm);
-		                  trace("rule=new Rule(" +key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm+")");
+		                  trace("rule=new Rule(" +key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.data).linguisticTerm+")");
 						   }
 						  else
 						   {
@@ -266,12 +280,12 @@ package winxalex.fuzzy
 									if (!node) 
 									throw new Error("Too few rules to make reduction. Insert every with every input combination rules");
 									
-									trace(key + " to AVERAGE POINTS SUM=" + element.average );
+									trace(key + " to AVERAGE POINTS SUM=" + element.data );
 							
 									
 										rule = FuzzyRule(node.data);
 										rule.antecedent = key;
-										rule.consequence = element.consequentManifold.name + " IS " + element.consequentManifold.getMaxDOMFunc(element.average).linguisticTerm;
+										rule.consequence = element.consequentManifold.name + " IS " + element.consequentManifold.getMaxDOMFunc(element.data).linguisticTerm;
 										 rule.rule = "IF "+rule.antecedent +" THEN "+ rule.consequence;
 										rule.compile(this);
 									//}
@@ -285,10 +299,10 @@ package winxalex.fuzzy
 								{
 									
 									//trace(element.consequentManifold.memberfunctions["VeryLow"].toString());
-									trace("REDUCED>>" + key + " to AVERAGE POINTS SUM =" + element.average + "/" + element.consequentManifold.memberfunctions.length + "=" + (element.average / element.consequentManifold.memberfunctions.length));
+									trace("REDUCED>>" + key + " to AVERAGE POINTS SUM =" + element.data + "/" + element.consequentManifold.memberfunctions.length + "=" + (element.data / element.consequentManifold.memberfunctions.length));
 							
 								
-								trace("rule=new Rule("+key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.average/element.consequentManifold.memberfunctions.length).linguisticTerm+")");
+								trace("rule=new Rule("+key + " THEN " + element.consequentManifold.name+" IS "+element.consequentManifold.getMaxDOMFunc(element.data/element.consequentManifold.memberfunctions.length).linguisticTerm+")");
 								}
 								else
 								{
@@ -305,9 +319,9 @@ package winxalex.fuzzy
 									if (!node) 
 									throw new Error("Too few rules to make reduction. Insert every with every input combination rules");
 									
-									trace(key + " to AVERAGE POINTS SUM=" + element.average + "/" + element.consequentManifold.memberfunctions.length + "=" + (element.average / element.consequentManifold.memberfunctions.length));
+									trace(key + " to AVERAGE POINTS SUM=" + element.data + "/" + element.consequentManifold.memberfunctions.length + "=" + (element.data / element.consequentManifold.memberfunctions.length));
 									rule.antecedent = key;
-									rule.consequence = element.consequentManifold.name + " IS " +element.consequentManifold.getMaxDOMFunc(element.average/element.consequentManifold.memberfunctions.length).linguisticTerm;
+									rule.consequence = element.consequentManifold.name + " IS " +element.consequentManifold.getMaxDOMFunc(element.data/element.consequentManifold.memberfunctions.length).linguisticTerm;
 							      	rule.rule = "IF "+rule.antecedent +" THEN "+ rule.consequence;
 									rule.compile(this);
 									//}
@@ -681,6 +695,86 @@ package winxalex.fuzzy
 			}
 		}
 		
+		public function get matrix():Vector.<*> //; Vector.<Vector.<Number>>
+		{
+			if (_ruleMatrix) return _ruleMatrix;
+			//inputFuzzymanifolds
+			var currentManifold:FuzzyManifold;
+			var otherManifold:FuzzyManifold;
+			var currentManifoldInx:int = inputFuzzymanifolds.length - 1;
+			var manifoldsInx:Vector.<int>;
+			var numMemberFunctions:int;
+			var currentMatrix:*;
+			var currentVector:Vector.<*> ; //Vector.<Vector.<Number>>;//=new Vector.<*>();
+			var i:int = 0;
+			var j:int = 0;
+			var k:int;
+			
+						
+			    currentManifold = FuzzyManifold(inputFuzzymanifolds[i]);
+				
+				numMemberFunctions = currentManifold.memberfunctions.length;
+				
+			   currentMatrix= new Vector.<Number>(numMemberFunctions, true);
+			
+			//loop thru input manifolds
+			//for (i= inputFuzzymanifolds.length-1; i >-1; i--)
+			for (i = 0; i < inputFuzzymanifolds.length - 1;i++)
+			{
+				 currentManifold = FuzzyManifold(inputFuzzymanifolds[i]);
+				
+				numMemberFunctions = currentManifold.memberfunctions.length;
+				
+				currentVector = new Vector.<*>(numMemberFunctions,true) ; 
+				
+				
+			
+					for (k = 0; k < numMemberFunctions; k++)
+					{
+						currentVector[k] = currentMatrix.concat();//make copy of vector x vector x vector
+					}
+					
+					currentMatrix = currentVector;
+					
+					
+					
+				
+			}
+			
+			_ruleMatrix = currentMatrix;
+			
+			/*_ruleMatrix[1][1][1] = 0.1111;*/
+			_ruleMatrix[2][2][2] = 0.22222;
+			
+			
+			trace(_ruleMatrix[2][2][2]);
+			
+			/*currentManifoldInx = inputFuzzymanifolds.length-1;
+			
+			while (currentManifoldInx > -1)
+			{
+				
+				FuzzyManifold(inputFuzzymanifolds[i]).memberfunctions[manifoldsInx[i]]
+				
+				_ruleMatrix[
+				
+				for (i = 0; i < currentManifold.memberfunctions.length; i++)
+				{
+					
+					
+					
+				}
+			}*/
+			
+			return _ruleMatrix;
+			
+		}
+		
+	/*	public function set matrix(mtx:Vector):void
+		{
+			_ruleMatrix = mtx;
+		}
+		*/
 		public function get AND():Function { return _AND; }
 		
 		public function set AND(value:Function):void 
@@ -699,10 +793,76 @@ package winxalex.fuzzy
 		{
 			var node:SListNode;
 			var s:String;
+			var i:int;
+			var j:int;
+			var k:int;
+			var m:int;
+			var dimension:int;
+			var dimensionVector:Vector.<uint>;
+			var currentVector:*;
 			node = fuzzyRules.head;
 			
-			s="-------------------------- Fuzzificatior data -----------------------\n"
+			s = "-------------------------- Fuzzificatior data -----------------------\n"
 			
+			if (_ruleMatrix)
+			{
+			s += "-------------------------- MATRIX -----------------------\n"
+			
+			if (_ruleMatrix.length > 0)
+			{
+				dimensionVector = new Vector.<uint>();
+			
+				currentVector = _ruleMatrix;
+				while (currentVector)
+				{
+					dimensionVector[dimensionVector.length]= currentVector.length;
+					currentVector = currentVector[0];
+				}
+				
+				switch(dimensionVector.length)
+				{
+					case 2:
+					for (i = 0; i < dimensionVector[0]; i++)
+					 for (j = 0; j < dimensionVector[1]; j++)
+					 trace(FuzzyManifold(inputFuzzymanifolds[0]).memberfunctions[i].linguisticTerm,FuzzyManifold(inputFuzzymanifolds[1]).memberfunctions[j].linguisticTerm,_ruleMatrix[i][j]);
+					break;
+					
+					case 3:
+						for (i = 0; i < dimensionVector[0]; i++)
+						 for (j = 0; j < dimensionVector[1]; j++)
+							for (k= 0; k < dimensionVector[2]; k++)
+									 trace(FuzzyManifold(inputFuzzymanifolds[0]).memberfunctions[i].linguisticTerm,FuzzyManifold(inputFuzzymanifolds[1]).memberfunctions[j].linguisticTerm,FuzzyManifold(inputFuzzymanifolds[2]).memberfunctions[k].linguisticTerm,_ruleMatrix[i][j][k]);
+					break;
+					
+					case 4:
+					for (i = 0; i < dimensionVector[0]; i++)
+						 for (j = 0; j < dimensionVector[1]; j++)
+							for (k = 0; j < dimensionVector[2]; k++)
+								for (m= 0; m< dimensionVector[3]; m++)
+								trace(_ruleMatrix[i][j][k][m]);
+					break;
+					
+					
+					default:
+					//TODO make for any matrix
+						/*while (dimensionVector[0]>-1)
+				{
+					currentVector = _ruleMatrix;
+					for (i = 0; i < currentVector.length; i++)
+					{
+						currentVector[i]
+						
+						for
+					}
+				}*/
+					trace(" Matrix isn't supported");
+					
+					
+				}
+			}
+				
+			
+			}
 			
 			s="-------------------------- RULES -----------------------\n"
 			while(node!=fuzzyRules.tail.next)

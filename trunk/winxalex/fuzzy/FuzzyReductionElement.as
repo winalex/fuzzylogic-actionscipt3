@@ -9,20 +9,21 @@ package winxalex.fuzzy
 		//public var memberFunction:FuzzyMembershipFunction;
 		//public var antecendent:String;
 		public var consequentManifold:FuzzyManifold;
-		public var average:Number;
+		public var data:Number;
 		
 		
-		public function FuzzyReductionElement(/*memberFunction:FuzzyMembershipFunction,antecendent:String,*/consequentManifold:FuzzyManifold,average:Number) 
+		
+		public function FuzzyReductionElement(/*memberFunction:FuzzyMembershipFunction,antecendent:String,*/consequentManifold:FuzzyManifold,data:Number) 
 		{
 			/*this.memberFunction = memberFunction;*/
 			/*this.antecendent = antecendent;*/
 			this.consequentManifold = consequentManifold;
-			this.average = average;
+			this.data = data;
 		}
 		
 		public function toString():String 
 		{
-			return "average:"+average.toString();
+			return "average:"+data.toString();
 		}
 		
 	}
