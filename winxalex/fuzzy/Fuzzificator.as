@@ -107,8 +107,14 @@ package winxalex.fuzzy
 		{
 			fuzzyRules.append(rule);
 			
+			
+			//TODO create matrix at creation of rules
+			///rule.antecedent.match
+			
 			if (compile)
 			rule.compile(this);
+			
+			
 			
 		}
 		
@@ -706,7 +712,7 @@ package winxalex.fuzzy
 			var numMemberFunctions:int;
 			var currentMatrix:*;
 			var currentVector:Vector.<*> ; //Vector.<Vector.<Number>>;//=new Vector.<*>();
-			var i:int = 0;
+			var i:int = inputFuzzymanifolds.length-1;
 			var j:int = 0;
 			var k:int;
 			
@@ -715,39 +721,52 @@ package winxalex.fuzzy
 				
 				numMemberFunctions = currentManifold.memberfunctions.length;
 				
+				trace("i="+i,"numMemberFunctions="+numMemberFunctions);
+				
 			   currentMatrix= new Vector.<Number>(numMemberFunctions, true);
 			
 			//loop thru input manifolds
-			//for (i= inputFuzzymanifolds.length-1; i >-1; i--)
-			for (i = 0; i < inputFuzzymanifolds.length - 1;i++)
+			for (i= inputFuzzymanifolds.length-2; i >-1; i--)
 			{
 				 currentManifold = FuzzyManifold(inputFuzzymanifolds[i]);
 				
 				numMemberFunctions = currentManifold.memberfunctions.length;
 				
+				trace("i="+i,"numMemberFunctions="+numMemberFunctions);
+				
 				currentVector = new Vector.<*>(numMemberFunctions,true) ; 
 				
-				
+								
 			
 					for (k = 0; k < numMemberFunctions; k++)
 					{
-						currentVector[k] = currentMatrix.concat();//make copy of vector x vector x vector
+						//TODO Problem not creating copy of complex Vector or Vectors
+						currentVector[k] = currentMatrix.slice(0);//make copy of vector x vector x vector
 					}
 					
-					currentMatrix = currentVector;
+					/*trace("i=" + i, currentVector[0]);
+					trace("i=" + i, currentVector[1]);
+					//if (currentVector[2])
+					trace("i="+i,currentVector[2]);*/
 					
-					
-					
+					currentMatrix = currentVector;//.concat();
+						
 				
 			}
+			
+			
 			
 			_ruleMatrix = currentMatrix;
 			
 			/*_ruleMatrix[1][1][1] = 0.1111;*/
-			_ruleMatrix[2][2][2] = 0.22222;
 			
+			_ruleMatrix[0][0][0] = 0.11111;
+			_ruleMatrix[0][0][1] = 0.22222;
+			_ruleMatrix[1][0][0] = 0.11211;
 			
-			trace(_ruleMatrix[2][2][2]);
+			trace(_ruleMatrix[0][0][0]);
+			trace(_ruleMatrix[0][0][1]);
+			trace(_ruleMatrix[1][0][0] );
 			
 			/*currentManifoldInx = inputFuzzymanifolds.length-1;
 			
@@ -815,7 +834,8 @@ package winxalex.fuzzy
 				currentVector = _ruleMatrix;
 				while (currentVector)
 				{
-					dimensionVector[dimensionVector.length]= currentVector.length;
+					dimensionVector[dimensionVector.length] = currentVector.length;
+					if (currentVector[0] is Number) break;
 					currentVector = currentVector[0];
 				}
 				
@@ -824,14 +844,14 @@ package winxalex.fuzzy
 					case 2:
 					for (i = 0; i < dimensionVector[0]; i++)
 					 for (j = 0; j < dimensionVector[1]; j++)
-					 trace(FuzzyManifold(inputFuzzymanifolds[0]).memberfunctions[i].linguisticTerm,FuzzyManifold(inputFuzzymanifolds[1]).memberfunctions[j].linguisticTerm,_ruleMatrix[i][j]);
+					 trace(FuzzyManifold(inputFuzzymanifolds[0]).memberfunctions[i].linguisticTerm,FuzzyManifold(inputFuzzymanifolds[1]).memberfunctions[j].linguisticTerm,"["+i,j+"]",_ruleMatrix[i][j]);
 					break;
 					
 					case 3:
 						for (i = 0; i < dimensionVector[0]; i++)
 						 for (j = 0; j < dimensionVector[1]; j++)
 							for (k= 0; k < dimensionVector[2]; k++)
-									 trace(FuzzyManifold(inputFuzzymanifolds[0]).memberfunctions[i].linguisticTerm,FuzzyManifold(inputFuzzymanifolds[1]).memberfunctions[j].linguisticTerm,FuzzyManifold(inputFuzzymanifolds[2]).memberfunctions[k].linguisticTerm,_ruleMatrix[i][j][k]);
+									 trace(FuzzyManifold(inputFuzzymanifolds[0]).memberfunctions[i].linguisticTerm,FuzzyManifold(inputFuzzymanifolds[1]).memberfunctions[j].linguisticTerm,FuzzyManifold(inputFuzzymanifolds[2]).memberfunctions[k].linguisticTerm,"["+i,j,k+"]",_ruleMatrix[i][j][k]);
 					break;
 					
 					case 4:
@@ -873,6 +893,14 @@ package winxalex.fuzzy
 			
 			return s;
 		}
+		
+		
+		
+		public function crateMatrix //edno dimeszionalna so offset
+		
+		
+		
+		
 	}
 
 }
