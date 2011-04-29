@@ -27,9 +27,10 @@ package winxalex.fuzzy
 		private static const _orCaseRegExp:RegExp =/Or/ig;
 		private static const  _andOperationTermRegExp:RegExp =/\d+(\s+AND\s+\d+)+/ig;
 		private static const  _orOperationTermRegExp:RegExp =/\d+(\s+OR\s+\d+)+/ig;
+		private static const _trimRegExp:RegExp =/^\s+|\s+$/gs;
 	//	private static const _notCaseRegExp:RegExp =/(Not|not)/g;
 		
-		private static const _thenCaseRegExp:RegExp =/Then/ig;
+		private static const _thenCaseRegExp:RegExp =/\s+Then\s+/ig;
 		private static const _punctuationCaseRegExp:RegExp =/(,|\.|;)/g;
 		
 		
@@ -500,6 +501,7 @@ package winxalex.fuzzy
 			//rule = rule.replace(_orCaseRegExp, "OR");
 			//trace(rule);
 			rule = rule.replace(_punctuationCaseRegExp, "");
+			rule = rule.replace(_trimRegExp, "");
 			//trace(rule);
 			
 			return rule;

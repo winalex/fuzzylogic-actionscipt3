@@ -1,4 +1,4 @@
-package  
+﻿package  winxalex.fuzzy.data
 {
 	import flash.system.ApplicationDomain;
 	import flash.utils.flash_proxy;
@@ -8,41 +8,53 @@ package
 	 * ...
 	 * @author alex winx
 	 */
-	public class UniMatrix extends Proxy
+	public class VectorEx extends Proxy
 	{
 		private var _vector:*;// Vector.<*>;
 		
-		private var _unimatrixDimObjects:Vector.<UniMatrix>;
+		private var _unimatrixDimObjects:Vector.<VectorEx>;
 		private var _length:int = 1;
 		
 		private var _dimensionArray:Array;
 		private var _argsVector:Vector.<int>;
 		
 		private var _index:uint = 0;
-		private static var _mtx:UniMatrix;
+		private var _elemInx:uint = 0;
+		private static var _mtx:VectorEx;
 		private static  const  VECTOR_CLASS_NAME : String = getQualifiedClassName(Vector );
 		
 		/**
-		 * dimension
+		 * 
+		 * 
+		 * dimension 
+		 * @option array of dimension as first param
 		 * @param	...args
 		 */
-		public function UniMatrix(cls:Class=null,applicationDomain : ApplicationDomain = null,...args) 
+		public function VectorEx(cls:Class=null,applicationDomain : ApplicationDomain = null,...args) 
 		{
+			var arguments:Array;
 			if(!cls) 
 			return;
 			
 			if (args.length < 0)
 			throw new Error("Unimatrix should have at least one dimension");
 			
-			_dimensionArray = args;
+					
+			if (args[0] is Array) {
+			    arguments = args[0];
+			}else {
+				arguments = args;
+			}
 			
-				_length = getLength(args);
+			   _dimensionArray = arguments;
+				_length = getLength(arguments);
 			
-				_argsVector = new Vector.<int>(args.length, true);
+				
+				_argsVector = new Vector.<int>(arguments.length, true);
 			
-			_vector =UniMatrix.createCustomVector(cls,_length,true,applicationDomain);
+			_vector =VectorEx.createCustomVector(cls,_length,true,applicationDomain);
 			
-			_mtx = new UniMatrix();
+			_mtx = new VectorEx();
 			
 			
 			
@@ -124,6 +136,13 @@ package
 		
 		
 		
+		public function push(value:*):void {
+			
+			_vector[_elemInx++] = value;
+		}
+		
+		
+		
 		public function getElementAt(...args):*
 		{
 			return _vector[getIndex(args)];
@@ -146,17 +165,61 @@ package
 			return null;
 		}
 		
-		public function dump():String
-		{
-			 throw new Error("Not yet implemented");
-		}
+		
 		
 		public function toString():String
 		{
 			var s:String = "";
+			var i:int;
+			var j:int;
+			var k:int;
+			var t:int;
 			
-			_index = 0;
-			s = String(_vector[getIndex(_argsVector)]);
+			
+			switch (_dimensionArray.length) {
+				case 1:
+				break;
+				case 2:
+				trace(_dimensionArray.length);
+					 for(i=0;i<_dimensionArray[0];i++)
+					  for (j = 0; j < _dimensionArray[1]; j++)
+						  
+						   {
+							  
+							  s+="["+i+"]["+j+"]="+getElementAt(i,j)+"\n";
+							   
+						   }
+				break;
+				
+				case 3:{
+				   for (k = 0; k < _dimensionArray[0]; k++)  
+					for(i=0;i<_dimensionArray[1];i++)
+						for (j= 0; j < 3; j++)
+						   {
+							   
+							  s+="["+i+"]["+j+"]["+k+"]="+getElementAt(i,j,k)+"\n";
+							   
+						   }
+				}
+				break;
+				
+				case 4:
+				   for (t=0; t < _dimensionArray[0]; t++)  
+						for (k=0; k < _dimensionArray[1]; k++)  
+							for(i=0;i<_dimensionArray[2];i++)
+								for (j=0; j < _dimensionArray[3]; j++)
+							   {
+									  
+									  s+="["+i+"]["+j+"]["+k+"]["+t+"]="+ getElementAt(i,j,k,t)+"\n";
+									   
+							   }
+				break;
+				
+				default:
+				 throw new Error("Not yet implemented");
+			}
+			
+				
 			
 			return s;
 		}
