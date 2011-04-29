@@ -2,8 +2,10 @@ package winxalex.fuzzy
 {
 	
 	
+	
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
+	import winxalex.fuzzy.data.VectorEx;
 	
 	/**
 	 * ...
@@ -61,7 +63,7 @@ package winxalex.fuzzy
 
   //a list containing all the fuzzy rules
   private var fuzzyRules:SLinkedList;
-  private var _ruleMatrix:Vector.<*> ; //Vector.<Vector.<Number>>;
+  private var _ruleMatrix:VectorEx;//   Vector.<*> ; / / Vector.<Vector.<Number>>;
   private var _nInputManifolds:int=0;
   private var _nOutputManifolds:int=0;
   
@@ -108,8 +110,27 @@ package winxalex.fuzzy
 			fuzzyRules.append(rule);
 			
 			
-			//TODO create matrix at creation of rules
-			///rule.antecedent.match
+			// Z is Z1
+			//trace(rule.consequence);
+			
+			
+			//Z
+			var manifoldMatch:Array =   rule.consequence.match(FuzzyRule._manifoldRegExp);
+			//Z1
+			var memberFunctionMatch:Array = rule.consequence.match(FuzzyRule._membershipRegExp);
+			
+			//trace(manifoldMatch.join(), memberFunctionMatch.join());
+	        var manifold:FuzzyManifold = outputFuzzyManifolds[manifoldMatch[0]];
+			
+			var memFunction:IFuzzyMembershipFunction = manifold.memberfunctions[memberFunctionMatch[0]];
+			
+		
+			
+			matrix.push(memFunction.averagePoint);
+			
+			
+			
+			
 			
 			if (compile)
 			rule.compile(this);
@@ -117,6 +138,10 @@ package winxalex.fuzzy
 			
 			
 		}
+		
+		
+		
+	
 		
 		/**
 		 *  simple Comb1, simpleComb2, additivly separable or inseparable ///dumpOnly:Boolean
@@ -701,99 +726,33 @@ package winxalex.fuzzy
 			}
 		}
 		
-		public function get matrix():Vector.<*> //; Vector.<Vector.<Number>>
+		public function get matrix():VectorEx //; Vector.<Vector.<Number>>
 		{
 			if (_ruleMatrix) return _ruleMatrix;
-			//inputFuzzymanifolds
+			
+			var i:int = 0;
 			var currentManifold:FuzzyManifold;
-			var otherManifold:FuzzyManifold;
-			var currentManifoldInx:int = inputFuzzymanifolds.length - 1;
-			var manifoldsInx:Vector.<int>;
-			var numMemberFunctions:int;
-			var currentMatrix:*;
-			var currentVector:Vector.<*> ; //Vector.<Vector.<Number>>;//=new Vector.<*>();
-			var i:int = inputFuzzymanifolds.length-1;
-			var j:int = 0;
-			var k:int;
+		
 			
+			var mtxDim:Array=new Array()
 						
-			    currentManifold = FuzzyManifold(inputFuzzymanifolds[i]);
-				
-				numMemberFunctions = currentManifold.memberfunctions.length;
-				
-				trace("i="+i,"numMemberFunctions="+numMemberFunctions);
-				
-			   currentMatrix= new Vector.<Number>(numMemberFunctions, true);
+			   for (; i < inputFuzzymanifolds.length;i++ ) {
+				     currentManifold = FuzzyManifold(inputFuzzymanifolds[i]);
+					mtxDim[mtxDim.length]= currentManifold.memberfunctions.length;
+			   }
 			
-			//loop thru input manifolds
-			for (i= inputFuzzymanifolds.length-2; i >-1; i--)
-			{
-				 currentManifold = FuzzyManifold(inputFuzzymanifolds[i]);
-				
-				numMemberFunctions = currentManifold.memberfunctions.length;
-				
-				trace("i="+i,"numMemberFunctions="+numMemberFunctions);
-				
-				currentVector = new Vector.<*>(numMemberFunctions,true) ; 
-				
-								
-			
-					for (k = 0; k < numMemberFunctions; k++)
-					{
-						//TODO Problem not creating copy of complex Vector or Vectors
-						currentVector[k] = currentMatrix.slice(0);//make copy of vector x vector x vector
-					}
-					
-					/*trace("i=" + i, currentVector[0]);
-					trace("i=" + i, currentVector[1]);
-					//if (currentVector[2])
-					trace("i="+i,currentVector[2]);*/
-					
-					currentMatrix = currentVector;//.concat();
-						
-				
-			}
-			
-			
-			
-			_ruleMatrix = currentMatrix;
-			
-			/*_ruleMatrix[1][1][1] = 0.1111;*/
-			
-			_ruleMatrix[0][0][0] = 0.11111;
-			_ruleMatrix[0][0][1] = 0.22222;
-			_ruleMatrix[1][0][0] = 0.11211;
-			
-			trace(_ruleMatrix[0][0][0]);
-			trace(_ruleMatrix[0][0][1]);
-			trace(_ruleMatrix[1][0][0] );
-			
-			/*currentManifoldInx = inputFuzzymanifolds.length-1;
-			
-			while (currentManifoldInx > -1)
-			{
-				
-				FuzzyManifold(inputFuzzymanifolds[i]).memberfunctions[manifoldsInx[i]]
-				
-				_ruleMatrix[
-				
-				for (i = 0; i < currentManifold.memberfunctions.length; i++)
-				{
-					
-					
-					
-				}
-			}*/
+			  
+			   _ruleMatrix=new VectorEx(Number,null,mtxDim);
 			
 			return _ruleMatrix;
 			
 		}
 		
-	/*	public function set matrix(mtx:Vector):void
+		public function set matrix(mtx:VectorEx):void
 		{
 			_ruleMatrix = mtx;
 		}
-		*/
+		
 		public function get AND():Function { return _AND; }
 		
 		public function set AND(value:Function):void 
@@ -823,68 +782,22 @@ package winxalex.fuzzy
 			
 			s = "-------------------------- Fuzzificatior data -----------------------\n"
 			
-			if (_ruleMatrix)
-			{
-			s += "-------------------------- MATRIX -----------------------\n"
-			
-			if (_ruleMatrix.length > 0)
-			{
-				dimensionVector = new Vector.<uint>();
-			
-				currentVector = _ruleMatrix;
-				while (currentVector)
+				if (_ruleMatrix)
 				{
-					dimensionVector[dimensionVector.length] = currentVector.length;
-					if (currentVector[0] is Number) break;
-					currentVector = currentVector[0];
-				}
+				s += "-------------------------- MATRIX -----------------------\n";
 				
-				switch(dimensionVector.length)
-				{
-					case 2:
-					for (i = 0; i < dimensionVector[0]; i++)
-					 for (j = 0; j < dimensionVector[1]; j++)
-					 trace(FuzzyManifold(inputFuzzymanifolds[0]).memberfunctions[i].linguisticTerm,FuzzyManifold(inputFuzzymanifolds[1]).memberfunctions[j].linguisticTerm,"["+i,j+"]",_ruleMatrix[i][j]);
-					break;
+				s += _ruleMatrix.toString();
+				
 					
-					case 3:
-						for (i = 0; i < dimensionVector[0]; i++)
-						 for (j = 0; j < dimensionVector[1]; j++)
-							for (k= 0; k < dimensionVector[2]; k++)
-									 trace(FuzzyManifold(inputFuzzymanifolds[0]).memberfunctions[i].linguisticTerm,FuzzyManifold(inputFuzzymanifolds[1]).memberfunctions[j].linguisticTerm,FuzzyManifold(inputFuzzymanifolds[2]).memberfunctions[k].linguisticTerm,"["+i,j,k+"]",_ruleMatrix[i][j][k]);
-					break;
-					
-					case 4:
-					for (i = 0; i < dimensionVector[0]; i++)
-						 for (j = 0; j < dimensionVector[1]; j++)
-							for (k = 0; j < dimensionVector[2]; k++)
-								for (m= 0; m< dimensionVector[3]; m++)
-								trace(_ruleMatrix[i][j][k][m]);
-					break;
-					
-					
-					default:
-					//TODO make for any matrix
-						/*while (dimensionVector[0]>-1)
-				{
-					currentVector = _ruleMatrix;
-					for (i = 0; i < currentVector.length; i++)
-					{
-						currentVector[i]
 						
-						for
-					}
-				}*/
-					trace(" Matrix isn't supported");
-					
+						
 					
 				}
-			}
 				
 			
-			}
 			
-			s="-------------------------- RULES -----------------------\n"
+			
+			s+="-------------------------- RULES -----------------------\n"
 			while(node!=fuzzyRules.tail.next)
 				{
 					s += FuzzyRule(node.data).rule+'\n';// 
@@ -895,8 +808,7 @@ package winxalex.fuzzy
 		}
 		
 		
-		
-		public function crateMatrix //edno dimeszionalna so offset
+	
 		
 		
 		

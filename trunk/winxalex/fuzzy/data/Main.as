@@ -1,7 +1,8 @@
 ﻿package  
 {
 	import flash.display.Sprite;
-	import flashx.textLayout.elements.InlineGraphicElement;
+	import winxalex.fuzzy.data.VectorEx;
+	
 	
 	/**
 	 * ...
@@ -14,11 +15,11 @@
 		public function Main() 
 		{
 			
-			var uni:UniMatrix;
+			var uni:VectorEx;
 			var elem:int=0;
 			
 			trace("2D Matrix");
-			uni=new UniMatrix(int,null,2, 3);
+			uni=new VectorEx(int,null,2, 3);
 			
 			
 			
@@ -50,7 +51,7 @@
 			
 			
 			trace("3D Matrix");
-			uni=new UniMatrix(int,null,2, 3,4);
+			uni=new VectorEx(int,null,2, 3,4);
 			
 			
 			for (var k:int = 0; k < 4; k++)
@@ -83,7 +84,7 @@
 			   
 			   
 			   	trace("4D Matrix");
-			uni=new UniMatrix(int,null,2, 3,4,5);
+			uni=new VectorEx(int,null,2, 3,4,5);
 			
 			 for (var t:int = 0; t < 5; t++)  
 			for (var k:int = 0; k < 4; k++)
@@ -115,7 +116,7 @@
 			   
 			   
 			      	trace("5D Matrix");
-			uni=new UniMatrix(int,null,2, 3,4,5,6);
+			uni=new VectorEx(int,null,2, 3,4,5,6);
 			
 			
 			 for (var m:int = 0; m < 6; m++) 
