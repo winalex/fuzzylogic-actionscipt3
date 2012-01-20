@@ -20,6 +20,8 @@ package winxalex.fuzzy
 		
 	    private var _fuzzificator:Fuzzificator = null;
 		
+		//ToDo  private var _precalculatedDOMs
+		
 		public function FuzzyManifold(name:String) 
 		{
 			this.name = name;
@@ -196,43 +198,99 @@ package winxalex.fuzzy
 			var pointer2:int;
 			
 			
-			var func1:IFuzzyMembershipFunction;
-			var func2:IFuzzyMembershipFunction;
-			var func3:IFuzzyMembershipFunction;
+			var func1:FuzzyMembershipFunction;
+			var func2:FuzzyMembershipFunction;
+			var func3:FuzzyMembershipFunction;
+			var func4:FuzzyMembershipFunction;
+			var func5:FuzzyMembershipFunction;
 			
 			
 			if (len == 2)
 			{
 				
-			
-			   max1 =  FuzzyMembershipFunction(memberfunctions[0]).levelOfConfidence;
-			  FuzzyMembershipFunction(memberfunctions[0]).maximumDOM = max1;
-			
-			    max2 =  FuzzyMembershipFunction(memberfunctions[1]).levelOfConfidence;
-				 FuzzyMembershipFunction(memberfunctions[1]).maximumDOM = max2;
+			   func1 = FuzzyMembershipFunction(memberfunctions[0]);
+			   func2 = FuzzyMembershipFunction(memberfunctions[1]);
+			   
+			   //decrease maximum to cut part of function
+			   func1.maximumDOM = func1.levelOfConfidence;
+		       func2.maximumDOM =  func2.levelOfConfidence;
 					
-				return max1 > max2? IFuzzyMembershipFunction(memberfunctions[0]).averagePoint:IFuzzyMembershipFunction(memberfunctions[1]).averagePoint;
+				return max1 > max2? func1.averagePoint:func2.averagePoint;
 			}
 			
 			
 			if (len == 3)
 			{
-				
-					
-			    max1 = FuzzyMembershipFunction(memberfunctions[0]).levelOfConfidence;
-			   FuzzyMembershipFunction(memberfunctions[0]).maximumDOM = max1;
-			
+			   func1 = FuzzyMembershipFunction(memberfunctions[0]);
+			   func2 = FuzzyMembershipFunction(memberfunctions[1]);
+			   func3 = FuzzyMembershipFunction(memberfunctions[2]);
 			   
-			    max2 = FuzzyMembershipFunction(memberfunctions[1]).levelOfConfidence;
-				 FuzzyMembershipFunction(memberfunctions[1]).maximumDOM = max2;
-				
-			    max3 =  FuzzyMembershipFunction(memberfunctions[2]).levelOfConfidence;
-				 FuzzyMembershipFunction(memberfunctions[2]).maximumDOM = max3;
-			
+			   //decrease maximum to cut part of function
+			   func1.maximumDOM = func1.levelOfConfidence;
+		       func2.maximumDOM =  func2.levelOfConfidence;
+			   func3.maximumDOM =  func3.levelOfConfidence;
+					
+			  		
 								
-				return max1 > max2? (max1>max3? IFuzzyMembershipFunction(memberfunctions[0]).averagePoint: IFuzzyMembershipFunction(memberfunctions[2]).averagePoint)     :        (max2 > max3?IFuzzyMembershipFunction(memberfunctions[1]).averagePoint:IFuzzyMembershipFunction(memberfunctions[2]).averagePoint);
+				return  func1.maximumDOM >  func2.maximumDOM? ( func1.maximumDOM> func3.maximumDOM?  func1.averagePoint: func3.averagePoint) : (func2.maximumDOM > func3.maximumDOM ? func2.averagePoint:func3.averagePoint);
 			}
 			
+			
+			pointer1 = 1;
+			pointer2 = len - 2;
+			
+			//pointer1=0
+			func1 = FuzzyMembershipFunction(memberfunctions[0]);
+			trace(FuzzyMembershipFunction(func1).toString());
+			max1 = func1.maximumDOM;
+			
+			
+			
+			//pointer1=len-1
+			func2=FuzzyMembershipFunction(memberfunctions[len - 1]);
+			max2 = func2.maximumDOM;
+			
+			
+			
+			
+			//trace(max1, max2);
+			
+			while (pointer1  <= pointer2)
+			{
+				
+			
+				if (max1 <  FuzzyMembershipFunction(memberfunctions[pointer1]).maximumDOM)
+				{
+					func1 = memberfunctions[pointer1];
+					max1 = func1.maximumDOM;
+				
+				}
+				
+			
+				if (pointer1 <pointer2)
+				{
+					
+				  if (max2 < FuzzyMembershipFunction(memberfunctions[pointer2]).maximumDOM)
+				  {
+					  func2 = memberfunctions[pointer2];
+					  max2 = func2.maximumDOM;
+				  }
+				  
+				  
+				  pointer2 = pointer2 - 1;
+				}
+				
+				
+				
+				pointer1 = pointer1 + 1;
+				
+				
+			//	trace(max1, max2);
+			//	trace("loop pass");
+			  
+			}
+			
+			return max1>max2?func1.averagePoint:func2.averagePoint;
 			
 			
 			//TODO make and test MOM for 4 and more functions
@@ -265,13 +323,14 @@ package winxalex.fuzzy
 			var func2:FuzzyMembershipFunction;
 			var func3:FuzzyMembershipFunction;
 			var func4:FuzzyMembershipFunction;
+			var func5:FuzzyMembershipFunction;
 			
 			if (len == 2)
 			{
 				func1 = FuzzyMembershipFunction(memberfunctions[0]);
 				func2 = FuzzyMembershipFunction(memberfunctions[1]);
 				
-				return (func1.levelOfConfidence * IFuzzyMembershipFunction(func1).maximumPoint + func2.levelOfConfidence * IFuzzyMembershipFunction(func2).maximumPoint) / (func1.levelOfConfidence + func2.levelOfConfidence);
+				return (func1.levelOfConfidence * func1.maximumPoint + func2.levelOfConfidence * func2.maximumPoint) / (func1.levelOfConfidence + func2.levelOfConfidence);
 			
 				
 			}
@@ -283,7 +342,7 @@ package winxalex.fuzzy
 				func2 = FuzzyMembershipFunction(memberfunctions[1]);
 				func3=FuzzyMembershipFunction(memberfunctions[2]);
 				
-					return (func1.levelOfConfidence * IFuzzyMembershipFunction(func1).maximumPoint + func2.levelOfConfidence * IFuzzyMembershipFunction(func2).maximumPoint+func3.levelOfConfidence*IFuzzyMembershipFunction(func3).maximumPoint) / (func1.levelOfConfidence + func2.levelOfConfidence+func3.levelOfConfidence);
+					return (func1.levelOfConfidence * func1.maximumPoint + func2.levelOfConfidence * func2.maximumPoint+func3.levelOfConfidence*IFuzzyMembershipFunction(func3).maximumPoint) / (func1.levelOfConfidence + func2.levelOfConfidence+func3.levelOfConfidence);
 			}
 			
 			if (len == 4)
@@ -293,11 +352,23 @@ package winxalex.fuzzy
 				func3 = FuzzyMembershipFunction(memberfunctions[2]);
 				func4 = FuzzyMembershipFunction(memberfunctions[3]);
 				
-					return (func1.levelOfConfidence * IFuzzyMembershipFunction(func1).maximumPoint + func2.levelOfConfidence * IFuzzyMembershipFunction(func2).maximumPoint+func3.levelOfConfidence*IFuzzyMembershipFunction(func3).maximumPoint+func4.levelOfConfidence*IFuzzyMembershipFunction(func4).maximumPoint) / (func1.levelOfConfidence + func2.levelOfConfidence+func3.levelOfConfidence+func4.levelOfConfidence);
+					return (func1.levelOfConfidence * func1.maximumPoint + func2.levelOfConfidence * func2.maximumPoint+func3.levelOfConfidence*func3.maximumPoint+func4.levelOfConfidence*func4.maximumPoint) / (func1.levelOfConfidence + func2.levelOfConfidence+func3.levelOfConfidence+func4.levelOfConfidence);
 			
 			}
 			
-			///TODO implement for more then 4 functions
+			if (len == 5)
+			{
+				func1 = FuzzyMembershipFunction(memberfunctions[0]);
+				func2 = FuzzyMembershipFunction(memberfunctions[1]);
+				func3 = FuzzyMembershipFunction(memberfunctions[2]);
+				func4 = FuzzyMembershipFunction(memberfunctions[3]);
+				func5 = FuzzyMembershipFunction(memberfunctions[4]);
+				
+					return (func1.levelOfConfidence * func1.maximumPoint + func2.levelOfConfidence * func2.maximumPoint+func3.levelOfConfidence*func3.maximumPoint+func4.levelOfConfidence*func4.maximumPoint+func5.levelOfConfidence*func5.maximumPoint) / (func1.levelOfConfidence + func2.levelOfConfidence+func3.levelOfConfidence+func4.levelOfConfidence+func5.levelOfConfidence);
+			
+			}
+			
+			///TODO implement for more then 6 functions
 			throw(new Error("For more then 5 function not yet implemented"));
 			
 			
@@ -417,16 +488,21 @@ package winxalex.fuzzy
 		
 		public function addMember(func:FuzzyMembershipFunction):void
 		{
+			var currentRangeValue:Number;
+			
 			memberfunctions[func.linguisticTerm] = func;
 			//memberfunctions.length = memberfunctions.length + 1;
 			
-			if (func.leftMidPoint-func.leftOffset < minRange)
-			minRange = func.leftMidPoint-func.leftOffset;
+			currentRangeValue = isNaN(func.leftPoint) ? func.leftMidPoint : func.leftPoint;
+			if(minRange>currentRangeValue)
+			minRange = currentRangeValue;
 			
-			if (func.rightMidPoint+func.rightOffset > maxRange)
-			maxRange = func.rightMidPoint+func.rightOffset;
 			
-			trace("Membership function <" + func.linguisticTerm + "> added to manifold {" + this.name+"} range["+minRange+","+maxRange+"]");
+			currentRangeValue = isNaN(func.rightPoint) ? func.rightMidPoint: func.rightPoint;
+			if(maxRange<currentRangeValue)
+			maxRange = currentRangeValue;
+			
+			trace("Membership function <" + func.linguisticTerm + ">of type:"+func.type+" added to manifold {" + this.name+"} range["+minRange+","+maxRange+"]");
 		
 		}
 		

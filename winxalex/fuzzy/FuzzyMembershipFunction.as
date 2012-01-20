@@ -4,14 +4,17 @@ package winxalex.fuzzy
 	 * ...
 	 * @author alex winx
 	 */
-	public class FuzzyMembershipFunction 
+	public class FuzzyMembershipFunction implements IFuzzyMembershipFunction 
 	{
 		public static const TRIANGLE:uint = 0;
 		public static const LEFT_SHOULDER:uint = 1;
 		public static const RIGHT_SHOULDER:uint = 2;
 		public static const TRAPEZOID:uint = 3;
-		public static const QUADRIC:uint = 4;
-		public static const SQUARE:uint = 5;
+	    /*public static const INV_TRAPEZOID:uint = 2;
+		public static const RIGHT_TRAPEZOID:uint = 2;
+		public static const INV_C_TRAPEZOID:uint = 3;
+		public static const LEFT_TRAPEZOID:uint = 4;*/
+		
 		
 		
 		/**
@@ -28,11 +31,16 @@ package winxalex.fuzzy
 		
 		
 		
+		private var _type:String;
 		
-		public var  rightMidPoint:Number;
-		public var  leftOffset:Number;
-        public var rightOffset:Number;
+		public var rightPoint:Number=NaN;
+		public var rightMidPoint:Number;
+		public var rightOffset:Number;
+		
+       	public var leftPoint:Number=NaN;
 		public var leftMidPoint:Number;
+		public var leftOffset:Number;
+		
 		public var isScaled:Boolean = false;
 		
 		
@@ -43,17 +51,30 @@ package winxalex.fuzzy
 		
 		public var isLOCReseted:Boolean = false;
 
+		//domain value at the middle of function range
+		private var _averagePoint:Number = NaN;
+		
+		private var _maximumPoint:Number=NaN;
 		
 		
-		
-		public function FuzzyMembershipFunction(linguisticTerm:String,leftOffset:Number=NaN,leftMidPoint:Number=NaN,rightMidPoint:Number=NaN,rightOffset:Number=NaN,...args) :void
+		public function FuzzyMembershipFunction(linguisticTerm:String,type:String,leftPoint:Number=NaN,leftMidPoint:Number=NaN,rightMidPoint:Number=NaN,rightPoint:Number=NaN,...args) :void
 		{
 			this.linguisticTerm = linguisticTerm;
+			this._type = type;
 			
 			_rightMidPoint= rightMidPoint;
-			_rightOffset = rightOffset;
-			_leftOffset = leftOffset;
+			_rightOffset = rightPoint-rightMidPoint;
+			_leftOffset = leftMidPoint-leftPoint;
 			_leftMidPoint = leftMidPoint;
+			this.leftPoint = leftPoint;
+			this.rightPoint = rightPoint;
+			
+			_maximumPoint = _rightMidPoint;
+			
+			if(_rightMidPoint!=leftMidPoint)
+				_averagePoint = leftMidPoint + (rightMidPoint - leftMidPoint) * 0.5
+			else
+			   _averagePoint = leftMidPoint;
 			
 			maximumDOM = 1;
 		}
@@ -87,6 +108,12 @@ package winxalex.fuzzy
 			_levelOfConfidence = value;
 		}
 		
+		public function calculateDOM(value:Number,clipping:Boolean=false):Number
+		{
+			throw new Error("Should be overrided");
+			return 0;
+		}
+		
 		internal function get maximumDOM():Number { return _maximumDOM; }
 		internal function set maximumDOM(value:Number):void
 		{
@@ -103,6 +130,25 @@ package winxalex.fuzzy
 			}
 		}
 		
+		public function get averagePoint():Number { return _averagePoint; }
+		
+		public function set averagePoint(value:Number):void 
+		{
+			value = _averagePoint;
+		}
+		
+		public function get maximumPoint():Number {  return _maximumPoint;  }
+		
+		public function set maximumPoint(value:Number):void
+		{
+			_maximumPoint = value;
+		}
+		
+		public function get type():String 
+		{
+			return _type;
+		}
+		
 		
 		
 		
@@ -117,7 +163,7 @@ package winxalex.fuzzy
 		public function toString():String 
 		{
 			
-			var s:String = "linguisticTerm=" + linguisticTerm + " DOM:" + _degreeOfMembership +" LOC="+_levelOfConfidence+" leftOffset=" + leftOffset+  " leftMidPoint=" + leftMidPoint + " rightMidPoint=" + rightMidPoint + " rightOffset=" + rightOffset;
+			var s:String = "linguisticTerm=" + linguisticTerm + " DOM:" + _degreeOfMembership +" LOC="+_levelOfConfidence+" leftPoint=" + leftPoint+  " leftMidPoint=" + leftMidPoint + " rightMidPoint=" + rightMidPoint + " rightPoint=" + rightPoint+" >OFFSETS: rightOffset:"+rightOffset+" leftOffset:"+leftOffset;
 			return  s;
 		}
 		

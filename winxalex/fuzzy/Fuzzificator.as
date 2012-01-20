@@ -398,7 +398,8 @@ package winxalex.fuzzy
 			if (!inputFuzzymanifolds.length)
 			throw new Error("No input manifolds. Please add create FuzzyInputs and attach them to some manifolds");
 			
-			if (!outputFuzzyManifolds.length)
+			//if (!outputFuzzyManifolds.length)
+			if (!_nOutputManifolds)
 			throw new Error("No output manifolds. ");
 			
 			
