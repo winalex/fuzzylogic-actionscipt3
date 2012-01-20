@@ -347,7 +347,7 @@ package winxalex.fuzzy
 		 * 
 		 * @param	stek
 		 */
-		private function toString(stek:Vector.<Token>):String
+		public static function dump(stek:Vector.<Token>):String
 		{
 			var i:int = 0;
 			var j:int ;
@@ -624,8 +624,12 @@ package winxalex.fuzzy
 		
 		}
 		
+		public function toString():String {
+			return "Fuzzy Rule:<" + this._rule+">";
+		}
 		
-			public function get isFired():Boolean { return _isFired; }
+		
+		public function get isFired():Boolean { return _isFired; }
 		
 		public function get antCompiledStek():Vector.<Token> { return _antCompiledStek; }
 		

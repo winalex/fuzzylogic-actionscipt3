@@ -4,21 +4,20 @@ package winxalex.fuzzy
 	 * ...
 	 * @author alex winx
 	 */
-	public class FuzzyTrapezoidMembershipFunction extends FuzzyMembershipFunction implements IFuzzyMembershipFunction
+	public class FuzzyTrapezoidMembershipFunction extends FuzzyMembershipFunction// implements IFuzzyMembershipFunction
 	{
 		
-		public var rightPoint:Number;
+		
 		
 	
 		
-		//domain value at the middle of
-		private var _averagePoint:Number=NaN;
-		private var _maximumPoint:Number=NaN;
+	
 		
-		public function FuzzyTrapezoidMembershipFunction(linguisticTerm:String, leftOffset:Number = NaN,leftMidPoint:Number = NaN,rightMidPoint:Number=NaN, rightOffset:Number = NaN, ...args) 
+		
+		public function FuzzyTrapezoidMembershipFunction(linguisticTerm:String,type:String, leftPoint:Number = NaN,leftMidPoint:Number = NaN,rightMidPoint:Number=NaN, rightPoint:Number = NaN, ...args) 
 		{
 					
-			super(linguisticTerm, leftOffset, leftMidPoint,rightMidPoint, rightOffset);
+			super(linguisticTerm,type, leftPoint, leftMidPoint,rightMidPoint, rightPoint);
 			
 		}
 		
@@ -26,7 +25,7 @@ package winxalex.fuzzy
 		
 		/* INTERFACE winxalex.fuzzy.IFuzzyMembershipFunction */
 		
-		public function calculateDOM(value:Number,clipping:Boolean=false):Number
+		override public function calculateDOM(value:Number,clipping:Boolean=false):Number
 		{
 					
 			var grad:Number;
@@ -95,21 +94,25 @@ package winxalex.fuzzy
 			if (super.maximumDOM == 1)//restore
 			{
 				
-			    this.rightMidPoint= _rightMidPoint;
+			   /* 
+				this.rightMidPoint= _rightMidPoint;
 				this.rightOffset = _rightOffset;
 				this.leftOffset = _leftOffset;
 				this.leftMidPoint = _leftMidPoint;
+				*/
 				
-			   	IFuzzyMembershipFunction(this).averagePoint = leftMidPoint + (rightMidPoint - leftMidPoint) / 2;
-				IFuzzyMembershipFunction(this).maximumPoint = IFuzzyMembershipFunction(this).averagePoint ;// leftMidPoint + (rightMidPoint - leftMidPoint) / 2;
+				
+				//in non simetrical triangles (_rightOffset!=_leftOffset)
+				if (_rightOffset != _leftOffset)
+			   	this.averagePoint = leftMidPoint + (rightMidPoint - leftMidPoint) * 0.5;// / 2;
+				//this.maximumPoint = this.averagePoint ;// leftMidPoint + (rightMidPoint - leftMidPoint) / 2;
 			    return;
 			}
 			
 			
-			IFuzzyMembershipFunction(this).averagePoint = leftMidPoint + (rightMidPoint - leftMidPoint) / 2;
 			
 			//not have meaning if value!=1
-			IFuzzyMembershipFunction(this).maximumPoint = NaN;
+			this.maximumPoint = NaN;
 			
 		    if (isScaled) return;//NO clipping
 			
@@ -132,21 +135,23 @@ package winxalex.fuzzy
 				newOffset =  super.maximumDOM * _rightOffset;
 				rightMidPoint = _rightMidPoint + _rightOffset - newOffset;
 				rightOffset = newOffset;
+				maximumPoint = rightMidPoint;
 			}
+			
+			
+			//in non simetrical triangles(_rightOffset!=_leftOffset);
+			if (_rightOffset != _leftOffset)
+			this.averagePoint = leftMidPoint + (rightMidPoint - leftMidPoint) * 0.5;// / 2;
 		}
 		
-		public function get averagePoint():Number { return leftMidPoint+(rightMidPoint-leftMidPoint)/2; }
+	
+	
 		
-		public function set averagePoint(value:Number):void 
+		override public function get maximumPoint():Number { return super.maximumPoint;  }
+		
+		override public function set maximumPoint(value:Number):void
 		{
-			_averagePoint = value;
-		}
-		
-		public function get maximumPoint():Number { return _maximumPoint;  }
-		
-		public function set maximumPoint(value:Number):void
-		{
-			_maximumPoint = value;
+			value = super.maximumPoint;
 		}
 		
 		
