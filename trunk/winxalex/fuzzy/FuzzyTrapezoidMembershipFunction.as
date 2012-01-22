@@ -1,161 +1,151 @@
-package winxalex.fuzzy 
+package winxalex.fuzzy
 {
+	import flash.geom.Point;
+	
 	/**
 	 * ...
 	 * @author alex winx
 	 */
-	public class FuzzyTrapezoidMembershipFunction extends FuzzyMembershipFunction// implements IFuzzyMembershipFunction
+	public class FuzzyTrapezoidMembershipFunction extends FuzzyMembershipFunction // implements IFuzzyMembershipFunction
 	{
 		
-		
-		
-	
-		
-	
-		
-		
-		public function FuzzyTrapezoidMembershipFunction(linguisticTerm:String,type:String, leftPoint:Number = NaN,leftMidPoint:Number = NaN,rightMidPoint:Number=NaN, rightPoint:Number = NaN, ...args) 
+		public function FuzzyTrapezoidMembershipFunction(linguisticTerm:String, type:String, leftDomain:Number = NaN, leftPeekDomain:Number = NaN, rightPeekDomain:Number = NaN, rightDomain:Number = NaN, ... args)
 		{
-					
-			super(linguisticTerm,type, leftPoint, leftMidPoint,rightMidPoint, rightPoint);
 			
+			super(linguisticTerm, type, leftDomain, leftPeekDomain, rightPeekDomain, rightDomain);
+		
 		}
-		
-		
 		
 		/* INTERFACE winxalex.fuzzy.IFuzzyMembershipFunction */
 		
-		override public function calculateDOM(value:Number,clipping:Boolean=false):Number
+		override public function calculateDOM(value:Number, clipping:Boolean = false):Number
 		{
-					
+			
 			var grad:Number;
 			
+			//TODO check if clipping can be done better
 			if (clipping)
 			{
-						maximumDOM = levelOfConfidence;
+				maximumDOM = levelOfConfidence;
 			}
 			
-		
-			  
-			    
-						//between mid points
-						   if  (value >= leftMidPoint  && value <=rightMidPoint) 
-						  {
-							  degreeOfMembership = maximumDOM;
-						  }		
-					    else
-						{//  //find DOM if left of center
-					  
-								  grad = value - leftMidPoint + leftOffset;//value - (leftMidPoint - leftOffset)
-								  
-								
-
-									  //find DOM if left of left mid point
-									  if ( (value < leftMidPoint) && grad>0 )
-									  {
-										 
-										
-										degreeOfMembership= grad*maximumDOM/leftOffset;
-									  }
-
-									  else //find DOM if right of center
-									  {
-											  grad = (rightMidPoint + rightOffset) - value;
-										  
-											  if ( (value > rightMidPoint) && ( grad>0 ) )
-											  {
-												
-												
-												degreeOfMembership= grad*maximumDOM /rightOffset;
-											  } 
-											  else //out of range of this FLV, degreeOfMembership= zero
-											  {
-												degreeOfMembership = 0;
-											  }
-									  }
-						}
+			//between mid points
+			if (value >= leftPeekPoint.x && value <= rightPeekPoint.x)
+			{
+				degreeOfMembership = maximumDOM;
+			}
+			else
+			{ //  //find DOM if left of center
+				
+				grad = value - leftPeekPoint.x + leftOffset; //value - (leftMidPoint - leftOffset)
+				
+				//find DOM if left of left mid point
+				if ((value < leftPeekPoint.x) && grad > 0)
+				{
+					
+					degreeOfMembership = grad * maximumDOM / leftOffset;
+				}
+				
+				else //find DOM if right of center
+				{
+					grad = (rightPeekPoint.x + rightOffset) - value;
+					
+					if ((value > rightPeekPoint.x) && (grad > 0))
+					{
 						
-						return degreeOfMembership;
+						degreeOfMembership = grad * maximumDOM / rightOffset;
+					}
+					else //out of range of this FLV, degreeOfMembership= zero
+					{
+						degreeOfMembership = 0;
+					}
+				}
+			}
+			
+			return degreeOfMembership;
 		}
 		
-		override internal function get maximumDOM():Number { return super.maximumDOM; }
+		override internal function get maximumDOM():Number
+		{
+			return super.maximumDOM;
+		}
 		
-		override internal function set maximumDOM(value:Number):void 
+		override internal function set maximumDOM(value:Number):void
 		{
 			
 			var newOffset:Number;
 			
-			if (value == super.maximumDOM) return;
+			if (value == super.maximumDOM)
+				return;
 			
-			super.maximumDOM = value; 
+			super.maximumDOM = value;
 			
+			//all values are reseted including average point 
+			if (value == 1)
+				return;
 			
-			
-			if (super.maximumDOM == 1)//restore
-			{
-				
-			   /* 
-				this.rightMidPoint= _rightMidPoint;
-				this.rightOffset = _rightOffset;
-				this.leftOffset = _leftOffset;
-				this.leftMidPoint = _leftMidPoint;
-				*/
-				
-				
-				//in non simetrical triangles (_rightOffset!=_leftOffset)
-				if (_rightOffset != _leftOffset)
-			   	this.averagePoint = leftMidPoint + (rightMidPoint - leftMidPoint) * 0.5;// / 2;
-				//this.maximumPoint = this.averagePoint ;// leftMidPoint + (rightMidPoint - leftMidPoint) / 2;
-			    return;
-			}
-			
-			
-			
-			//not have meaning if value!=1
-			this.maximumPoint = NaN;
-			
-		    if (isScaled) return;//NO clipping
-			
-		
+			if (isScaled)
+				return; //NO clipping
 			
 			//CLIPPING
-			if (_leftOffset != 0 )
+			if (origLeftOffset != 0)
 			{
-			
-				newOffset =  super.maximumDOM * _leftOffset;
-				leftMidPoint = _leftMidPoint - _leftOffset + newOffset;
+				
+				newOffset = value * origLeftOffset;
+				leftPeekPoint.x = origLeftDomain - origLeftOffset + newOffset;
 				leftOffset = newOffset;
 				
 			}
 			
 			//CLIPPING
-			if (_rightOffset != 0)
+			if (origRightOffset != 0)
 			{
-			
-				newOffset =  super.maximumDOM * _rightOffset;
-				rightMidPoint = _rightMidPoint + _rightOffset - newOffset;
+				newOffset = value * origRightOffset;
+				rightPeekPoint.x = origRightDomain + origRightOffset - newOffset;
 				rightOffset = newOffset;
-				maximumPoint = rightMidPoint;
+				
 			}
 			
-			
 			//in non simetrical triangles(_rightOffset!=_leftOffset);
-			if (_rightOffset != _leftOffset)
-			this.averagePoint = leftMidPoint + (rightMidPoint - leftMidPoint) * 0.5;// / 2;
+			if (rightPeekPoint.x != leftPeekPoint.x)
+			{
+				this.averageDomain = leftPeekPoint.x + (rightPeekPoint.x - leftPeekPoint.x) * 0.5; // / 2;
+			}
+		
 		}
 		
-	
-	
-		
-		override public function get maximumPoint():Number { return super.maximumPoint;  }
-		
-		override public function set maximumPoint(value:Number):void
+		override public function get conture():Vector.<Point>
 		{
-			value = super.maximumPoint;
+			var points:Vector.<Point>;
+			
+			if (!super.conture)
+			{
+				super.conture = new Vector.<Point>();
+				
+				if (leftPeekPoint != leftPoint)
+				{
+					points.push(leftPoint);
+				}
+				
+				points.push(leftPeekPoint);
+				
+				if (rightPoint != rightPeekPoint)
+				{
+					points.push(rightPoint);
+				}
+				
+				points.push(rightPeekPoint);
+				
+			}
+			
+			return super.conture;
 		}
 		
-		
-		
+		override public function get maximumDomain():Number
+		{
+			return averageDomain;
+		}
+	
 	}
 
 }
