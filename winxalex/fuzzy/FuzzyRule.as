@@ -347,7 +347,7 @@ package winxalex.fuzzy
 		 * 
 		 * @param	stek
 		 */
-		public static function dump(stek:Vector.<Token>):String
+		public function dump(stek:Vector.<Token>):String
 		{
 			var i:int = 0;
 			var j:int ;

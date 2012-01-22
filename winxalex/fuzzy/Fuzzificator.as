@@ -126,7 +126,7 @@ package winxalex.fuzzy
 			
 		
 			
-			matrix.push(memFunction.averagePoint);
+			//matrix.push(memFunction.averageDomain);
 			
 			
 			
@@ -222,7 +222,7 @@ package winxalex.fuzzy
 								switch(method)
 								{
 									case ReductionMethod.SIMPLE_1:
-									newAverage = IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averagePoint;
+									newAverage = IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averageDomain;
 									trace("-----------------------------------------------");
 									  trace(membershipName);
 									trace(">"+element.data, newAverage);
@@ -245,7 +245,7 @@ package winxalex.fuzzy
 									   
 									   trace(membershipName);
 									
-										newAverage = IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averagePoint;
+										newAverage = IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averageDomain;
 										
 									trace("REDUCING>>"+currentMatch + " THEN " + membershipName + " Average point sum:(" + element.data+"+"+newAverage+")="+(element.data +newAverage));
 									
@@ -264,7 +264,7 @@ package winxalex.fuzzy
 								trace("REDUCING >> INIT ");
 								  trace(membershipName);
 								//save found unique antescendent assocated with consequent fuzzyManifold and averagePoint
-								dict[currentMatch] = new FuzzyReductionElement(fm, IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averagePoint);
+								dict[currentMatch] = new FuzzyReductionElement(fm, IFuzzyMembershipFunction(fm.memberfunctions[membershipName]).averageDomain);
 								numNewRules++;
 								
 								// trace(fm.memberfunctions[membershipName].toString());
@@ -545,9 +545,9 @@ package winxalex.fuzzy
 								
 							}*/
 							
-							max = fm.getMaxDOM(input);
+							max = fm.getSumDOM(input);// fm.getMaxDOM(input);
 						
-							//trace(input,"max:" + max);
+							//trace(input,"x" + max);
 							s1 += input * max;
 							s2 += max;
 							
@@ -555,7 +555,7 @@ package winxalex.fuzzy
 						}
 				
 				
-				
+				//trace(s1,"/ "+s2);
 				fm.output = s1 / s2;
 				
 			}
@@ -618,7 +618,7 @@ package winxalex.fuzzy
 		}*/
 		
 		/**
-		 *    sum(input * xDOM(input))/sum of DOM(input)  COG or CENTROID
+		 *    sum(input * xDOM(input))/sum of DOM(input)  
 		 * @param	step (0.1 is every 10th)
 		 * @return
 		 *///
@@ -682,6 +682,19 @@ package winxalex.fuzzy
 			
 		}
 		
+		
+		
+		private function COG():void {
+			var fm:FuzzyManifold;
+			var func:FuzzyMembershipFunction;
+		
+			
+			for each (fm in outputFuzzyManifolds)
+			{
+				fm.output = fm.getCOG();
+			}
+		}
+		
 	/**
 	 * 
 	 * @param	outputFuzzyManifolds
@@ -692,43 +705,18 @@ package winxalex.fuzzy
 		private static function AVMAX(outputFuzzyManifolds:Dictionary):void
 		{
 			var fm:FuzzyManifold;
-			var sumLOC:Number;
-			var sumAvgMulLOC:Number;
-			var levelOfConfidence:Number;
 			var func:FuzzyMembershipFunction;
 		
 			
 			for each (fm in outputFuzzyManifolds)
 			{
-				sumLOC = 0;
-				sumAvgMulLOC = 0;
-				
-				
-						
-						/*	for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
-							{
-								func = FuzzyMembershipFunction( ifunc);
-								if(func.maximumDOM<1)
-								 func.maximumDOM = 1;//it is reset
-								
-								sumAvgMulLOC+= ifunc.maximumPoint *func.levelOfConfidence;
-								
-								sumLOC += func.levelOfConfidence;
-								
-							
-							}*/
-							
-							
-				
 				fm.output = fm.getMaxAv();
-				
-				//fm.output = sumAvgMulLOC /sumLOC;
-				
 			}
 		}
 		
 		public function get matrix():VectorEx //; Vector.<Vector.<Number>>
 		{
+			throw new Error("Not Yet Implemented");
 			if (_ruleMatrix) return _ruleMatrix;
 			
 			var i:int = 0;

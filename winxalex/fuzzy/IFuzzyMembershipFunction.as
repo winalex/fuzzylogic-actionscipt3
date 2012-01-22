@@ -1,5 +1,6 @@
 package winxalex.fuzzy 
 {
+	import flash.geom.Point;
 		
 	/**
 	 * ...
@@ -16,12 +17,15 @@ package winxalex.fuzzy
 					
 		function toString():String;
 	 
-		function get averagePoint():Number;
-		function set averagePoint(value:Number):void;
+		function get averageDomain():Number;
+		function set averageDomain(value:Number):void;
 		
-		//point in which DOM is MAX
-		function get maximumPoint():Number
-		function set maximumPoint(value:Number):void;
+		//point in which DOM is MAX =1
+		function get maximumDomain():Number
+		function set maximumDomain(value:Number):void;
+		
+		function get conture():Vector.<Point>;
+		function set conture(value:Vector.<Point>):void;
 	 
 	
 		

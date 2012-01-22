@@ -4,7 +4,7 @@ Type='mamdani'
 Version=2.0
 NumInputs=2
 NumOutputs=1
-NumRules=0
+NumRules=9
 AndMethod='min'
 OrMethod='max'
 ImpMethod='min'
@@ -36,3 +36,12 @@ MF2='Desirable':'trimf',[25 50 75]
 MF3='VeryDesirable':'trapmf',[50 75 100 100]
 
 [Rules]
+3 1, 1 (1) : 1
+3 2, 1 (1) : 1
+3 3, 2 (1) : 1
+2 1, 2 (1) : 1
+2 2, 3 (1) : 1
+2 3, 3 (1) : 1
+1 1, 1 (1) : 1
+1 2, 1 (1) : 1
+1 3, 1 (1) : 1
