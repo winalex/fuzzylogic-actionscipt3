@@ -18,21 +18,17 @@ package winxalex.fuzzy
 		
 		/* INTERFACE winxalex.fuzzy.IFuzzyMembershipFunction */
 		
-		override public function calculateDOM(value:Number, clipping:Boolean = false):Number
+		override public function calculateDOM(value:Number):Number
 		{
 			
 			var grad:Number;
 			
-			//TODO check if clipping can be done better
-			if (clipping)
-			{
-				maximumDOM = levelOfConfidence;
-			}
+			super.calculateDOM(value);
 			
 			//between mid points
 			if (value >= leftPeekPoint.x && value <= rightPeekPoint.x)
 			{
-				degreeOfMembership = maximumDOM;
+				degreeOfMembership = levelOfConfidence;
 			}
 			else
 			{ //  //find DOM if left of center
@@ -43,7 +39,7 @@ package winxalex.fuzzy
 				if ((value < leftPeekPoint.x) && grad > 0)
 				{
 					
-					degreeOfMembership = grad * maximumDOM / leftOffset;
+					degreeOfMembership = grad * levelOfConfidence / leftOffset;
 				}
 				
 				else //find DOM if right of center
@@ -53,7 +49,7 @@ package winxalex.fuzzy
 					if ((value > rightPeekPoint.x) && (grad > 0))
 					{
 						
-						degreeOfMembership = grad * maximumDOM / rightOffset;
+						degreeOfMembership = grad * levelOfConfidence / rightOffset;
 					}
 					else //out of range of this FLV, degreeOfMembership= zero
 					{
@@ -65,24 +61,19 @@ package winxalex.fuzzy
 			return degreeOfMembership;
 		}
 		
-		override internal function get maximumDOM():Number
+		override public function recalcBoundaries():void
 		{
-			return super.maximumDOM;
-		}
-		
-		override internal function set maximumDOM(value:Number):void
-		{
-			
 			var newOffset:Number;
 			
-			if (value == super.maximumDOM)
-				return;
+			areBoundariesDIRTY = false;
 			
-			super.maximumDOM = value;
 			
-			//all values are reseted including average point 
-			if (value == 1)
+			
+			if (levelOfConfidence == 1)
+			{
+				super.recalcBoundaries();
 				return;
+			}
 			
 			if (isScaled)
 				return; //NO clipping
@@ -91,7 +82,7 @@ package winxalex.fuzzy
 			if (origLeftOffset != 0)
 			{
 				
-				newOffset = value * origLeftOffset;
+				newOffset = levelOfConfidence * origLeftOffset;
 				leftPeekPoint.x = origLeftDomain - origLeftOffset + newOffset;
 				leftOffset = newOffset;
 				
@@ -100,7 +91,7 @@ package winxalex.fuzzy
 			//CLIPPING
 			if (origRightOffset != 0)
 			{
-				newOffset = value * origRightOffset;
+				newOffset = levelOfConfidence * origRightOffset;
 				rightPeekPoint.x = origRightDomain + origRightOffset - newOffset;
 				rightOffset = newOffset;
 				
@@ -111,7 +102,6 @@ package winxalex.fuzzy
 			{
 				this.averageDomain = leftPeekPoint.x + (rightPeekPoint.x - leftPeekPoint.x) * 0.5; // / 2;
 			}
-		
 		}
 		
 		override public function get conture():Vector.<Point>

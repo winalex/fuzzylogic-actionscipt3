@@ -48,6 +48,8 @@ package winxalex.fuzzy
 	 
 	 
 	 private var _AND:Function = FuzzyOperator.fMIN;
+	 
+	
     
 	
 	internal function fAND(...args):Number
@@ -59,13 +61,16 @@ package winxalex.fuzzy
 	 {
 		 return _OR.apply(null, args);
 	 }
+	 
+	 
 
 
   //a list containing all the fuzzy rules
   private var fuzzyRules:SLinkedList;
   private var _ruleMatrix:VectorEx;//   Vector.<*> ; / / Vector.<Vector.<Number>>;
   private var _nInputManifolds:int=0;
-  private var _nOutputManifolds:int=0;
+  private var _nOutputManifolds:int = 0;
+  private var _fazzificationDirty:Boolean = false;
   
 		
 		
@@ -402,6 +407,13 @@ package winxalex.fuzzy
 			if (!_nOutputManifolds)
 			throw new Error("No output manifolds. ");
 			
+		/*	for each (fm in ouputManifolds)
+			{
+				
+				fm.reset();
+				
+			}*/
+			
 			
 			for each (fm in inputFuzzymanifolds)
 			{
@@ -475,7 +487,7 @@ package winxalex.fuzzy
 			for each (fm in outputFuzzyManifolds)
 			{
 				
-				     
+				    // fm.reset();
 							
 						/**/	
 						/*for each(var ifunc:IFuzzyMembershipFunction in fm.memberfunctions)
@@ -521,6 +533,7 @@ package winxalex.fuzzy
 				s1 = 0;
 				s2 = 0;
 				
+				//fm.reset();
 				
 				 
 						//get delta
@@ -545,7 +558,7 @@ package winxalex.fuzzy
 								
 							}*/
 							
-							max = fm.getSumDOM(input);// fm.getMaxDOM(input);
+							max = fm.getMaxDOM(input);
 						
 							//trace(input,"x" + max);
 							s1 += input * max;
@@ -641,7 +654,7 @@ package winxalex.fuzzy
 				s1 = 0;
 				s2 = 0;
 				
-				
+				//fm.reset();
 				 
 						//get delta
 						delta = (fm.maxRange-fm.minRange) * step;
@@ -691,6 +704,7 @@ package winxalex.fuzzy
 			
 			for each (fm in outputFuzzyManifolds)
 			{
+				//fm.reset();
 				fm.output = fm.getCOG();
 			}
 		}
@@ -710,6 +724,7 @@ package winxalex.fuzzy
 			
 			for each (fm in outputFuzzyManifolds)
 			{
+				//fm.reset();
 				fm.output = fm.getMaxAv();
 			}
 		}
