@@ -18,7 +18,7 @@ package winxalex.fuzzy
 		
 		private var _fuzzificator:Fuzzificator = null;
 		
-		//ToDo  private var _precalculatedDOMs
+		
 		
 		public function FuzzyManifold(name:String)
 		{
@@ -47,20 +47,23 @@ package winxalex.fuzzy
 			var pointer1:int;
 			var pointer2:int;
 			var func1:FuzzyMembershipFunction;
+			var func2:FuzzyMembershipFunction;
 			
 			if (len == 2)
 			{
-				max1 = IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input, true);
-				max2 = IFuzzyMembershipFunction(memberfunctions[1]).calculateDOM(input, true);
+				func1 = FuzzyMembershipFunction(memberfunctions[0]);
+				func2 = FuzzyMembershipFunction(memberfunctions[1]);
+				max1 = func1.calculateDOM(input);
+				max2 = func2.calculateDOM(input);
 				
 				return max1 > max2 ? max1 : max2;
 			}
 			if (len == 3)
 			{
 				
-				max1 = IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input, true);
-				max2 = IFuzzyMembershipFunction(memberfunctions[1]).calculateDOM(input, true);
-				max3 = IFuzzyMembershipFunction(memberfunctions[2]).calculateDOM(input, true);
+				max1 = IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input);
+				max2 = IFuzzyMembershipFunction(memberfunctions[1]).calculateDOM(input);
+				max3 = IFuzzyMembershipFunction(memberfunctions[2]).calculateDOM(input);
 				
 				//trace(max1, max2, max3);
 				
@@ -70,18 +73,18 @@ package winxalex.fuzzy
 			pointer1 = 1;
 			pointer2 = len - 2;
 			
-			max1 = IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input, true);
-			max2 = IFuzzyMembershipFunction(memberfunctions[len - 1]).calculateDOM(input, true);
+			max1 = IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input);
+			max2 = IFuzzyMembershipFunction(memberfunctions[len - 1]).calculateDOM(input);
 			
 			while (pointer1 <= pointer2)
 			{
 				
-				if (max1 < IFuzzyMembershipFunction(memberfunctions[pointer1]).calculateDOM(input, true))
+				if (max1 < IFuzzyMembershipFunction(memberfunctions[pointer1]).calculateDOM(input))
 					max1 = FuzzyMembershipFunction(memberfunctions[pointer1]).degreeOfMembership;
 				
 				if (pointer1 < pointer2)
 				{
-					if (max2 < IFuzzyMembershipFunction(memberfunctions[pointer2]).calculateDOM(input, true))
+					if (max2 < IFuzzyMembershipFunction(memberfunctions[pointer2]).calculateDOM(input))
 						max2 = FuzzyMembershipFunction(memberfunctions[pointer2]).degreeOfMembership;
 					pointer2 = pointer2 - 1;
 				}
@@ -117,23 +120,23 @@ package winxalex.fuzzy
 			var sum2:Number;
 			
 			if (len == 2)
-				return IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input, true) + IFuzzyMembershipFunction(memberfunctions[1]).calculateDOM(input, true)
+				return IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input) + IFuzzyMembershipFunction(memberfunctions[1]).calculateDOM(input)
 			if (len == 3)
-				return IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input, true) + IFuzzyMembershipFunction(memberfunctions[1]).calculateDOM(input, true) + IFuzzyMembershipFunction(memberfunctions[2]).calculateDOM(input, true);
+				return IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input) + IFuzzyMembershipFunction(memberfunctions[1]).calculateDOM(input) + IFuzzyMembershipFunction(memberfunctions[2]).calculateDOM(input);
 			if (len == 4)
-				return IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input, true) + IFuzzyMembershipFunction(memberfunctions[1]).calculateDOM(input, true) + IFuzzyMembershipFunction(memberfunctions[2]).calculateDOM(input, true) + IFuzzyMembershipFunction(memberfunctions[3]).calculateDOM(input, true);
+				return IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input) + IFuzzyMembershipFunction(memberfunctions[1]).calculateDOM(input) + IFuzzyMembershipFunction(memberfunctions[2]).calculateDOM(input) + IFuzzyMembershipFunction(memberfunctions[3]).calculateDOM(input);
 			
 			//TODO test sum of 5 and more
 			pointer1 = 1;
 			pointer2 = len - 2;
 			
-			sum1 = IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input, true); // Token(args[0]).value;
-			sum2 = IFuzzyMembershipFunction(memberfunctions[len - 1]).calculateDOM(input, true); // Token(args[len - 1]).value;
+			sum1 = IFuzzyMembershipFunction(memberfunctions[0]).calculateDOM(input); // Token(args[0]).value;
+			sum2 = IFuzzyMembershipFunction(memberfunctions[len - 1]).calculateDOM(input); // Token(args[len - 1]).value;
 			
 			while (pointer1 <= pointer2)
 			{
 				
-				sum1 += IFuzzyMembershipFunction(memberfunctions[pointer1]).calculateDOM(input, true); // Token(args[pointer1]).value;
+				sum1 += IFuzzyMembershipFunction(memberfunctions[pointer1]).calculateDOM(input); // Token(args[pointer1]).value;
 				
 				if (sum1 > 1)
 					return 1;
@@ -141,7 +144,7 @@ package winxalex.fuzzy
 				if (pointer1 < pointer2)
 				{
 					
-					sum2 += IFuzzyMembershipFunction(memberfunctions[pointer2]).calculateDOM(input, true); //Token(args[pointer2]).value;
+					sum2 += IFuzzyMembershipFunction(memberfunctions[pointer2]).calculateDOM(input); //Token(args[pointer2]).value;
 					if (sum2 > 1)
 						return 1;
 					pointer2 = pointer2 - 1;

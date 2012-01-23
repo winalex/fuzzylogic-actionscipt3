@@ -39,6 +39,7 @@ package winxalex.fuzzy
 		public var origLeftDomain:Number;
 		
 		public var isLOCReseted:Boolean = false;
+		public var areBoundariesDIRTY:Boolean = false;
 		
 		//domain value at the middle of function range
 		private var _averageDomain:Number = NaN;
@@ -49,7 +50,7 @@ package winxalex.fuzzy
 		/**
 		 * level of confidence (firing strenght)
 		 */
-		private var _levelOfConfidence:Number = 0;
+		private var _levelOfConfidence:Number = 1;
 		private var _maximumDOM:Number = 0;
 		private var _degreeOfMembership:Number = 0;
 		
@@ -74,21 +75,25 @@ package winxalex.fuzzy
 			
 			_maximumDomain = origRightDomain;
 			
-			if (origRightDomain != origLeftDomain)
-				_averageDomain = leftPeekDomain + (rightPeekDomain - leftPeekDomain) * 0.5
-			else
-				_averageDomain = leftPeekDomain;
+			recalcBoundaries();
 			
-			maximumDOM = 1;
+			
 		}
 		
 		public function reset():void
 		{
-			maximumDOM = 1;
 			
+			areBoundariesDIRTY = false;
+			
+			_levelOfConfidence = 1;
 			_degreeOfMembership = 0;
 			
+			isScaled = false;
+			
 			isLOCReseted = false;
+			
+			//TODO check if needed
+			//recalcBoundaries(); 
 		
 		}
 		
@@ -102,34 +107,8 @@ package winxalex.fuzzy
 			_degreeOfMembership = value;
 		}
 		
-		public function get levelOfConfidence():Number
-		{
-			return _levelOfConfidence;
-		}
-		
-		public function set levelOfConfidence(value:Number):void
-		{
-			_levelOfConfidence = value;
-		}
-		
-		public function calculateDOM(value:Number, clipping:Boolean = false):Number
-		{
-			throw new Error("Should be overrided");
-			return 0;
-		}
-		
-		internal function get maximumDOM():Number
-		{
-			return _maximumDOM;
-		}
-		
-		internal function set maximumDOM(value:Number):void
-		{
+		public function recalcBoundaries():void {
 			
-			_maximumDOM = value;
-			
-			if (_maximumDOM == 1) //restore
-			{
 				this.rightPeekPoint.x = origRightDomain;
 				this.rightPeekPoint.y = 1;
 				
@@ -143,7 +122,45 @@ package winxalex.fuzzy
 					_averageDomain = origLeftDomain + (origRightDomain - origLeftDomain) * 0.5
 				else
 					_averageDomain = origLeftDomain;
+		}
+		
+		public function get levelOfConfidence():Number
+		{
+			//if (isNaN(_levelOfConfidence)) return 1;
+			return _levelOfConfidence;
+		}
+		
+		public function set levelOfConfidence(value:Number):void
+		{
+			//if (value == super.levelOfConfidence) return;
+			
+			_levelOfConfidence = value;
+			
+			areBoundariesDIRTY = true;
+		}
+		
+		public function calculateDOM(value:Number):Number
+		{
+			if (areBoundariesDIRTY)
+			{
+				
+				recalcBoundaries();
+				
 			}
+			
+			return 0;
+		}
+		
+		internal function get maximumDOM():Number
+		{
+			return _maximumDOM;
+		}
+		
+		internal function set maximumDOM(value:Number):void
+		{
+			
+			_maximumDOM = value;
+			
 		}
 		
 		public function get averageDomain():Number

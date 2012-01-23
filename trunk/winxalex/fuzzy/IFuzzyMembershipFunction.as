@@ -10,7 +10,7 @@ package winxalex.fuzzy
 	{
 		
 		
-		function calculateDOM(value:Number,clipping:Boolean=false):Number
+		function calculateDOM(value:Number):Number
 		
 		function reset():void;
 		
