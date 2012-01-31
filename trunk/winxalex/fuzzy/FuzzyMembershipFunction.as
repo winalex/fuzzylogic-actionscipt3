@@ -21,7 +21,7 @@ package winxalex.fuzzy
 		
 		public var linguisticTerm:String;
 		
-		private var _type:String;
+		private var _typeName:String;
 		
 		public var rightPoint:Point ;
 		public var rightPeekPoint:Point;
@@ -30,6 +30,8 @@ package winxalex.fuzzy
 		public var leftPoint:Point;
 		public var leftPeekPoint:Point;
 		public var leftOffset:Number;
+		
+		public var intersectionPoint:Point;
 		
 		public var isScaled:Boolean = false;
 		
@@ -54,10 +56,10 @@ package winxalex.fuzzy
 		private var _maximumDOM:Number = 0;
 		private var _degreeOfMembership:Number = 0;
 		
-		public function FuzzyMembershipFunction(linguisticTerm:String, type:String, leftDomain:Number = NaN, leftPeekDomain:Number = NaN, rightPeekDomain:Number = NaN, rightDomain:Number = NaN, ... args):void
+		public function FuzzyMembershipFunction(linguisticTerm:String, typeName:String, leftDomain:Number = NaN, leftPeekDomain:Number = NaN, rightPeekDomain:Number = NaN, rightDomain:Number = NaN, ... args):void
 		{
 			this.linguisticTerm = linguisticTerm;
-			this._type = type;
+			this._typeName = typeName;
 			
 			origRightDomain = rightPeekDomain;
 			origRightOffset = rightDomain - rightPeekDomain;
@@ -95,6 +97,13 @@ package winxalex.fuzzy
 			//TODO check if needed
 			//recalcBoundaries(); 
 		
+		}
+		
+		
+		
+		
+		public function area():Number {
+			throw new Error("must be overriden");
 		}
 		
 		public function get degreeOfMembership():Number
@@ -186,20 +195,14 @@ package winxalex.fuzzy
 			_maximumDomain = value;
 		}
 		
-		public function get type():String
+		public function get typeName():String 
 		{
-			return _type;
+			return _typeName;
 		}
 		
-		public function get conture():Vector.<Point>
-		{
-			return _conture;
-		}
 		
-		public function set conture(value:Vector.<Point>):void
-		{
-			_conture = value;
-		}
+		
+		
 		
 		public function toString():String
 		{

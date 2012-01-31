@@ -84,6 +84,7 @@ package winxalex.fuzzy
 				
 				newOffset = levelOfConfidence * origLeftOffset;
 				leftPeekPoint.x = origLeftDomain - origLeftOffset + newOffset;
+				leftPeekPoint.y = levelOfConfidence;
 				leftOffset = newOffset;
 				
 			}
@@ -93,6 +94,7 @@ package winxalex.fuzzy
 			{
 				newOffset = levelOfConfidence * origRightOffset;
 				rightPeekPoint.x = origRightDomain + origRightOffset - newOffset;
+				rightPeekPoint.y = levelOfConfidence;
 				rightOffset = newOffset;
 				
 			}
@@ -104,31 +106,36 @@ package winxalex.fuzzy
 			}
 		}
 		
-		override public function get conture():Vector.<Point>
+	
+		override public function area():Number 
 		{
-			var points:Vector.<Point>;
+			var areaSize:Number = 0;
+			var value:Number = 0;
 			
-			if (!super.conture)
+			
+			if (leftPoint.x != leftPeekPoint.x)
 			{
-				super.conture = new Vector.<Point>();
-				
-				if (leftPeekPoint != leftPoint)
-				{
-					points.push(leftPoint);
-				}
-				
-				points.push(leftPeekPoint);
-				
-				if (rightPoint != rightPeekPoint)
-				{
-					points.push(rightPoint);
-				}
-				
-				points.push(rightPeekPoint);
-				
+				//Math.abs((a.getX()-c.getX())*(b.getY()-a.getY())-(a.getX()-b.getX())*(c.getY()-a.getY()))*0.5;
+				//a.y=0 b.y=0
+				value= (leftPoint.x - leftPeekPoint.x) * ( -leftPoint.x) * (leftPoint.x - leftPeekPoint.x) * (leftPeekPoint.y) * 0.5;
+				if (value < 0) 
+					areaSize = -value;
+				else
+				   areaSize = value;
 			}
 			
-			return super.conture;
+			
+			
+			if (leftPeekPoint.x != rightPeekPoint.x) {
+				value = (leftPeekPoint.x - rightPeekPoint.x) * (leftPeekPoint.y - rightPeekPoint.y);
+				if (value < 0) 
+					areaSize += -value;
+				else
+					areaSize += value;
+			}
+			
+			
+			return areaSize;
 		}
 		
 		override public function get maximumDomain():Number

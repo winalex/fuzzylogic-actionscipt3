@@ -70,7 +70,7 @@ package winxalex.fuzzy
 		
 		override public function calculateDOM(value:Number):Number 
 		{
-			degreeOfMembership=levelOfConfidence*Math.pow(Math.E, -Math.pow((value-averageDomain), 2) / (2 * Math.pow(width, 2)));
+			degreeOfMembership=levelOfConfidence*Math.pow(Math.E, -Math.pow((value-averageDomain), 2) / (2 * Math.pow(_width, 2)));
 			
 			return degreeOfMembership;
 		}
