@@ -1,6 +1,8 @@
 package
 {
 	import flash.display.Sprite;
+	import flash.text.TextField;
+	import flash.text.TextFieldAutoSize;
 	import flash.utils.Dictionary;
 	import winxalex.fuzzy.*;
 	
@@ -16,6 +18,7 @@ package
 		
 		public function Test1() 
 		{
+			var tf:TextField;
 			var fuz:Fuzzificator= new Fuzzificator();
 			var factory:IFuzzyMembershipFunctionFactory = FuzzyMembershipFunctionFactory.getInstance();
 			var manifold:FuzzyManifold;
@@ -24,6 +27,7 @@ package
 			var ammoStatusInput:FuzzyInput;
 			var distanceStatusInput:FuzzyInput;
 			var fuzzyManifolds:Dictionary;
+			var container1:Sprite;
 			
 			ammoStatusInput = new FuzzyInput();
 			distanceStatusInput = new FuzzyInput();
@@ -46,7 +50,16 @@ package
 			trace(func.toString());
 			
 			
-			
+			container1 = new Sprite();
+			container1.y = 60;
+			container1.x = 5;
+			addChild(container1);
+			tf = new TextField();
+			tf.y = 10;
+			tf.autoSize = TextFieldAutoSize.RIGHT;
+			tf.text = manifold.name;
+			container1.addChild(tf);
+			manifold.draw(container1.graphics,10);
 			
 			
 			
@@ -78,6 +91,16 @@ package
 			manifold.addMember(func);
 			//trace("Far:"+func.degreeOfMembership);
 			
+			var container2:Sprite = new Sprite();
+			container2.y = 140;
+			container2.x = 5;
+			tf = new TextField();
+			tf.y = 10;
+			tf.autoSize = TextFieldAutoSize.RIGHT;
+			tf.text = manifold.name;
+			container2.addChild(tf);
+			addChild(container2);
+			manifold.draw(container2.graphics);
 			
 			fuz.addManifold(manifold);
 			
@@ -107,6 +130,16 @@ package
 			//trace(func.linguisticTerm+":"+func.degreeOfMembership);
 			//trace(func.toString());
 			manifold.addMember(func);
+			
+			var container3:Sprite = new Sprite();
+			container3.y = 250;
+			container3.x = 5;
+			tf.autoSize = TextFieldAutoSize.RIGHT;
+			tf.text = manifold.name;
+			tf.y = 10;
+			container3.addChild(tf);
+			addChild(container3);
+			manifold.draw(container3.graphics,10);
 			
 			fuz.addManifold(manifold);
 			
@@ -145,9 +178,11 @@ package
 			trace("INPUT> ammo:" + ammoStatusInput.value + " distance:" + distanceStatusInput.value);
 			
 			fuz.Fuzzify();
+			fuz.getManifold("Distance_to_Target").fillArea(container2.graphics);
+			fuz.getManifold("Ammo_Status").fillArea(container3.graphics, 10);
 			
-			
-			
+			fuz.getManifold("Desirability").fillArea(container1.graphics,10);
+			return;
 		
 				
 			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.MEAN_OF_MAXIMUM);
@@ -188,7 +223,7 @@ package
 			//fuz.getManifold("Desirability").reset();
 			fuz.Fuzzify();
 			
-			
+
 			trace(fuz.getManifold("Desirability").toString());
 		
 				

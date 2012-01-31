@@ -1,5 +1,7 @@
 package winxalex.fuzzy
 {
+	import flash.display.Graphics;
+	import flash.display.GraphicsPathCommand;
 	import flash.geom.Point;
 	
 	/**
@@ -58,6 +60,41 @@ package winxalex.fuzzy
 				}
 			}
 			
+			var newOffset:Number
+			
+			if(degreeOfMembership){
+			
+			//CLIPPING
+			if (origLeftOffset != 0)
+			{
+				
+				newOffset = degreeOfMembership * origLeftOffset;
+				leftPeekPoint.x = origLeftDomain - origLeftOffset + newOffset;
+				
+				leftOffset = newOffset;
+				
+			}
+			
+			leftPeekPoint.y = degreeOfMembership;
+			
+			//CLIPPING
+			if (origRightOffset != 0)
+			{
+				newOffset = degreeOfMembership * origRightOffset;
+				rightPeekPoint.x = origRightDomain + origRightOffset - newOffset;
+				rightOffset = newOffset;
+				
+			}
+			
+			rightPeekPoint.y = degreeOfMembership;
+			
+			//in non simetrical triangles(_rightOffset!=_leftOffset);
+			if (rightPeekPoint.x != leftPeekPoint.x)
+			{
+				this.averageDomain = leftPeekPoint.x + (rightPeekPoint.x - leftPeekPoint.x) * 0.5; // / 2;
+			}
+			}
+			
 			return degreeOfMembership;
 		}
 		
@@ -66,8 +103,6 @@ package winxalex.fuzzy
 			var newOffset:Number;
 			
 			areBoundariesDIRTY = false;
-			
-			
 			
 			if (levelOfConfidence == 1)
 			{
@@ -106,36 +141,55 @@ package winxalex.fuzzy
 			}
 		}
 		
-	
-		override public function area():Number 
+		/*override public function area():Number
+		   {
+		   var areaSize:Number = 0;
+		   var value:Number = 0;
+		
+		
+		   if (leftPoint.x != leftPeekPoint.x)
+		   {
+		   //Math.abs((a.getX()-c.getX())*(b.getY()-a.getY())-(a.getX()-b.getX())*(c.getY()-a.getY()))*0.5;
+		   //a.y=0 b.y=0
+		   value= (leftPoint.x - leftPeekPoint.x) * ( -leftPoint.x) * (leftPoint.x - leftPeekPoint.x) * (leftPeekPoint.y) * 0.5;
+		   if (value < 0)
+		   areaSize = -value;
+		   else
+		   areaSize = value;
+		   }
+		
+		
+		
+		   if (leftPeekPoint.x != rightPeekPoint.x) {
+		   value = (leftPeekPoint.x - rightPeekPoint.x) * (leftPeekPoint.y - rightPeekPoint.y);
+		   if (value < 0)
+		   areaSize += -value;
+		   else
+		   areaSize += value;
+		   }
+		
+		
+		   return areaSize;
+		 }*/
+		
+		override public function fillArea(container:Graphics, scaleX:uint = 1, scaleY:uint = 50):void
 		{
-			var areaSize:Number = 0;
-			var value:Number = 0;
+			if (!degreeOfMembership) return;
+			
+			container.lineStyle(2, 0, 0);
+			container.beginFill(0xFF00FF);
 			
 			
-			if (leftPoint.x != leftPeekPoint.x)
-			{
-				//Math.abs((a.getX()-c.getX())*(b.getY()-a.getY())-(a.getX()-b.getX())*(c.getY()-a.getY()))*0.5;
-				//a.y=0 b.y=0
-				value= (leftPoint.x - leftPeekPoint.x) * ( -leftPoint.x) * (leftPoint.x - leftPeekPoint.x) * (leftPeekPoint.y) * 0.5;
-				if (value < 0) 
-					areaSize = -value;
-				else
-				   areaSize = value;
-			}
+				container.drawPath(Vector.<int>([1, 2, 2, 2]), Vector.<Number>([leftPoint.x * scaleX, -leftPoint.y * scaleY, leftPeekPoint.x * scaleX, -leftPeekPoint.y * scaleY, rightPeekPoint.x * scaleX, -rightPeekPoint.y * scaleY, rightPoint.x * scaleX, -rightPoint.y * scaleY]));
 			
+			container.endFill();
+		}
+		
+		override public function draw(container:Graphics, scaleX:uint = 1, scaleY:uint = 50):void
+		{
+			container.lineStyle(2);
 			
-			
-			if (leftPeekPoint.x != rightPeekPoint.x) {
-				value = (leftPeekPoint.x - rightPeekPoint.x) * (leftPeekPoint.y - rightPeekPoint.y);
-				if (value < 0) 
-					areaSize += -value;
-				else
-					areaSize += value;
-			}
-			
-			
-			return areaSize;
+			container.drawPath(Vector.<int>([1, 2, 2, 2]), Vector.<Number>([leftPoint.x * scaleX, -leftPoint.y * scaleY, leftPeekPoint.x * scaleX, -leftPeekPoint.y * scaleY, rightPeekPoint.x * scaleX, -rightPeekPoint.y * scaleY, rightPoint.x * scaleX, -rightPoint.y * scaleY]));
 		}
 		
 		override public function get maximumDomain():Number
