@@ -30,6 +30,11 @@ package
 			
 			manifold = new FuzzyManifold("Desirability");
 			
+			//leftMidPoint,rightMidPoint,rightOffset
+			func = factory.create(FuzzyMembershipFunction.LEFT_SHOULDER, "Undesirable", 0,25, 50 ); //[0 0 25 50]
+			manifold.addMember(func);
+			trace(func.toString());
+			
 			//leftOffset,peakPoint,rightOffset
 			func = factory.create(FuzzyMembershipFunction.TRIANGLE, "Desirable", [25, 50, 75] );//  [25 50 75]
 			manifold.addMember(func);
@@ -40,10 +45,7 @@ package
 			manifold.addMember(func);
 			trace(func.toString());
 			
-			//leftMidPoint,rightMidPoint,rightOffset
-			func = factory.create(FuzzyMembershipFunction.LEFT_SHOULDER, "Undesirable", 0,25, 50 ); //[0 0 25 50]
-			manifold.addMember(func);
-			trace(func.toString());
+			
 			
 			
 			
@@ -55,12 +57,8 @@ package
 			
 			manifold = new FuzzyManifold("Distance_to_Target");
 			manifold.input = distanceStatusInput;
-			//left0ffset,peakPoint
-			func = factory.create(FuzzyMembershipFunction.RIGHT_SHOULDER, "Far", "150, 300,400","," )  ;//  [150 300 400 400]
-			//IFuzzyMembershipFunction(func).calculateDOM(200);
-			manifold.addMember(func);
-			//trace("Far:"+func.degreeOfMembership);
 			
+			//!!! Warning make them sorted  by X so CENTROID won't fail 
 			//leftPeakPoint,rightPeakPoint,rightPoint
 			func = factory.create(FuzzyMembershipFunction.LEFT_SHOULDER, "Close", 0,25, 125 );//[0 0 25 125]
 			//IFuzzyMembershipFunction(func).calculateDOM(200);
@@ -73,6 +71,12 @@ package
 			//IFuzzyMembershipFunction(func).calculateDOM(200);
 			manifold.addMember(func);
 			//trace("Medium:" + func.degreeOfMembership);
+			
+			//left0ffset,peakPoint
+			func = factory.create(FuzzyMembershipFunction.RIGHT_SHOULDER, "Far", "150, 300,400","," )  ;//  [150 300 400 400]
+			//IFuzzyMembershipFunction(func).calculateDOM(200);
+			manifold.addMember(func);
+			//trace("Far:"+func.degreeOfMembership);
 			
 			
 			fuz.addManifold(manifold);
@@ -162,9 +166,15 @@ package
 			trace("OUTPUT MAXAV:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
 				//fuz.getManifold("Desirability").reset();
-				fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTER_OF_AREA_CENTROID);
+				fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTER_OF_AREA);
 			
-			trace("CENTROID:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			trace("OUTPUT COA:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			
+			
+			
+			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTROID);
+			
+			trace("OUTPUT COG:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
 			trace(fuz.getManifold("Desirability").toString());
 			
@@ -192,9 +202,13 @@ package
 			trace("OUTPUT MAXAV:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
 			//fuz.getManifold("Desirability").reset();
-			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTER_OF_AREA_CENTROID);
+			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTER_OF_AREA);
 			
-			trace("OUTPUT CENTROID:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			trace("OUTPUT COA:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			
+			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTROID);
+			
+			trace("OUTPUT COG:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
 			
 			ammoStatusInput.value = 8;
@@ -229,7 +243,7 @@ package
 			
 				//	fuz.getManifold("Desirability").reset();
 			
-				fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTER_OF_AREA_CENTROID);
+				fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTER_OF_AREA);
 			
 			trace("CENTROID:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 		

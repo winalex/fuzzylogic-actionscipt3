@@ -18,8 +18,6 @@ package winxalex.fuzzy
 		
 		private var _fuzzificator:Fuzzificator = null;
 		
-		
-		
 		public function FuzzyManifold(name:String)
 		{
 			this.name = name;
@@ -179,16 +177,94 @@ package winxalex.fuzzy
 			var func4:FuzzyMembershipFunction;
 			var func5:FuzzyMembershipFunction;
 			
+			var value:Number;
+			var x0:Number, x1:Number, y1:Number, y0:Number;
+			var a:Number;
+			var signedArea:Number;
+			var intersectionPoint:Point;
+			var shapePoints:Vector.<Point> = new Vector.<Point>;
+			
 			if (len == 2)
 			{
+				func1 = FuzzyMembershipFunction(memberfunctions[0]);
+				func2 = FuzzyMembershipFunction(memberfunctions[1]);
 				
-				return computeContureCentroid(unionConture(FuzzyMembershipFunction(memberfunctions[0]).conture, FuzzyMembershipFunction(memberfunctions[1]).conture));
+				intersectionPoint = FuzzyManifold.intersect(func1, func2);
+				
+				shapePoints[shapePoints.length] = func1.leftPoint;
+				shapePoints[shapePoints.length] = func1.leftPeekPoint;
+				//if its triangle (LOC=1 ) or if intersection not lies on the LOC line
+				if (func1.leftPeekPoint.x != func1.rightPeekPoint.x && intersectionPoint.y != func1.levelOfConfidence)
+				{
+					shapePoints[shapePoints.length] = func1.rightPeekPoint;
+					
+				}
+				shapePoints[shapePoints.length] = intersectionPoint;
+				
+				if (intersectionPoint.y != func2.levelOfConfidence)
+					shapePoints[shapePoints.length] = func2.leftPeekPoint;
+				
+				if (func2.leftPeekPoint.x != func2.rightPeekPoint.x)
+					shapePoints[shapePoints.length] = func2.rightPeekPoint;
+				
+				shapePoints[shapePoints.length] = func2.rightPoint;
+				
+				return compute2DPolygonCentroid(shapePoints);
 			}
 			
 			if (len == 3)
-			   {
-			   return computeContureCentroid(unionConture(FuzzyMembershipFunction(memberfunctions[0]).conture,FuzzyMembershipFunction(memberfunctions[1]).conture,FuzzyMembershipFunction(memberfunctions[2]).conture));
-			   }
+			{
+				func1 = FuzzyMembershipFunction(memberfunctions[0]);
+				func2 = FuzzyMembershipFunction(memberfunctions[1]);
+				func3 = FuzzyMembershipFunction(memberfunctions[2]);
+				
+				FuzzyManifold.intersect(func1, func2);
+				
+				intersectionPoint = FuzzyManifold.intersect(func1, func2);
+				
+				shapePoints[shapePoints.length] = func1.leftPoint;
+				shapePoints[shapePoints.length] = func1.leftPeekPoint;
+				//if its triangle (LOC=1 ) or if intersection not lies on the LOC line
+				if (func1.leftPeekPoint.x != func1.rightPeekPoint.x && intersectionPoint.y != func1.levelOfConfidence)
+				{
+					shapePoints[shapePoints.length] = func1.rightPeekPoint;
+					
+				}
+				shapePoints[shapePoints.length] = intersectionPoint;
+				
+				if (intersectionPoint.y != func2.levelOfConfidence)
+					shapePoints[shapePoints.length] = func2.leftPeekPoint;
+				
+				if (func2.leftPeekPoint.x != func2.rightPeekPoint.x)
+					shapePoints[shapePoints.length] = func2.rightPeekPoint;
+				
+				shapePoints[shapePoints.length] = func2.rightPoint;
+				
+				FuzzyManifold.intersect(func2, func3);
+				
+				
+					intersectionPoint=FuzzyManifold.intersect(func1, func2);
+				
+				shapePoints[shapePoints.length] = func2.leftPoint;
+				shapePoints[shapePoints.length] = func2.leftPeekPoint;
+				//if its triangle (LOC=1 ) or if intersection not lies on the LOC line
+				if (func2.leftPeekPoint.x != func2.rightPeekPoint.x && intersectionPoint.y != func2.levelOfConfidence)
+				{
+				shapePoints[shapePoints.length] = func2.rightPeekPoint;
+				
+				}	
+				shapePoints[shapePoints.length] = intersectionPoint;
+				
+				if(intersectionPoint.y!=func3.levelOfConfidence)
+				shapePoints[shapePoints.length] = func3.leftPeekPoint;
+				
+				if(func3.leftPeekPoint.x!=func3.rightPeekPoint.x)
+				shapePoints[shapePoints.length] = func3.rightPeekPoint;
+				
+				shapePoints[shapePoints.length] = func3.rightPoint;
+				
+				return compute2DPolygonCentroid(shapePoints);
+			}
 			/*
 			
 			   if (len == 4)
@@ -203,61 +279,107 @@ package winxalex.fuzzy
 			throw new Error(" Not Implemented for 6 memberfunction");
 		}
 		
-		private function unionConture(... args):Vector.<Point>
+		public static function intersect(leftFunction:FuzzyMembershipFunction, rightFunction:FuzzyMembershipFunction):Point
 		{
-			var i:int = args.length - 1;
-			var conture:Vector.<Point>;
-			var conture1:Vector.<Point>
-			var func1:FuzzyMembershipFunction;
-			var func2:FuzzyMembershipFunction;
-			var x0:Number;
-			var x1:Number;
 			
-			var y0:Number;
-			var y1:Number;
+			var intersectionPoint:Point;
 			
-			
-			
-			if (args.length < 1)
-				throw new Error("At least 2 contures requred for union operation");
-			
-			conture = new Vector.<Point>();
-			
-			//going from right to left
-			while (i > 0)
+			if (leftFunction is FuzzyTrapezoidMembershipFunction && rightFunction is FuzzyTrapezoidMembershipFunction)
 			{
-				func1 = memberfunctions[i];
-				func2 = memberfunctions[i - 1];
 				
-			/*	x0 = func1.rightPoint.x;
-				y0 = func1.rightPoint.y;
-				x1 = vertices[i+1].x;
-				y1 = vertices[i+1].y;
-				a = x0*y1 - x1*y0;
-				signedArea += a;
-				centroid.x += (x0 + x1)*a;*/
+				if (leftFunction.levelOfConfidence != 1 || rightFunction.levelOfConfidence != 1)
+					if (leftFunction.levelOfConfidence > rightFunction.levelOfConfidence)
+					{
+						//   /\-
+						intersectionPoint = lineIntersectLine(leftFunction.rightPeekPoint, leftFunction.rightPoint, rightFunction.leftPeekPoint, rightFunction.rightPeekPoint);
+						
+						if (intersectionPoint)
+							return intersectionPoint;
+						
+					}
+					else
+					{
+						//  -/\
+						
+						intersectionPoint = lineIntersectLine(leftFunction.leftPeekPoint, leftFunction.rightPeekPoint, rightFunction.leftPoint, rightFunction.leftPeekPoint);
+						
+						if (intersectionPoint)
+							return intersectionPoint;
+					}
 				
-				//if(func2.rightPeekPoint.x != func2.leftPeekPoint.x)
+				// /\/\
 				
-			/*	*/
+				intersectionPoint = lineIntersectLine(leftFunction.rightPeekPoint, leftFunction.rightPoint, rightFunction.leftPoint, rightFunction.leftPeekPoint);
 				
+				if (intersectionPoint)
+					return intersectionPoint;
 				
-				i--;
+				throw new Error("Cant' find intersection point between " + leftFunction.linguisticTerm + "," + rightFunction.linguisticTerm);
+				
+			}
+			else if (leftFunction is FuzzyGaussMembershipFunction && rightFunction is FuzzyTrapezoidMembershipFunction)
+			{
+				throw new Error("Not implemented yet");
+			}
+			else if (leftFunction is FuzzyTrapezoidMembershipFunction && rightFunction is FuzzyGaussMembershipFunction)
+			{
+				throw new Error("Not implemented yet");
+			}
+			else if (leftFunction is FuzzyGaussMembershipFunction && rightFunction is FuzzyGaussMembershipFunction)
+			{
+				throw new Error("Not implemented yet");
 			}
 			
 			return null;
 		}
 		
-		private function intersect(func1:FuzzyMembershipFunction, func2:FuzzyMembershipFunction):void {
+		private static function compute2DPolygonCentroid(vertices:Vector.<Point>):Number
+		{
+			var centroid:Number;
+			var signedArea:Number = 0.0;
+			var x0:Number = 0.0; // Current vertex X
+			var y0:Number = 0.0; // Current vertex Y
+			var x1:Number = 0.0; // Next vertex X
+			var y1:Number = 0.0; // Next vertex Y
+			var a:Number = 0.0; // Partial signed area
 			
+			// For all vertices except last
+			var i:int = 0;
+			var len:int = vertices.length - 1;
+			for (i = 0; i < len; ++i)
+			{
+				x0 = vertices[i].x;
+				y0 = vertices[i].y;
+				x1 = vertices[i + 1].x;
+				y1 = vertices[i + 1].y;
+				a = x0 * y1 - x1 * y0;
+				signedArea += a;
+				centroid += (x0 + x1) * a;
+				
+			}
+			
+			// Do last vertex
+			x0 = vertices[i].x;
+			y0 = vertices[i].y;
+			x1 = vertices[0].x;
+			y1 = vertices[0].y;
+			a = x0 * y1 - x1 * y0;
+			signedArea += a;
+			centroid += (x0 + x1) * a;
+			
+			centroid /= (3 * signedArea);
+			
+			return centroid;
 		}
 		
-		
-	
-		
-		private function computeContureCentroid(conture:Vector.<Point>):Number
+		public static function lineIntersectGauss():Point
 		{
-			return 0;
+			return null;
+		}
+		
+		public static function gaussIntersectGauss():Point
+		{
+			return null;
 		}
 		
 		//---------------------------------------------------------------
@@ -645,7 +767,7 @@ package winxalex.fuzzy
 			if (maxRange < currentRangeValue)
 				maxRange = currentRangeValue;
 			
-			trace("Membership function <" + func.linguisticTerm + ">of type:" + func.type + " added to manifold {" + this.name + "} range[" + minRange + "," + maxRange + "]");
+			trace("Membership function <" + func.linguisticTerm + ">of type:" + func.typeName + " added to manifold {" + this.name + "} range[" + minRange + "," + maxRange + "]");
 		
 		}
 		

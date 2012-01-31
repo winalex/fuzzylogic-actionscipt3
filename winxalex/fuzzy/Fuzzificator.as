@@ -461,13 +461,18 @@ package winxalex.fuzzy
 				MoM(outputFuzzyManifolds);
 				return outputFuzzyManifolds;
 				break;
-				case DefuzzificationMethod.CENTER_OF_AREA_CENTROID:
+				case DefuzzificationMethod.CENTER_OF_AREA:
 				if(args[0])
 				CoA(outputFuzzyManifolds,args[0]);
 				else
 				CoA(outputFuzzyManifolds);
 				return outputFuzzyManifolds;
 				break;
+				case DefuzzificationMethod.CENTROID:
+				COG();
+				return outputFuzzyManifolds;
+				break;
+				
 				
 			}
 			

@@ -24,8 +24,7 @@ package winxalex.fuzzy
 		function get maximumDomain():Number
 		function set maximumDomain(value:Number):void;
 		
-		function get conture():Vector.<Point>;
-		function set conture(value:Vector.<Point>):void;
+		
 	 
 	
 		
