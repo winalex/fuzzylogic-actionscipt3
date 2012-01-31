@@ -1,5 +1,6 @@
 package winxalex.fuzzy
 {
+	import flash.display.Graphics;
 	import flash.geom.Point;
 	
 	/**
@@ -15,8 +16,11 @@ package winxalex.fuzzy
 		
 		public var input:FuzzyInput;
 		private var _output:Number;
+		private var _container:Graphics;
 		
 		private var _fuzzificator:Fuzzificator = null;
+		private var _drawingScaleX:uint;
+		private var _drawingScaleY:uint;
 		
 		public function FuzzyManifold(name:String)
 		{
@@ -263,6 +267,12 @@ package winxalex.fuzzy
 				
 				shapePoints[shapePoints.length] = func3.rightPoint;
 				
+				func1.draw(_container, _drawingScaleX, _drawingScaleY);
+				func2.draw(_container, _drawingScaleX, _drawingScaleY);
+				func3.draw(_container, _drawingScaleX, _drawingScaleY);
+				
+				drawAreaShapePoints(shapePoints);
+				
 				return compute2DPolygonCentroid(shapePoints);
 			}
 			/*
@@ -278,6 +288,44 @@ package winxalex.fuzzy
 			 */
 			throw new Error(" Not Implemented for 6 memberfunction");
 		}
+		
+		
+		
+		public function fillArea(container:Graphics,scaleX:uint=1,scaleY:uint=50):void
+		{
+			 for each (var func:FuzzyMembershipFunction in this.memberfunctions)
+					{
+						func.fillArea(container, scaleX, scaleY);
+					}
+		}
+		
+		public function draw(container:Graphics,scaleX:uint=1,scaleY:uint=50):void{
+			
+			_container = container;
+			_drawingScaleX = scaleX;
+			_drawingScaleY = scaleY;
+			
+			    for each (var func:FuzzyMembershipFunction in this.memberfunctions)
+					{
+						func.draw(container,scaleX,scaleY);
+					}
+		}
+		
+		private function drawAreaShapePoints(points:Vector.<Point>):void
+		{
+			var i:int = 0;
+			var len:int = points.length - 1;
+			var point:Point;
+			
+			for (i = 0; i < len; ++i)
+			{
+				point = points[i];
+				_container.drawCircle(point.x*_drawingScaleX, -point.y*_drawingScaleY, 2);
+			}
+		}
+		
+		
+		
 		
 		public static function intersect(leftFunction:FuzzyMembershipFunction, rightFunction:FuzzyMembershipFunction):Point
 		{
@@ -335,7 +383,7 @@ package winxalex.fuzzy
 		
 		private static function compute2DPolygonCentroid(vertices:Vector.<Point>):Number
 		{
-			var centroid:Number;
+			var centroid:Number=0;
 			var signedArea:Number = 0.0;
 			var x0:Number = 0.0; // Current vertex X
 			var y0:Number = 0.0; // Current vertex Y
@@ -350,9 +398,10 @@ package winxalex.fuzzy
 			{
 				x0 = vertices[i].x;
 				y0 = vertices[i].y;
+				
 				x1 = vertices[i + 1].x;
 				y1 = vertices[i + 1].y;
-				a = x0 * y1 - x1 * y0;
+				a = Math.abs(x0 * y1 - x1 * y0);
 				signedArea += a;
 				centroid += (x0 + x1) * a;
 				
@@ -363,7 +412,7 @@ package winxalex.fuzzy
 			y0 = vertices[i].y;
 			x1 = vertices[0].x;
 			y1 = vertices[0].y;
-			a = x0 * y1 - x1 * y0;
+			a = Math.abs(x0 * y1 - x1 * y0);
 			signedArea += a;
 			centroid += (x0 + x1) * a;
 			
@@ -783,11 +832,11 @@ package winxalex.fuzzy
 				if (input.value <= maxRange && input.value >= minRange)
 				{
 					
-					for each (var func:IFuzzyMembershipFunction in this.memberfunctions)
+					for each (var func:FuzzyMembershipFunction in this.memberfunctions)
 					{
 						func.reset();
 						func.calculateDOM(input.value);
-						trace(this.name, FuzzyMembershipFunction(func).linguisticTerm, FuzzyMembershipFunction(func).degreeOfMembership);
+						trace(this.name, FuzzyMembershipFunction(func).linguisticTerm,"DOM:"+FuzzyMembershipFunction(func).degreeOfMembership+" for input "+input.value);
 					}
 				}
 				else

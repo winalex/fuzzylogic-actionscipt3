@@ -514,6 +514,8 @@ package winxalex.fuzzy
 							_nextAggregation.value = _result * this.weight;
 							_prevAggregation.value = memberfunction.levelOfConfidence;
 							
+							//HERE degree of membership can be used for output function too 
+							//recalc of bounds in calculateDOM needed(so for speed LOC variable is introduced)
 							memberfunction.levelOfConfidence = _fuzzificator.aggregation(_prevAggregation, _nextAggregation);
 							
 							if (_fuzzificator.implication == FuzzyOperator.fPRODUCT)

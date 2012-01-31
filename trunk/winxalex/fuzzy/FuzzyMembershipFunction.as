@@ -1,5 +1,6 @@
 package winxalex.fuzzy
 {
+	import flash.display.Graphics;
 	import flash.geom.Point;
 	
 	/**
@@ -17,13 +18,11 @@ package winxalex.fuzzy
 		   public static const INV_C_TRAPEZOID:uint = 3;
 		 public static const LEFT_TRAPEZOID:uint = 4;*/
 		
-		
-		
 		public var linguisticTerm:String;
 		
 		private var _typeName:String;
 		
-		public var rightPoint:Point ;
+		public var rightPoint:Point;
 		public var rightPeekPoint:Point;
 		public var rightOffset:Number;
 		
@@ -31,7 +30,8 @@ package winxalex.fuzzy
 		public var leftPeekPoint:Point;
 		public var leftOffset:Number;
 		
-		public var intersectionPoint:Point;
+		
+		
 		
 		public var isScaled:Boolean = false;
 		
@@ -78,32 +78,7 @@ package winxalex.fuzzy
 			_maximumDomain = origRightDomain;
 			
 			recalcBoundaries();
-			
-			
-		}
 		
-		public function reset():void
-		{
-			
-			areBoundariesDIRTY = false;
-			
-			_levelOfConfidence = 1;
-			_degreeOfMembership = 0;
-			
-			isScaled = false;
-			
-			isLOCReseted = false;
-			
-			//TODO check if needed
-			//recalcBoundaries(); 
-		
-		}
-		
-		
-		
-		
-		public function area():Number {
-			throw new Error("must be overriden");
 		}
 		
 		public function get degreeOfMembership():Number
@@ -116,26 +91,10 @@ package winxalex.fuzzy
 			_degreeOfMembership = value;
 		}
 		
-		public function recalcBoundaries():void {
-			
-				this.rightPeekPoint.x = origRightDomain;
-				this.rightPeekPoint.y = 1;
-				
-				this.rightOffset = origRightOffset;
-				this.leftOffset = origLeftOffset;
-				
-				this.leftPeekPoint.x = origLeftDomain;
-				this.leftPeekPoint.y = 1;
-								
-				if (origRightDomain != origLeftDomain)
-					_averageDomain = origLeftDomain + (origRightDomain - origLeftDomain) * 0.5
-				else
-					_averageDomain = origLeftDomain;
-		}
-		
 		public function get levelOfConfidence():Number
 		{
 			//if (isNaN(_levelOfConfidence)) return 1;
+			
 			return _levelOfConfidence;
 		}
 		
@@ -145,19 +104,10 @@ package winxalex.fuzzy
 			
 			_levelOfConfidence = value;
 			
-			areBoundariesDIRTY = true;
-		}
-		
-		public function calculateDOM(value:Number):Number
-		{
-			if (areBoundariesDIRTY)
-			{
-				
-				recalcBoundaries();
-				
-			}
+			rightPeekPoint.y = value;
+			leftPeekPoint.y = value;
 			
-			return 0;
+			areBoundariesDIRTY = true;
 		}
 		
 		internal function get maximumDOM():Number
@@ -169,7 +119,7 @@ package winxalex.fuzzy
 		{
 			
 			_maximumDOM = value;
-			
+		
 		}
 		
 		public function get averageDomain():Number
@@ -195,14 +145,68 @@ package winxalex.fuzzy
 			_maximumDomain = value;
 		}
 		
-		public function get typeName():String 
+		public function get typeName():String
 		{
 			return _typeName;
 		}
 		
+		public function reset():void
+		{
+			
+			areBoundariesDIRTY = false;
+			
+			_levelOfConfidence = 1;
+			_degreeOfMembership = 0;
+			
+			isScaled = false;
+			
+			isLOCReseted = false;
+		
+			//TODO check if needed
+			//recalcBoundaries(); 
+		
+		}
+		
+		public function calculateDOM(value:Number):Number
+		{
+			if (areBoundariesDIRTY)
+			{
+				
+				recalcBoundaries();
+				
+			}
+			
+			return 0;
+		}
 		
 		
+		public function fillArea(container:Graphics, scaleX:uint = 1, scaleY:uint = 50):void
+		{
+			throw new Error("Should be overrided");
+		}
 		
+		public function draw(container:Graphics,scaleX:uint=1,scaleY:uint=50):void
+		{
+			throw new Error("Should be overrided");
+		}
+		
+		public function recalcBoundaries():void
+		{
+			
+			this.rightPeekPoint.x = origRightDomain;
+			this.rightPeekPoint.y = 1;
+			
+			this.rightOffset = origRightOffset;
+			this.leftOffset = origLeftOffset;
+			
+			this.leftPeekPoint.x = origLeftDomain;
+			this.leftPeekPoint.y = 1;
+			
+			if (origRightDomain != origLeftDomain)
+				_averageDomain = origLeftDomain + (origRightDomain - origLeftDomain) * 0.5
+			else
+				_averageDomain = origLeftDomain;
+		}
 		
 		public function toString():String
 		{
