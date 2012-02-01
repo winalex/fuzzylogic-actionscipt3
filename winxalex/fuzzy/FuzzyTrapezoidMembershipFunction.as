@@ -25,12 +25,12 @@ package winxalex.fuzzy
 			
 			var grad:Number;
 			
-			super.calculateDOM(value);
+			//super.calculateDOM(value);
 			
 			//between mid points
 			if (value >= leftPeekPoint.x && value <= rightPeekPoint.x)
 			{
-				degreeOfMembership = levelOfConfidence;
+				degreeOfMembership = maximumDOM; // levelOfConfidence;
 			}
 			else
 			{ //  //find DOM if left of center
@@ -41,7 +41,7 @@ package winxalex.fuzzy
 				if ((value < leftPeekPoint.x) && grad > 0)
 				{
 					
-					degreeOfMembership = grad * levelOfConfidence / leftOffset;
+					degreeOfMembership = grad * maximumDOM / leftOffset;
 				}
 				
 				else //find DOM if right of center
@@ -50,8 +50,7 @@ package winxalex.fuzzy
 					
 					if ((value > rightPeekPoint.x) && (grad > 0))
 					{
-						
-						degreeOfMembership = grad * levelOfConfidence / rightOffset;
+						degreeOfMembership = grad * maximumDOM / rightOffset;
 					}
 					else //out of range of this FLV, degreeOfMembership= zero
 					{
@@ -60,9 +59,19 @@ package winxalex.fuzzy
 				}
 			}
 			
-			var newOffset:Number
+			//areBoundariesDIRTY = true;
 			
-			if(degreeOfMembership){
+			return degreeOfMembership;
+		}
+		
+		override public function recalcBoundaries():void
+		{
+			var newOffset:Number;
+			
+			areBoundariesDIRTY = false;
+						
+			if (isScaled)
+				return; //NO clipping
 			
 			//CLIPPING
 			if (origLeftOffset != 0)
@@ -82,57 +91,12 @@ package winxalex.fuzzy
 			{
 				newOffset = degreeOfMembership * origRightOffset;
 				rightPeekPoint.x = origRightDomain + origRightOffset - newOffset;
+				
 				rightOffset = newOffset;
 				
 			}
 			
 			rightPeekPoint.y = degreeOfMembership;
-			
-			//in non simetrical triangles(_rightOffset!=_leftOffset);
-			if (rightPeekPoint.x != leftPeekPoint.x)
-			{
-				this.averageDomain = leftPeekPoint.x + (rightPeekPoint.x - leftPeekPoint.x) * 0.5; // / 2;
-			}
-			}
-			
-			return degreeOfMembership;
-		}
-		
-		override public function recalcBoundaries():void
-		{
-			var newOffset:Number;
-			
-			areBoundariesDIRTY = false;
-			
-			if (levelOfConfidence == 1)
-			{
-				super.recalcBoundaries();
-				return;
-			}
-			
-			if (isScaled)
-				return; //NO clipping
-			
-			//CLIPPING
-			if (origLeftOffset != 0)
-			{
-				
-				newOffset = levelOfConfidence * origLeftOffset;
-				leftPeekPoint.x = origLeftDomain - origLeftOffset + newOffset;
-				leftPeekPoint.y = levelOfConfidence;
-				leftOffset = newOffset;
-				
-			}
-			
-			//CLIPPING
-			if (origRightOffset != 0)
-			{
-				newOffset = levelOfConfidence * origRightOffset;
-				rightPeekPoint.x = origRightDomain + origRightOffset - newOffset;
-				rightPeekPoint.y = levelOfConfidence;
-				rightOffset = newOffset;
-				
-			}
 			
 			//in non simetrical triangles(_rightOffset!=_leftOffset);
 			if (rightPeekPoint.x != leftPeekPoint.x)
@@ -174,19 +138,25 @@ package winxalex.fuzzy
 		
 		override public function fillArea(container:Graphics, scaleX:uint = 1, scaleY:uint = 50):void
 		{
-			if (!degreeOfMembership) return;
+			if (!degreeOfMembership)
+				return;
+			
+			if (areBoundariesDIRTY)
+				recalcBoundaries();
 			
 			container.lineStyle(2, 0, 0);
 			container.beginFill(0xFF00FF);
 			
-			
-				container.drawPath(Vector.<int>([1, 2, 2, 2]), Vector.<Number>([leftPoint.x * scaleX, -leftPoint.y * scaleY, leftPeekPoint.x * scaleX, -leftPeekPoint.y * scaleY, rightPeekPoint.x * scaleX, -rightPeekPoint.y * scaleY, rightPoint.x * scaleX, -rightPoint.y * scaleY]));
+			container.drawPath(Vector.<int>([1, 2, 2, 2]), Vector.<Number>([leftPoint.x * scaleX, -leftPoint.y * scaleY, leftPeekPoint.x * scaleX, -leftPeekPoint.y * scaleY, rightPeekPoint.x * scaleX, -rightPeekPoint.y * scaleY, rightPoint.x * scaleX, -rightPoint.y * scaleY]));
 			
 			container.endFill();
 		}
 		
 		override public function draw(container:Graphics, scaleX:uint = 1, scaleY:uint = 50):void
 		{
+			/*if (areBoundariesDIRTY)
+			 recalcBoundaries();*/
+			
 			container.lineStyle(2);
 			
 			container.drawPath(Vector.<int>([1, 2, 2, 2]), Vector.<Number>([leftPoint.x * scaleX, -leftPoint.y * scaleY, leftPeekPoint.x * scaleX, -leftPeekPoint.y * scaleY, rightPeekPoint.x * scaleX, -rightPeekPoint.y * scaleY, rightPoint.x * scaleX, -rightPoint.y * scaleY]));

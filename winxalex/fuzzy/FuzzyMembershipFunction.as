@@ -23,15 +23,12 @@ package winxalex.fuzzy
 		private var _typeName:String;
 		
 		public var rightPoint:Point;
-		public var rightPeekPoint:Point;
+		private var _rightPeekPoint:Point;
 		public var rightOffset:Number;
 		
 		public var leftPoint:Point;
 		public var leftPeekPoint:Point;
 		public var leftOffset:Number;
-		
-		
-		
 		
 		public var isScaled:Boolean = false;
 		
@@ -53,7 +50,7 @@ package winxalex.fuzzy
 		 * level of confidence (firing strenght)
 		 */
 		private var _levelOfConfidence:Number = 1;
-		private var _maximumDOM:Number = 0;
+		private var _maximumDOM:Number = 1;
 		private var _degreeOfMembership:Number = 0;
 		
 		public function FuzzyMembershipFunction(linguisticTerm:String, typeName:String, leftDomain:Number = NaN, leftPeekDomain:Number = NaN, rightPeekDomain:Number = NaN, rightDomain:Number = NaN, ... args):void
@@ -72,12 +69,20 @@ package winxalex.fuzzy
 			this.rightPoint = new Point();
 			this.rightPoint.x = rightDomain;
 			
-			rightPeekPoint = new Point(rightPeekDomain, 1)
+			_rightPeekPoint = new Point(rightPeekDomain, 1)
 			leftPeekPoint = new Point(leftPeekDomain, 1)
 			
 			_maximumDomain = origRightDomain;
 			
-			recalcBoundaries();
+			this.rightOffset = origRightOffset;
+			this.leftOffset = origLeftOffset;
+			
+			if (origRightDomain != origLeftDomain)
+				_averageDomain = origLeftDomain + (origRightDomain - origLeftDomain) * 0.5
+			else
+				_averageDomain = origLeftDomain;
+		
+			//this.recalcBoundaries();
 		
 		}
 		
@@ -88,12 +93,22 @@ package winxalex.fuzzy
 		
 		public function set degreeOfMembership(value:Number):void
 		{
+			areBoundariesDIRTY = true;
 			_degreeOfMembership = value;
+			
+			if (value == 1)
+			{
+				//restoring orginal settings
+			   this.recalcBoundaries();
+			   return;
+			 }
 		}
 		
 		public function get levelOfConfidence():Number
 		{
 			//if (isNaN(_levelOfConfidence)) return 1;
+			
+			areBoundariesDIRTY = true;
 			
 			return _levelOfConfidence;
 		}
@@ -104,12 +119,12 @@ package winxalex.fuzzy
 			
 			_levelOfConfidence = value;
 			
-			rightPeekPoint.y = value;
-			leftPeekPoint.y = value;
-			
 			areBoundariesDIRTY = true;
 		}
 		
+		/**
+		 * Maximum Degree of Membership
+		 */
 		internal function get maximumDOM():Number
 		{
 			return _maximumDOM;
@@ -119,7 +134,8 @@ package winxalex.fuzzy
 		{
 			
 			_maximumDOM = value;
-		
+			
+			areBoundariesDIRTY = true;
 		}
 		
 		public function get averageDomain():Number
@@ -133,7 +149,7 @@ package winxalex.fuzzy
 		}
 		
 		/**
-		 * point on which member function reach value = 1
+		 * maximum X value on which member function has value = 1
 		 */
 		public function get maximumDomain():Number
 		{
@@ -150,42 +166,42 @@ package winxalex.fuzzy
 			return _typeName;
 		}
 		
+		public function get rightPeekPoint():Point
+		{
+			//if(areBoundariesDIRTY)
+			return _rightPeekPoint;
+		}
+		
 		public function reset():void
 		{
 			
 			areBoundariesDIRTY = false;
 			
 			_levelOfConfidence = 1;
+			_maximumDOM = 1;
 			_degreeOfMembership = 0;
 			
 			isScaled = false;
 			
 			isLOCReseted = false;
 		
-			//TODO check if needed
-			//recalcBoundaries(); 
+			//recalcBoundaries();
 		
 		}
 		
 		public function calculateDOM(value:Number):Number
 		{
-			if (areBoundariesDIRTY)
-			{
-				
-				recalcBoundaries();
-				
-			}
 			
+			throw new Error("Should be overrided");
 			return 0;
 		}
-		
 		
 		public function fillArea(container:Graphics, scaleX:uint = 1, scaleY:uint = 50):void
 		{
 			throw new Error("Should be overrided");
 		}
 		
-		public function draw(container:Graphics,scaleX:uint=1,scaleY:uint=50):void
+		public function draw(container:Graphics, scaleX:uint = 1, scaleY:uint = 50):void
 		{
 			throw new Error("Should be overrided");
 		}
@@ -196,11 +212,11 @@ package winxalex.fuzzy
 			this.rightPeekPoint.x = origRightDomain;
 			this.rightPeekPoint.y = 1;
 			
-			this.rightOffset = origRightOffset;
-			this.leftOffset = origLeftOffset;
-			
 			this.leftPeekPoint.x = origLeftDomain;
 			this.leftPeekPoint.y = 1;
+			
+			this.rightOffset = origRightOffset;
+			this.leftOffset = origLeftOffset;
 			
 			if (origRightDomain != origLeftDomain)
 				_averageDomain = origLeftDomain + (origRightDomain - origLeftDomain) * 0.5
