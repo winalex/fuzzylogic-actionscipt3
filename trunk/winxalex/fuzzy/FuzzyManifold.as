@@ -55,8 +55,17 @@ package winxalex.fuzzy
 			{
 				func1 = FuzzyMembershipFunction(memberfunctions[0]);
 				func2 = FuzzyMembershipFunction(memberfunctions[1]);
+				
+				func1.maximumDOM = func1.degreeOfMembership;
+				func2.maximumDOM = func2.degreeOfMembership;
+				
 				max1 = func1.calculateDOM(input);
 				max2 = func2.calculateDOM(input);
+				
+				//restore
+				func1.degreeOfMembership = func1.maximumDOM;
+				func2.degreeOfMembership= func2.maximumDOM;
+				
 				
 				return max1 > max2 ? max1 : max2;
 			}
@@ -193,19 +202,21 @@ package winxalex.fuzzy
 				func1 = FuzzyMembershipFunction(memberfunctions[0]);
 				func2 = FuzzyMembershipFunction(memberfunctions[1]);
 				
+				
+				
 				intersectionPoint = FuzzyManifold.intersect(func1, func2);
 				
 				shapePoints[shapePoints.length] = func1.leftPoint;
 				shapePoints[shapePoints.length] = func1.leftPeekPoint;
 				//if its triangle (LOC=1 ) or if intersection not lies on the LOC line
-				if (func1.leftPeekPoint.x != func1.rightPeekPoint.x && intersectionPoint.y != func1.levelOfConfidence)
+				if (func1.leftPeekPoint.x != func1.rightPeekPoint.x && intersectionPoint.y != func1.degreeOfMembership)
 				{
 					shapePoints[shapePoints.length] = func1.rightPeekPoint;
 					
 				}
 				shapePoints[shapePoints.length] = intersectionPoint;
 				
-				if (intersectionPoint.y != func2.levelOfConfidence)
+				if (intersectionPoint.y != func2.degreeOfMembership)
 					shapePoints[shapePoints.length] = func2.leftPeekPoint;
 				
 				if (func2.leftPeekPoint.x != func2.rightPeekPoint.x)
@@ -222,6 +233,9 @@ package winxalex.fuzzy
 				func2 = FuzzyMembershipFunction(memberfunctions[1]);
 				func3 = FuzzyMembershipFunction(memberfunctions[2]);
 				
+				//func1.maximumDOM = 0.14;
+				//func1.recalcBoundaries();
+				
 				FuzzyManifold.intersect(func1, func2);
 				
 				intersectionPoint = FuzzyManifold.intersect(func1, func2);
@@ -229,37 +243,29 @@ package winxalex.fuzzy
 				shapePoints[shapePoints.length] = func1.leftPoint;
 				shapePoints[shapePoints.length] = func1.leftPeekPoint;
 				//if its triangle (LOC=1 ) or if intersection not lies on the LOC line
-				if (func1.leftPeekPoint.x != func1.rightPeekPoint.x && intersectionPoint.y != func1.levelOfConfidence)
+				if (func1.leftPeekPoint.x != func1.rightPeekPoint.x && intersectionPoint.y != func1.degreeOfMembership)
 				{
 					shapePoints[shapePoints.length] = func1.rightPeekPoint;
 					
 				}
+				
 				shapePoints[shapePoints.length] = intersectionPoint;
 				
-				if (intersectionPoint.y != func2.levelOfConfidence)
+				if (intersectionPoint.y != func2.degreeOfMembership)
 					shapePoints[shapePoints.length] = func2.leftPeekPoint;
 				
-				if (func2.leftPeekPoint.x != func2.rightPeekPoint.x)
-					shapePoints[shapePoints.length] = func2.rightPeekPoint;
+									
+			    intersectionPoint=FuzzyManifold.intersect(func2, func3);
 				
-				shapePoints[shapePoints.length] = func2.rightPoint;
-				
-				FuzzyManifold.intersect(func2, func3);
-				
-				
-					intersectionPoint=FuzzyManifold.intersect(func1, func2);
-				
-				shapePoints[shapePoints.length] = func2.leftPoint;
-				shapePoints[shapePoints.length] = func2.leftPeekPoint;
 				//if its triangle (LOC=1 ) or if intersection not lies on the LOC line
-				if (func2.leftPeekPoint.x != func2.rightPeekPoint.x && intersectionPoint.y != func2.levelOfConfidence)
+				if (func2.leftPeekPoint.x != func2.rightPeekPoint.x && intersectionPoint.y != func2.degreeOfMembership)
 				{
-				shapePoints[shapePoints.length] = func2.rightPeekPoint;
-				
+				   shapePoints[shapePoints.length] = func2.rightPeekPoint;
 				}	
+				
 				shapePoints[shapePoints.length] = intersectionPoint;
 				
-				if(intersectionPoint.y!=func3.levelOfConfidence)
+				if(intersectionPoint.y!=func3.degreeOfMembership)
 				shapePoints[shapePoints.length] = func3.leftPeekPoint;
 				
 				if(func3.leftPeekPoint.x!=func3.rightPeekPoint.x)
@@ -267,11 +273,14 @@ package winxalex.fuzzy
 				
 				shapePoints[shapePoints.length] = func3.rightPoint;
 				
-				func1.draw(_container, _drawingScaleX, _drawingScaleY);
-				func2.draw(_container, _drawingScaleX, _drawingScaleY);
-				func3.draw(_container, _drawingScaleX, _drawingScaleY);
-				
-				drawAreaShapePoints(shapePoints);
+				if (_container)
+				{
+					func1.draw(_container, _drawingScaleX, _drawingScaleY);
+					func2.draw(_container, _drawingScaleX, _drawingScaleY);
+					func3.draw(_container, _drawingScaleX, _drawingScaleY);
+					
+					drawAreaShapePoints(shapePoints);
+				}
 				
 				return compute2DPolygonCentroid(shapePoints);
 			}
@@ -291,11 +300,11 @@ package winxalex.fuzzy
 		
 		
 		
-		public function fillArea(container:Graphics,scaleX:uint=1,scaleY:uint=50):void
+		public function fillArea():void
 		{
 			 for each (var func:FuzzyMembershipFunction in this.memberfunctions)
 					{
-						func.fillArea(container, scaleX, scaleY);
+						func.fillArea(_container, _drawingScaleX, _drawingScaleY);
 					}
 		}
 		
@@ -314,7 +323,7 @@ package winxalex.fuzzy
 		private function drawAreaShapePoints(points:Vector.<Point>):void
 		{
 			var i:int = 0;
-			var len:int = points.length - 1;
+			var len:int = points.length;
 			var point:Point;
 			
 			for (i = 0; i < len; ++i)
@@ -335,8 +344,8 @@ package winxalex.fuzzy
 			if (leftFunction is FuzzyTrapezoidMembershipFunction && rightFunction is FuzzyTrapezoidMembershipFunction)
 			{
 				
-				if (leftFunction.levelOfConfidence != 1 || rightFunction.levelOfConfidence != 1)
-					if (leftFunction.levelOfConfidence > rightFunction.levelOfConfidence)
+				if (leftFunction.degreeOfMembership != 1 || rightFunction.degreeOfMembership != 1)
+					if (leftFunction.degreeOfMembership > rightFunction.degreeOfMembership)
 					{
 						//   /\-
 						intersectionPoint = lineIntersectLine(leftFunction.rightPeekPoint, leftFunction.rightPoint, rightFunction.leftPeekPoint, rightFunction.rightPeekPoint);
@@ -401,7 +410,7 @@ package winxalex.fuzzy
 				
 				x1 = vertices[i + 1].x;
 				y1 = vertices[i + 1].y;
-				a = Math.abs(x0 * y1 - x1 * y0);
+				a = (x0 * y1 - x1 * y0);
 				signedArea += a;
 				centroid += (x0 + x1) * a;
 				
@@ -412,7 +421,7 @@ package winxalex.fuzzy
 			y0 = vertices[i].y;
 			x1 = vertices[0].x;
 			y1 = vertices[0].y;
-			a = Math.abs(x0 * y1 - x1 * y0);
+			a = (x0 * y1 - x1 * y0);
 			signedArea += a;
 			centroid += (x0 + x1) * a;
 			
@@ -835,7 +844,7 @@ package winxalex.fuzzy
 					for each (var func:FuzzyMembershipFunction in this.memberfunctions)
 					{
 						func.reset();
-						func.calculateDOM(input.value);
+						func.maximumDOM=func.calculateDOM(input.value);
 						trace(this.name, FuzzyMembershipFunction(func).linguisticTerm,"DOM:"+FuzzyMembershipFunction(func).degreeOfMembership+" for input "+input.value);
 					}
 				}

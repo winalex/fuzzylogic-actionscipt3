@@ -59,7 +59,7 @@ package
 			tf.autoSize = TextFieldAutoSize.RIGHT;
 			tf.text = manifold.name;
 			container1.addChild(tf);
-			manifold.draw(container1.graphics,10);
+			manifold.draw(container1.graphics,5);
 			
 			
 			
@@ -178,10 +178,23 @@ package
 			trace("INPUT> ammo:" + ammoStatusInput.value + " distance:" + distanceStatusInput.value);
 			
 			fuz.Fuzzify();
-			fuz.getManifold("Distance_to_Target").fillArea(container2.graphics);
-			fuz.getManifold("Ammo_Status").fillArea(container3.graphics, 10);
+			fuz.getManifold("Distance_to_Target").fillArea();
+			fuz.getManifold("Ammo_Status").fillArea();
 			
-			fuz.getManifold("Desirability").fillArea(container1.graphics,10);
+		/*	func = fuz.getManifold("Desirability").memberfunctions[0];
+			trace("Desirability", func.linguisticTerm, "DOM:", func.degreeOfMembership);
+			func = fuz.getManifold("Desirability").memberfunctions[1];
+			trace("Desirability", func.linguisticTerm, "DOM:", func.degreeOfMembership);
+			func = fuz.getManifold("Desirability").memberfunctions[2];
+			trace("Desirability", func.linguisticTerm, "DOM:", func.degreeOfMembership);*/
+			fuz.getManifold("Desirability").fillArea();
+			
+			
+			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTROID);
+			
+			trace("OUTPUT COG:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			
+			trace(fuz.getManifold("Desirability").toString());
 			return;
 		
 				

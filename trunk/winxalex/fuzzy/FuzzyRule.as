@@ -502,7 +502,8 @@ package winxalex.fuzzy
 						
 						if (!memberfunction.areBoundariesDIRTY)//boundaries are dirty when LOC is changed from default value=1
 						{
-						   memberfunction.levelOfConfidence = _result;
+							memberfunction.degreeOfMembership= _result;
+						  // memberfunction.levelOfConfidence = _result;
 						}
 						else
 						{
@@ -511,13 +512,15 @@ package winxalex.fuzzy
 							//OR new rule result with the previous result for rules in same membership function
 							//memberfunction.degreeOfMembership = FuzzyOperator.fOR(memberfunction.degreeOfMembership, _result);
 							
+							//_nextAggregation.value = _result * this.weight;
 							_nextAggregation.value = _result * this.weight;
-							_prevAggregation.value = memberfunction.levelOfConfidence;
+							_prevAggregation.value = memberfunction.degreeOfMembership;
+							//_prevAggregation.value = memberfunction.levelOfConfidence;
 							
 							//HERE degree of membership can be used for output function too 
 							//recalc of bounds in calculateDOM needed(so for speed LOC variable is introduced)
-							memberfunction.levelOfConfidence = _fuzzificator.aggregation(_prevAggregation, _nextAggregation);
-							
+							//memberfunction.levelOfConfidence = _fuzzificator.aggregation(_prevAggregation, _nextAggregation);
+							memberfunction.degreeOfMembership= _fuzzificator.aggregation(_prevAggregation, _nextAggregation);
 							if (_fuzzificator.implication == FuzzyOperator.fPRODUCT)
 								memberfunction.isScaled = true;
 							
