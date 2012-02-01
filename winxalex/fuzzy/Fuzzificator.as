@@ -658,9 +658,7 @@ package winxalex.fuzzy
 			{
 				s1 = 0;
 				s2 = 0;
-				
-				//fm.reset();
-				 
+								 
 						//get delta
 						delta = (fm.maxRange-fm.minRange) * step;
 						input = fm.minRange+delta;
@@ -683,7 +681,7 @@ package winxalex.fuzzy
 							sumDOMs=fm.getSumDOM(input);
 							
 							
-						
+						//trace(input, sumDOMs);
 							
 							s1 += input * sumDOMs;
 							s2 += sumDOMs;

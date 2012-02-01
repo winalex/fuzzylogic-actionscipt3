@@ -27,7 +27,7 @@ package winxalex.fuzzy
 		public var rightOffset:Number;
 		
 		public var leftPoint:Point;
-		public var leftPeekPoint:Point;
+		private var _leftPeekPoint:Point;
 		public var leftOffset:Number;
 		
 		public var isScaled:Boolean = false;
@@ -50,7 +50,6 @@ package winxalex.fuzzy
 		 * level of confidence (firing strenght)
 		 */
 		private var _levelOfConfidence:Number = 1;
-		private var _maximumDOM:Number = 1;
 		private var _degreeOfMembership:Number = 0;
 		
 		public function FuzzyMembershipFunction(linguisticTerm:String, typeName:String, leftDomain:Number = NaN, leftPeekDomain:Number = NaN, rightPeekDomain:Number = NaN, rightDomain:Number = NaN, ... args):void
@@ -93,47 +92,26 @@ package winxalex.fuzzy
 		
 		public function set degreeOfMembership(value:Number):void
 		{
-			areBoundariesDIRTY = true;
 			_degreeOfMembership = value;
 			
 			if (value == 1)
 			{
 				//restoring orginal settings
-			   this.recalcBoundaries();
-			   return;
-			 }
+				this.recalcBoundaries();
+				return;
+			}
 		}
 		
 		public function get levelOfConfidence():Number
 		{
-			//if (isNaN(_levelOfConfidence)) return 1;
-			
-			areBoundariesDIRTY = true;
-			
 			return _levelOfConfidence;
 		}
 		
 		public function set levelOfConfidence(value:Number):void
 		{
-			//if (value == super.levelOfConfidence) return;
 			
 			_levelOfConfidence = value;
 			
-			areBoundariesDIRTY = true;
-		}
-		
-		/**
-		 * Maximum Degree of Membership
-		 */
-		internal function get maximumDOM():Number
-		{
-			return _maximumDOM;
-		}
-		
-		internal function set maximumDOM(value:Number):void
-		{
-			
-			_maximumDOM = value;
 			
 			areBoundariesDIRTY = true;
 		}
@@ -168,8 +146,23 @@ package winxalex.fuzzy
 		
 		public function get rightPeekPoint():Point
 		{
-			//if(areBoundariesDIRTY)
+			if (areBoundariesDIRTY)
+			{
+				recalcBoundaries();
+			}
 			return _rightPeekPoint;
+		}
+		
+		public function get leftPeekPoint():Point
+		{
+			if (areBoundariesDIRTY)
+				recalcBoundaries();
+			return _leftPeekPoint;
+		}
+		
+		public function set leftPeekPoint(value:Point):void
+		{
+			_leftPeekPoint = value;
 		}
 		
 		public function reset():void
@@ -178,21 +171,36 @@ package winxalex.fuzzy
 			areBoundariesDIRTY = false;
 			
 			_levelOfConfidence = 1;
-			_maximumDOM = 1;
 			_degreeOfMembership = 0;
 			
 			isScaled = false;
 			
 			isLOCReseted = false;
 		
-			//recalcBoundaries();
+		    this.rightPeekPoint.x = origRightDomain;
+			this.rightPeekPoint.y = 1;
+			
+			this.leftPeekPoint.x = origLeftDomain;
+			this.leftPeekPoint.y = 1;
+			
+			this.rightOffset = origRightOffset;
+			this.leftOffset = origLeftOffset;
+			
+			if (origRightDomain != origLeftDomain)
+				_averageDomain = origLeftDomain + (origRightDomain - origLeftDomain) * 0.5
+			else
+				_averageDomain = origLeftDomain;
 		
 		}
 		
 		public function calculateDOM(value:Number):Number
 		{
 			
-			throw new Error("Should be overrided");
+			/*if (areBoundariesDIRTY)
+			   {
+			   recalcBoundaries();
+			 }*/
+			
 			return 0;
 		}
 		
@@ -209,19 +217,7 @@ package winxalex.fuzzy
 		public function recalcBoundaries():void
 		{
 			
-			this.rightPeekPoint.x = origRightDomain;
-			this.rightPeekPoint.y = 1;
 			
-			this.leftPeekPoint.x = origLeftDomain;
-			this.leftPeekPoint.y = 1;
-			
-			this.rightOffset = origRightOffset;
-			this.leftOffset = origLeftOffset;
-			
-			if (origRightDomain != origLeftDomain)
-				_averageDomain = origLeftDomain + (origRightDomain - origLeftDomain) * 0.5
-			else
-				_averageDomain = origLeftDomain;
 		}
 		
 		public function toString():String
