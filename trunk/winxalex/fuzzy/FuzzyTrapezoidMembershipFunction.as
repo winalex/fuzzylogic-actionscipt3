@@ -25,12 +25,12 @@ package winxalex.fuzzy
 			
 			var grad:Number;
 			
-			//super.calculateDOM(value);
+			super.calculateDOM(value);
 			
 			//between mid points
 			if (value >= leftPeekPoint.x && value <= rightPeekPoint.x)
 			{
-				degreeOfMembership = maximumDOM; // levelOfConfidence;
+				degreeOfMembership = levelOfConfidence; // levelOfConfidence;
 			}
 			else
 			{ //  //find DOM if left of center
@@ -41,7 +41,7 @@ package winxalex.fuzzy
 				if ((value < leftPeekPoint.x) && grad > 0)
 				{
 					
-					degreeOfMembership = grad * maximumDOM / leftOffset;
+					degreeOfMembership = grad * levelOfConfidence / leftOffset;
 				}
 				
 				else //find DOM if right of center
@@ -50,7 +50,7 @@ package winxalex.fuzzy
 					
 					if ((value > rightPeekPoint.x) && (grad > 0))
 					{
-						degreeOfMembership = grad * maximumDOM / rightOffset;
+						degreeOfMembership = grad * levelOfConfidence / rightOffset;
 					}
 					else //out of range of this FLV, degreeOfMembership= zero
 					{
@@ -58,8 +58,6 @@ package winxalex.fuzzy
 					}
 				}
 			}
-			
-			//areBoundariesDIRTY = true;
 			
 			return degreeOfMembership;
 		}
@@ -69,7 +67,7 @@ package winxalex.fuzzy
 			var newOffset:Number;
 			
 			areBoundariesDIRTY = false;
-						
+			
 			if (isScaled)
 				return; //NO clipping
 			
@@ -77,26 +75,26 @@ package winxalex.fuzzy
 			if (origLeftOffset != 0)
 			{
 				
-				newOffset = degreeOfMembership * origLeftOffset;
+				newOffset = levelOfConfidence * origLeftOffset;
 				leftPeekPoint.x = origLeftDomain - origLeftOffset + newOffset;
 				
 				leftOffset = newOffset;
 				
 			}
 			
-			leftPeekPoint.y = degreeOfMembership;
+			leftPeekPoint.y = levelOfConfidence;
 			
 			//CLIPPING
 			if (origRightOffset != 0)
 			{
-				newOffset = degreeOfMembership * origRightOffset;
+				newOffset = levelOfConfidence * origRightOffset;
 				rightPeekPoint.x = origRightDomain + origRightOffset - newOffset;
 				
 				rightOffset = newOffset;
 				
 			}
 			
-			rightPeekPoint.y = degreeOfMembership;
+			rightPeekPoint.y = levelOfConfidence;
 			
 			//in non simetrical triangles(_rightOffset!=_leftOffset);
 			if (rightPeekPoint.x != leftPeekPoint.x)
@@ -136,13 +134,16 @@ package winxalex.fuzzy
 		   return areaSize;
 		 }*/
 		
+		/**
+		 * fill cut area (show DOM);
+		 * @param	container
+		 * @param	scaleX
+		 * @param	scaleY
+		 */
 		override public function fillArea(container:Graphics, scaleX:uint = 1, scaleY:uint = 50):void
 		{
-			if (!degreeOfMembership)
+			if (!degreeOfMembership && !levelOfConfidence)
 				return;
-			
-			if (areBoundariesDIRTY)
-				recalcBoundaries();
 			
 			container.lineStyle(2, 0, 0);
 			container.beginFill(0xFF00FF);
@@ -152,10 +153,14 @@ package winxalex.fuzzy
 			container.endFill();
 		}
 		
+		/**
+		 * drawing function in designated container
+		 * @param	container
+		 * @param	scaleX
+		 * @param	scaleY
+		 */
 		override public function draw(container:Graphics, scaleX:uint = 1, scaleY:uint = 50):void
 		{
-			/*if (areBoundariesDIRTY)
-			 recalcBoundaries();*/
 			
 			container.lineStyle(2);
 			

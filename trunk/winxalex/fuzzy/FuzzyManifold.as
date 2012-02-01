@@ -56,15 +56,15 @@ package winxalex.fuzzy
 				func1 = FuzzyMembershipFunction(memberfunctions[0]);
 				func2 = FuzzyMembershipFunction(memberfunctions[1]);
 				
-				func1.maximumDOM = func1.degreeOfMembership;
-				func2.maximumDOM = func2.degreeOfMembership;
+				func1.levelOfConfidence = func1.degreeOfMembership;
+				func2.levelOfConfidence = func2.degreeOfMembership;
 				
 				max1 = func1.calculateDOM(input);
 				max2 = func2.calculateDOM(input);
 				
 				//restore
-				func1.degreeOfMembership = func1.maximumDOM;
-				func2.degreeOfMembership= func2.maximumDOM;
+				func1.degreeOfMembership = func1.levelOfConfidence;
+				func2.degreeOfMembership= func2.levelOfConfidence;
 				
 				
 				return max1 > max2 ? max1 : max2;
@@ -202,21 +202,19 @@ package winxalex.fuzzy
 				func1 = FuzzyMembershipFunction(memberfunctions[0]);
 				func2 = FuzzyMembershipFunction(memberfunctions[1]);
 				
-				
-				
 				intersectionPoint = FuzzyManifold.intersect(func1, func2);
 				
 				shapePoints[shapePoints.length] = func1.leftPoint;
 				shapePoints[shapePoints.length] = func1.leftPeekPoint;
 				//if its triangle (LOC=1 ) or if intersection not lies on the LOC line
-				if (func1.leftPeekPoint.x != func1.rightPeekPoint.x && intersectionPoint.y != func1.degreeOfMembership)
+				if (func1.leftPeekPoint.x != func1.rightPeekPoint.x && intersectionPoint.y != func1.levelOfConfidence)
 				{
 					shapePoints[shapePoints.length] = func1.rightPeekPoint;
 					
 				}
 				shapePoints[shapePoints.length] = intersectionPoint;
 				
-				if (intersectionPoint.y != func2.degreeOfMembership)
+				if (intersectionPoint.y != func2.levelOfConfidence)
 					shapePoints[shapePoints.length] = func2.leftPeekPoint;
 				
 				if (func2.leftPeekPoint.x != func2.rightPeekPoint.x)
@@ -233,9 +231,6 @@ package winxalex.fuzzy
 				func2 = FuzzyMembershipFunction(memberfunctions[1]);
 				func3 = FuzzyMembershipFunction(memberfunctions[2]);
 				
-				//func1.maximumDOM = 0.14;
-				//func1.recalcBoundaries();
-				
 				FuzzyManifold.intersect(func1, func2);
 				
 				intersectionPoint = FuzzyManifold.intersect(func1, func2);
@@ -243,7 +238,7 @@ package winxalex.fuzzy
 				shapePoints[shapePoints.length] = func1.leftPoint;
 				shapePoints[shapePoints.length] = func1.leftPeekPoint;
 				//if its triangle (LOC=1 ) or if intersection not lies on the LOC line
-				if (func1.leftPeekPoint.x != func1.rightPeekPoint.x && intersectionPoint.y != func1.degreeOfMembership)
+				if (func1.leftPeekPoint.x != func1.rightPeekPoint.x && intersectionPoint.y != func1.levelOfConfidence)
 				{
 					shapePoints[shapePoints.length] = func1.rightPeekPoint;
 					
@@ -251,36 +246,32 @@ package winxalex.fuzzy
 				
 				shapePoints[shapePoints.length] = intersectionPoint;
 				
-				if (intersectionPoint.y != func2.degreeOfMembership)
+				if (intersectionPoint.y != func2.levelOfConfidence)
 					shapePoints[shapePoints.length] = func2.leftPeekPoint;
 				
 									
 			    intersectionPoint=FuzzyManifold.intersect(func2, func3);
 				
 				//if its triangle (LOC=1 ) or if intersection not lies on the LOC line
-				if (func2.leftPeekPoint.x != func2.rightPeekPoint.x && intersectionPoint.y != func2.degreeOfMembership)
+				if (func2.leftPeekPoint.x != func2.rightPeekPoint.x && intersectionPoint.y != func2.levelOfConfidence)
 				{
 				   shapePoints[shapePoints.length] = func2.rightPeekPoint;
 				}	
 				
 				shapePoints[shapePoints.length] = intersectionPoint;
 				
-				if(intersectionPoint.y!=func3.degreeOfMembership)
+				if(intersectionPoint.y!=func3.levelOfConfidence)
 				shapePoints[shapePoints.length] = func3.leftPeekPoint;
 				
 				if(func3.leftPeekPoint.x!=func3.rightPeekPoint.x)
 				shapePoints[shapePoints.length] = func3.rightPeekPoint;
 				
 				shapePoints[shapePoints.length] = func3.rightPoint;
-				
+			/*	
 				if (_container)
 				{
-					func1.draw(_container, _drawingScaleX, _drawingScaleY);
-					func2.draw(_container, _drawingScaleX, _drawingScaleY);
-					func3.draw(_container, _drawingScaleX, _drawingScaleY);
-					
 					drawAreaShapePoints(shapePoints);
-				}
+				}*/
 				
 				return compute2DPolygonCentroid(shapePoints);
 			}
@@ -295,7 +286,7 @@ package winxalex.fuzzy
 			   return computeContureCentroid(unionConture(FuzzyMembershipFunction(memberfunctions[0]).conture,FuzzyMembershipFunction(memberfunctions[1]).conture,FuzzyMembershipFunction(memberfunctions[2]).conture));
 			   }
 			 */
-			throw new Error(" Not Implemented for 6 memberfunction");
+			throw new Error(" Not Implemented for 4 memberfunction");
 		}
 		
 		
@@ -309,6 +300,8 @@ package winxalex.fuzzy
 		}
 		
 		public function draw(container:Graphics,scaleX:uint=1,scaleY:uint=50):void{
+			
+			container.clear();
 			
 			_container = container;
 			_drawingScaleX = scaleX;
@@ -325,6 +318,8 @@ package winxalex.fuzzy
 			var i:int = 0;
 			var len:int = points.length;
 			var point:Point;
+			
+			_container.lineStyle(2);
 			
 			for (i = 0; i < len; ++i)
 			{
@@ -344,8 +339,8 @@ package winxalex.fuzzy
 			if (leftFunction is FuzzyTrapezoidMembershipFunction && rightFunction is FuzzyTrapezoidMembershipFunction)
 			{
 				
-				if (leftFunction.degreeOfMembership != 1 || rightFunction.degreeOfMembership != 1)
-					if (leftFunction.degreeOfMembership > rightFunction.degreeOfMembership)
+				if (leftFunction.levelOfConfidence != 1 || rightFunction.levelOfConfidence != 1)
+					if (leftFunction.levelOfConfidence > rightFunction.levelOfConfidence)
 					{
 						//   /\-
 						intersectionPoint = lineIntersectLine(leftFunction.rightPeekPoint, leftFunction.rightPoint, rightFunction.leftPeekPoint, rightFunction.rightPeekPoint);
@@ -580,10 +575,6 @@ package winxalex.fuzzy
 				func1 = FuzzyMembershipFunction(memberfunctions[0]);
 				func2 = FuzzyMembershipFunction(memberfunctions[1]);
 				
-				//decrease maximum to cut part of function
-				func1.maximumDOM = func1.levelOfConfidence;
-				func2.maximumDOM = func2.levelOfConfidence;
-				
 				return max1 > max2 ? func1.averageDomain : func2.averageDomain;
 			}
 			
@@ -593,13 +584,8 @@ package winxalex.fuzzy
 				func2 = FuzzyMembershipFunction(memberfunctions[1]);
 				func3 = FuzzyMembershipFunction(memberfunctions[2]);
 				
-				//decrease maximum to cut part(Level of confidence) of function
-				func1.maximumDOM = func1.levelOfConfidence;
-				func2.maximumDOM = func2.levelOfConfidence;
-				func3.maximumDOM = func3.levelOfConfidence;
-				
 				//return  func1.maximumDOM >  func2.maximumDOM? ( func1.maximumDOM> func3.maximumDOM?  func1.averagePoint : func1.maximumDOM >  func2.maximumDOM? ( func1.maximumDOM> func3.maximumDOM?  func1.averagePoint: func3.averagePoint) : (func2.maximumDOM > func3.maximumDOM ? func2.averagePoint:func3.averagePoint);: func3.averagePoint) : (func2.maximumDOM > func3.maximumDOM ? func2.averagePoint:func3.averagePoint);					
-				return func1.maximumDOM > func2.maximumDOM ? (func1.maximumDOM > func3.maximumDOM ? func1.averageDomain : func3.averageDomain) : (func2.maximumDOM > func3.maximumDOM ? func2.averageDomain : func3.averageDomain);
+				return func1.levelOfConfidence > func2.levelOfConfidence ? (func1.levelOfConfidence > func3.levelOfConfidence ? func1.averageDomain : func3.averageDomain) : (func2.levelOfConfidence > func3.levelOfConfidence ? func2.averageDomain : func3.averageDomain);
 			}
 			
 			pointer1 = 1;
@@ -608,31 +594,31 @@ package winxalex.fuzzy
 			//pointer1=0
 			func1 = FuzzyMembershipFunction(memberfunctions[0]);
 			trace(FuzzyMembershipFunction(func1).toString());
-			max1 = func1.maximumDOM;
+			max1 = func1.levelOfConfidence;
 			
 			//pointer1=len-1
 			func2 = FuzzyMembershipFunction(memberfunctions[len - 1]);
-			max2 = func2.maximumDOM;
+			max2 = func2.levelOfConfidence;
 			
 			//trace(max1, max2);
 			
 			while (pointer1 <= pointer2)
 			{
 				
-				if (max1 < FuzzyMembershipFunction(memberfunctions[pointer1]).maximumDOM)
+				if (max1 < FuzzyMembershipFunction(memberfunctions[pointer1]).levelOfConfidence)
 				{
 					func1 = memberfunctions[pointer1];
-					max1 = func1.maximumDOM;
+					max1 = func1.levelOfConfidence;
 					
 				}
 				
 				if (pointer1 < pointer2)
 				{
 					
-					if (max2 < FuzzyMembershipFunction(memberfunctions[pointer2]).maximumDOM)
+					if (max2 < FuzzyMembershipFunction(memberfunctions[pointer2]).levelOfConfidence)
 					{
 						func2 = memberfunctions[pointer2];
-						max2 = func2.maximumDOM;
+						max2 = func2.levelOfConfidence;
 					}
 					
 					pointer2 = pointer2 - 1;
@@ -758,7 +744,7 @@ package winxalex.fuzzy
 				return max1 > max2 ? (max1 > max3 ? FuzzyMembershipFunction(memberfunctions[0]) : FuzzyMembershipFunction(memberfunctions[2])) : (max2 > max3 ? FuzzyMembershipFunction(memberfunctions[1]) : FuzzyMembershipFunction(memberfunctions[2]));
 			}
 			
-			//TODO Alerady partually tested
+			//TODO Already partually tested
 			pointer1 = 1;
 			pointer2 = len - 2;
 			
@@ -779,7 +765,7 @@ package winxalex.fuzzy
 				if (max1 < IFuzzyMembershipFunction(memberfunctions[pointer1]).calculateDOM(input))
 				{
 					func1 = memberfunctions[pointer1];
-					max1 = FuzzyMembershipFunction(func1).degreeOfMembership;
+					max1 = FuzzyMembershipFunction(func1).levelOfConfidence;
 					
 				}
 				
@@ -789,7 +775,7 @@ package winxalex.fuzzy
 					if (max2 < IFuzzyMembershipFunction(memberfunctions[pointer2]).calculateDOM(input))
 					{
 						func2 = memberfunctions[pointer2];
-						max2 = FuzzyMembershipFunction(func2).degreeOfMembership;
+						max2 = FuzzyMembershipFunction(func2).levelOfConfidence;
 					}
 					
 					pointer2 = pointer2 - 1;
@@ -844,7 +830,7 @@ package winxalex.fuzzy
 					for each (var func:FuzzyMembershipFunction in this.memberfunctions)
 					{
 						func.reset();
-						func.maximumDOM=func.calculateDOM(input.value);
+						func.levelOfConfidence=func.calculateDOM(input.value);
 						trace(this.name, FuzzyMembershipFunction(func).linguisticTerm,"DOM:"+FuzzyMembershipFunction(func).degreeOfMembership+" for input "+input.value);
 					}
 				}
