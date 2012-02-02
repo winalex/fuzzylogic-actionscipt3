@@ -17,6 +17,8 @@ package winxalex.fuzzy
 		public static const PROBSUM:Function = fPROBSUM;
 		public static const SUM:Function = fSUM;*/
 	
+		private static var _temp1Token:Token = new Token();
+		private static var _temp2Token:Token = new Token();
 		
 		
 		   /**
@@ -333,6 +335,86 @@ package winxalex.fuzzy
 		}
 		
 		
+		public static function fDOM(...args):Number
+		{
+			var memberfunction:FuzzyMembershipFunction;
+			var manifold:FuzzyManifold;
+			var currentDOM:Number;
+			var fuzzificator:Fuzzificator = args[2];
+			
+			manifold = fuzzificator.inputFuzzymanifolds[args[0]]
+			
+			if (manifold)
+			{
+				memberfunction = manifold.memberfunctions[args[1]];
+				if (memberfunction)
+				{
+					
+					return memberfunction.degreeOfMembership;
+				}
+				else
+					throw new Error(" Member function  <" + args[1] + "> in manifold <" + args[0] + ">  doesn't exist");
+				
+			}
+			else
+			{
+				throw new Error(" Manifold " + args[0]+" doesn't exist");
+			}
+		
+		}
+		
+		
+		
+		public static function fAGGREGATE (manifoldName:String, memberfunctionName:String,fuzzificator:Fuzzificator,weight:Number,implicationResult:Token):void
+		{
+			var memberfunction:FuzzyMembershipFunction;
+			var manifold:FuzzyManifold;
+			
+			if (!implicationResult.value) return;
+			
+			manifold = fuzzificator.outputFuzzyManifolds[manifoldName];
+			
+		
+			//if(_fuzzificator.type==FuzzificatorType.SUGENO)
+			
+			if (manifold)
+			{
+				memberfunction = manifold.memberfunctions[memberfunctionName];
+				
+				if (memberfunction)
+				{
+					
+					
+											
+						if (!memberfunction.areBoundariesDIRTY)//boundaries are dirty when LOC is changed from default value=1
+						{
+							memberfunction.levelOfConfidence= implicationResult.value;
+						 
+						}
+						else
+						{
+							
+							_temp1Token.value = implicationResult.value *  weight;
+							_temp2Token.value = memberfunction.levelOfConfidence;
+							memberfunction.levelOfConfidence= fuzzificator.aggregation(_temp2Token,_temp1Token  );
+							
+							if (fuzzificator.implication == FuzzyOperator.fPRODUCT)
+								memberfunction.isScaled = true;
+							
+						}
+						
+							
+				}
+				else
+					throw new Error(" has not existing memeber function  <" + memberfunctionName + "> in manifold <" + manifoldName + ">");
+				
+			}
+			else
+			{
+				throw new Error( " has not existing manifold " + manifoldName);
+			}
+		}
+			
 		
 		
 		

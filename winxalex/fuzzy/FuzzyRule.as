@@ -38,9 +38,12 @@ package winxalex.fuzzy
 		 *  IF (Our_Health IS Near_Death) AND (Enemy_Health IS Near_Death) THEN (Aggressiveness IS Fight_Defensively) (optional)WEIGHT=1;
 		 * @param	rule
 		 */
-		public function FuzzyRule(rule:String):void
+		public function FuzzyRule(rule:String=""):void
 		{
 			var match:Array;
+			
+			if (!rule.length) return;
+			
 			rule = cleanCase(rule);
 			
 			match = rule.split(_thenCaseRegExp, 2);
@@ -67,8 +70,11 @@ package winxalex.fuzzy
 			
 			setWeight();
 			
-			_antCompiledStek = compileString(this.antecedent, getDOM);
-			_conCompiledStek = compileString(this.consequence, implicate); //Change so DOM
+			_antCompiledStek = compileString(this.antecedent, FuzzyOperator.fDOM);
+			//_antCompiledStek = compileString(this.antecedent, getDOM);
+			_conCompiledStek = compileString(this.consequence, fuzz.implication); 
+			
+					
 		
 			// trace("COMPILED:"+toString(_antCompiledStek));
 		}
@@ -160,7 +166,15 @@ package winxalex.fuzzy
 					throw new Error("Erroruos rule: " + currentmatch);
 				
 				// stek[stek.length] = new Token(stek.length,getDOM, [manifold, memberFunction]);
-				stek[stek.length] = new Token(stek.length, termFunction, [manifold, memberFunction]);
+				//stek[stek.length] = new Token(stek.length, termFunction, [manifold, memberFunction]);
+				
+				if (_fuzzificator.implication == termFunction)
+				{
+				  stek[stek.length]= new Token(0, _fuzzificator.implication, [_antCompiledStek[_antCompiledStek.length-1],new Token(0,null,null,1)]);
+				  stek[stek.length] = new Token(1, FuzzyOperator.fAGGREGATE, [manifold,memberFunction,_fuzzificator,_weight,stek[stek.length-1]]);
+				}
+				else
+				  stek[stek.length] = new Token(stek.length, termFunction, [manifold, memberFunction, _fuzzificator]);
 				
 				//traceString = "DOM("+manifold +"," + memberFunction+")";
 				
@@ -347,7 +361,8 @@ package winxalex.fuzzy
 		{
 			switch (f)
 			{
-				case getDOM: 
+				case FuzzyOperator.fDOM:
+				//case getDOM: 
 					return "DOM";
 					break;
 				
@@ -420,6 +435,7 @@ package winxalex.fuzzy
 		 */
 		public function evaluate():Number
 		{
+			//evaluate condition term1 operator term2...
 			_result = evaluateStek(_antCompiledStek);
 			if (_result)
 			{
@@ -430,9 +446,8 @@ package winxalex.fuzzy
 				//result steak
 				evaluateStek(_conCompiledStek);
 				
-					//this is commented for speed cos fMIN(_result,1)=_result(+clipping) and fPROD(_result,1)=_result(+scaling)
-					//_result=_fuzzificator.implication(_result, 1);
 				
+							
 			}
 			else
 				_isFired = false;
@@ -476,12 +491,12 @@ package winxalex.fuzzy
 			return fr;
 		}
 		
-		private function implicate(manifoldName:String, memberfunctionName:String):void
+		/*public function implicate(manifoldName:String, memberfunctionName:String,fuzzificator:Fuzzificator):void
 		{
 			var memberfunction:FuzzyMembershipFunction;
 			var manifold:FuzzyManifold;
 			
-			manifold = _fuzzificator.outputFuzzyManifolds[manifoldName];
+			manifold = fuzzificator.outputFuzzyManifolds[manifoldName];
 			//if(_fuzzificator.type==FuzzificatorType.SUGENO)
 			
 			if (manifold)
@@ -492,14 +507,7 @@ package winxalex.fuzzy
 				{
 					if (_isFired) //result is ready
 					{
-						/*if (!memberfunction.isLOCReseted)
-						{
-							memberfunction.isLOCReseted = true;
-							memberfunction.levelOfConfidence = _result;
-							
-							memberfunction.isScaled = false;
-						}*/ 
-						
+											
 						if (!memberfunction.areBoundariesDIRTY)//boundaries are dirty when LOC is changed from default value=1
 						{
 							memberfunction.levelOfConfidence= _result;
@@ -507,18 +515,9 @@ package winxalex.fuzzy
 						}
 						else
 						{
-											  
-							//OR new rule result with the previous result for rules in same membership function
-							//memberfunction.degreeOfMembership = FuzzyOperator.fOR(memberfunction.degreeOfMembership, _result);
-							
-							//_nextAggregation.value = _result * this.weight;
 							_nextAggregation.value = _result * this.weight;
 							_prevAggregation.value = memberfunction.levelOfConfidence;
-							//_prevAggregation.value = memberfunction.levelOfConfidence;
-							
-							//HERE degree of membership can be used for output function too 
-							//recalc of bounds in calculateDOM needed(so for speed LOC variable is introduced)
-							//memberfunction.levelOfConfidence = _fuzzificator.aggregation(_prevAggregation, _nextAggregation);
+						
 							memberfunction.levelOfConfidence= _fuzzificator.aggregation(_prevAggregation, _nextAggregation);
 							if (_fuzzificator.implication == FuzzyOperator.fPRODUCT)
 								memberfunction.isScaled = true;
@@ -537,9 +536,9 @@ package winxalex.fuzzy
 				throw new Error(this.rule + " has not existing manifold " + manifoldName);
 			}
 		
-		}
+		}*/
 		
-		private function getDOM(manifoldName:String, memberfunctionName:String):Number
+		/*private function getDOM(manifoldName:String, memberfunctionName:String):Number
 		{
 			var memberfunction:FuzzyMembershipFunction;
 			var manifold:FuzzyManifold;
@@ -564,7 +563,7 @@ package winxalex.fuzzy
 				throw new Error(this.rule + " has not existing manifold " + manifoldName);
 			}
 		
-		}
+		}*/
 		
 		public function toString():String
 		{
