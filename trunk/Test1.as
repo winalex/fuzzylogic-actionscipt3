@@ -3,6 +3,7 @@ package
 	import flash.display.Sprite;
 	import flash.text.TextField;
 	import flash.text.TextFieldAutoSize;
+	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	import winxalex.fuzzy.*;
 	
@@ -18,6 +19,7 @@ package
 		
 		public function Test1() 
 		{
+			var tempStek:Vector.<Token>;
 			var tf:TextField;
 			var fuz:Fuzzificator= new Fuzzificator();
 			var factory:IFuzzyMembershipFunctionFactory = FuzzyMembershipFunctionFactory.getInstance();
@@ -95,10 +97,10 @@ package
 			container2.y = 140;
 			container2.x = 5;
 			tf = new TextField();
-			tf.y = 10;
 			tf.autoSize = TextFieldAutoSize.RIGHT;
 			tf.text = manifold.name;
 			container2.addChild(tf);
+			tf.y = 10;
 			addChild(container2);
 			manifold.draw(container2.graphics);
 			
@@ -134,6 +136,7 @@ package
 			var container3:Sprite = new Sprite();
 			container3.y = 250;
 			container3.x = 5;
+			tf = new TextField();
 			tf.autoSize = TextFieldAutoSize.RIGHT;
 			tf.text = manifold.name;
 			tf.y = 10;
@@ -150,8 +153,31 @@ package
 			/**/
 			rule = new FuzzyRule( "IF Distance_to_Target IS Far AND Ammo_Status IS Loads THEN Desirability IS Desirable");
 				fuz.addRule(rule);
-				rule = new FuzzyRule( " IF Distance_to_Target IS Far AND Ammo_Status IS Okey THEN Desirability IS Undesirable");
-					fuz.addRule(rule);
+				
+				//Rule:IF Distance_to_Target IS Far AND Ammo_Status IS Okey THEN Desirability IS Undesirable has fired TRUE with result:0.3333333333333333
+				//rule = new FuzzyRule(Distance_to_Target,Far,Ammo_Status
+				
+				rule = new FuzzyRule();
+				tempStek = new Vector.<Token>(3,true);
+				
+				// creation antescendent(condition stek) stek like "Distance_to_Target IS Far AND Ammo_Status IS Okey"
+				tempStek[0] = new Token(0, FuzzyOperator.fDOM, ["Distance_to_Target", "Far", fuz]);
+				tempStek[1] = new Token(1, FuzzyOperator.fDOM, ["Ammo_Status", "Okey", fuz]);
+				var result:Token=tempStek[2] = new Token(2, FuzzyOperator.fMIN, [tempStek[0], tempStek[1]]);
+				rule.antCompiledStek = tempStek;
+				
+				// creation result stek like "Desirability IS Undesirable"
+				tempStek = new Vector.<Token>(2,true);
+				tempStek[0] = new Token(0, fuz.implication, [result,new Token(0,null,null,1)]);
+				tempStek[1] = new Token(1, FuzzyOperator.fAGGREGATE, ["Desirability", "Undesirable",fuz,rule.weight,tempStek[0]]);
+				
+			
+				rule.conCompiledStek = tempStek;
+				
+				fuz.addRule(rule,false);
+			/*
+				/*rule = new FuzzyRule( " IF Distance_to_Target IS Far AND Ammo_Status IS Okey THEN Desirability IS Undesirable");
+					fuz.addRule(rule);*/
 					rule = new FuzzyRule( " IF Distance_to_Target IS Far AND  Ammo_Status IS Low THEN Desirability IS Undesirable ");
 						fuz.addRule(rule);
 						rule = new FuzzyRule( "IF Distance_to_Target IS Medium AND Ammo_Status IS Loads THEN Desirability IS VeryDesirable ");
@@ -168,6 +194,7 @@ package
 									fuz.addRule(rule);
 												
 			
+									//new Token(1,
 			
 			trace(fuz.getManifold("Desirability").toString());
 			
@@ -190,14 +217,11 @@ package
 			fuz.getManifold("Desirability").fillArea();
 			
 			
+			//can draw dots of the bounding shape (for debug uncomment  drawAreaShapePoints);
 			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTROID);
 			
 			trace("OUTPUT COG:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
-			
-			trace(fuz.getManifold("Desirability").toString());
-			return;
-		
-				
+									
 			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.MEAN_OF_MAXIMUM);
 			//fuz.getManifold("Desirability").reset();
 			trace("OUTPUT MOM:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
@@ -218,13 +242,8 @@ package
 			
 			trace("OUTPUT COA:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
+					
 			
-			
-			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTROID);
-			
-			trace("OUTPUT COG:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
-			
-			trace(fuz.getManifold("Desirability").toString());
 			
 			
 			 ammoStatusInput.value = 15;
@@ -309,7 +328,7 @@ Ammo_Status Okey 0.8
 OUTPUT MOM:83.33333333333333
 OUTPUT COS:61.85185185185184
 OUTPUT MAXAV:60.41666666666667
-CENTROID:63.913043478260875
+OUTPUT COA:63.913043478260875
 
 
 

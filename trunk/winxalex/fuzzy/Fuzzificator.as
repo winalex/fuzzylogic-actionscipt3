@@ -119,7 +119,9 @@ package winxalex.fuzzy
 			//trace(rule.consequence);
 			
 			
-			//Z
+			/*
+			 Matrix 
+			 * //Z
 			var manifoldMatch:Array =   rule.consequence.match(FuzzyRule._manifoldRegExp);
 			//Z1
 			var memberFunctionMatch:Array = rule.consequence.match(FuzzyRule._membershipRegExp);
@@ -127,7 +129,7 @@ package winxalex.fuzzy
 			//trace(manifoldMatch.join(), memberFunctionMatch.join());
 	        var manifold:FuzzyManifold = outputFuzzyManifolds[manifoldMatch[0]];
 			
-			var memFunction:IFuzzyMembershipFunction = manifold.memberfunctions[memberFunctionMatch[0]];
+			var memFunction:IFuzzyMembershipFunction = manifold.memberfunctions[memberFunctionMatch[0]];*/
 			
 		
 			
