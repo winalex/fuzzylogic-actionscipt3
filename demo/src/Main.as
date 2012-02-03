@@ -12,6 +12,7 @@ package
 	import winxalex.fuzzy.FuzzyMembershipFunction;
 	import winxalex.fuzzy.FuzzyMembershipFunctionFactory;
 	import winxalex.fuzzy.Token;
+	import winxalex.fuzzy.FuzzyOperator;
 	
 	/**
 	 * ...
@@ -37,10 +38,10 @@ package
 			targets = new Array();
 			// entry point
 			var hero:Hero = new Hero();
-			hero.fuzzificator = getFuzzificator();
+			//hero.fuzzificator = getFuzzificator();
 			hero.y = stage.stageHeight * 0.5;
-			hero.addWeapon(new RocketLuncher(20));
-			hero.addWeapon(new Pistol(40));
+			//hero.addWeapon(new RocketLuncher(20));
+			//hero.addWeapon(new Pistol(40));
 			hero.addWeapon(new Knife(int.MAX_VALUE));
 			addChild(hero);
 			
@@ -49,11 +50,10 @@ package
 			spawingTimer.start();
 		}
 		
-		private function getFuzzificator():void
+		private function getFuzzificator():Fuzzificator
 		{
 			var tempStek:Vector.<Token>;
-			var tf:TextField;
-			var fuz:Fuzzificator = new Fuzzificator();
+    		var fuz:Fuzzificator = new Fuzzificator();
 			var factory:FuzzyMembershipFunctionFactory = FuzzyMembershipFunctionFactory.getInstance();
 			var manifold:FuzzyManifold;
 			var func:FuzzyMembershipFunction;
@@ -173,7 +173,7 @@ package
 			sol.y = this.stage.stageHeight * 0.5;
 			sol.x = this.stage.stageWidth + sol.width;
 			this.addChild(sol);
-			
+			targets.push(sol);
 			spawingTimer.delay = 1000 + Math.random() * 3000;
 		
 		}
