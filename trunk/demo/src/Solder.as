@@ -23,8 +23,8 @@ package
 			
 			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 			
-			this.addEventListener("KNIFE_HIT", onMissleHit);
-			this.addEventListener("MISSILE_HIT", onKnifeHit);
+			this.addEventListener("KNIFE_HIT", onKnifeHit);
+			this.addEventListener("MISSILE_HIT", onMissleHit);
 			this.addEventListener("DIE", onDie);
 			
 		}
@@ -63,6 +63,8 @@ package
 		{
 			return _health;
 		}
+		
+	
 		
 	}
 

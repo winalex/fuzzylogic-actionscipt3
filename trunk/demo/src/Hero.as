@@ -1,7 +1,12 @@
-package  
+﻿package  
 {
+	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
 	import flash.events.Event;
+	import winxalex.fuzzy.Fuzzificator;
+	import winxalex.fuzzy.FuzzyInput;
+	import winxalex.fuzzy.DefuzzificationMethod;
+	import winxalex.fuzzy.FuzzyManifold;
 	
 	/**
 	 * ...
@@ -16,12 +21,14 @@ package
 		private var _fuzzificator:Fuzzificator;
 		private var ammoStatusInput:FuzzyInput;
 		private var distanceStatusInput:FuzzyInput;
-		private var target:Solder;
+		private var _target:Solder;
 		
 		
 		public function Hero() :void
 		{
 			this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
+			
+			_weapons=new Vector.<Weapon>();
 		}
 		
 		public function addWeapon(weapon:Weapon):void 
@@ -45,11 +52,12 @@ package
 		{
 			var target:DisplayObject;
 			//not the best way to find target
-			for (var i:int = 0; this.parent.numChildren; i++)
+			for (var i:int = 0; i<this.parent.numChildren; i++)
 			{
 				target = this.parent.getChildAt(i);
-				if (target is Solder && target.health > 0) {
-					return target;
+				if(_currentWeapon is Knife && 
+				if (target is Solder && Solder(target).health > 0) {
+					return target as Solder;
 				}
 			}
 			
@@ -60,32 +68,34 @@ package
 		{
 			//find target start  switch if needed shooting ani
 			
-			target = findTarget();
+			if(_target) return;
+			_target = findTarget();
 			
-			if (target) {
-				selectWeapon(target);
-				this.removeEventListener(Event.ENTER_FRAME);
-				this.addEventListener("WEAPON_FIRED",onWeapondReady);
+			if (_target) {
+				//selectWeapon(_target);
+				shoot();
+				this.removeEventListener(Event.ENTER_FRAME,onWeapondReady);
+				this._currentWeapon.addEventListener("WEAPON_FIRED",onWeapondReady);
 			}
 			
 		}
 		
 		private function shoot():void 
 		{
-			this.gotoAndPlay("SHOOT_ANI");
+			this._currentWeapon.prepShoot();
 		}
 		
-		private function onWeapondReady():void {
+		private function onWeapondReady(e:Event):void {
 			
-			 target.dispatchEvent(new Event("KNIFE_HIT"));
+			// _target.dispatchEvent(new Event("KNIFE_HIT"));
 			 _currentWeapon.shoot();
 		}
 		
 		private function onEndShoot(e:Event):void 
 		{
 			
-			
-			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			_target=null;
+			//this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
 		private function selectWeapon(target:Solder):void 
@@ -102,8 +112,9 @@ package
 				ammoStatusInput.value = weapon.ammo;
 			    distanceStatusInput.value = distance;
 				
-				fuzzificator.Fuzzify();
-				desirability = fuzzificator.Defuzzify(DefuzzificationMethod. AVERAGE_OF_MAXIMA);
+				_fuzzificator.Fuzzify();
+				desirability = FuzzyManifold(_fuzzificator.Defuzzify(DefuzzificationMethod. AVERAGE_OF_MAXIMA)["Desirability"]).output;
+				
 				
 				
 				

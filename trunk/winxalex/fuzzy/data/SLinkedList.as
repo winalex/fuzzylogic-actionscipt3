@@ -1,5 +1,5 @@
 
-package winxalex.fuzzy
+package winxalex.fuzzy.data
 {
 	
 

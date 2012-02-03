@@ -74,7 +74,8 @@
   </compileTargets>
   <!-- Paths to exclude from the Project Explorer tree -->
   <hiddenPaths>
-    <!-- example: <hidden path="..." /> -->
+    <hidden path="additional codes" />
+    <hidden path="Tests" />
   </hiddenPaths>
   <!-- Executed before build -->
   <preBuildCommand />
@@ -82,7 +83,7 @@
   <postBuildCommand alwaysRun="False" />
   <!-- Other project options -->
   <options>
-    <option showHiddenPaths="False" />
+    <option showHiddenPaths="True" />
     <option testMovie="ExternalPlayer" />
   </options>
   <!-- Plugin storage -->

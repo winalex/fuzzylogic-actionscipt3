@@ -1,4 +1,4 @@
-package
+﻿package
 {
 	import flash.display.DisplayObject;
 	import flash.display.MovieClip;
@@ -14,8 +14,9 @@ package
 		public var speed:int = 5;
 		private var _hitEvent:Event;
 		
-		public function Missle():void
+		public function Missile():void
 		{
+			
 			this.addEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 		}
 		
@@ -32,7 +33,7 @@ package
 			var boundingRect:Rectangle;
 			var target:DisplayObject;
 			//not the best way to find target
-			for (var i:int = 0; this.parent.numChildren; i++) {
+			for (var i:int = 0; i<this.parent.numChildren; i++) {
 				target = this.parent.getChildAt(i);
 				
 				if ( target is Solder) {
@@ -56,15 +57,16 @@ package
 			if (target) {
 				
 				target.dispatchEvent(hitEvent);
-				this.removeEventListener(Event.ENTER_FRAME);
+				this.removeEventListener(Event.ENTER_FRAME,onEnterFrame);
 				this.parent.removeChild(this);
+				return;
 			}
 			
 			//move missle
 			this.x += speed;
 			
 			if (this.x > this.stage.stageWidth + this.width) {
-				this.removeEventListener(Event.ENTER_FRAME);
+				this.removeEventListener(Event.ENTER_FRAME,onEnterFrame);
 				this.parent.removeChild(this);
 			}
 		}

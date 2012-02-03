@@ -36,12 +36,12 @@ package
 			
 			manifold = new FuzzyManifold("Desirability");
 			
-			//leftMidPoint,rightMidPoint,rightOffset
+			
 			func = factory.create(FuzzyMembershipFunction.LEFT_SHOULDER, "Undesirable", 0,25, 50 ); //[0 0 25 50]
 			manifold.addMember(func);
 			trace(func.toString());
 			
-			//leftOffset,peakPoint,rightOffset
+			
 			func = factory.create(FuzzyMembershipFunction.TRIANGLE, "Desirable", [25, 50, 75] );//  [25 50 75]
 			manifold.addMember(func);
 			trace(func.toString());
@@ -74,20 +74,20 @@ package
 			manifold.input = distanceStatusInput;
 			
 			//!!! Warning make them sorted  by X so CENTROID won't fail 
-			//leftPeakPoint,rightPeakPoint,rightPoint
+			
 			func = factory.create(FuzzyMembershipFunction.LEFT_SHOULDER, "Close", 0,25, 125 );//[0 0 25 125]
 			//IFuzzyMembershipFunction(func).calculateDOM(200);
 			manifold.addMember(func);
 			//trace("Close:"+func.degreeOfMembership);
 			
 			
-			//leftOffset,peakPoint,rightOffset
+			
 			func = factory.create(FuzzyMembershipFunction.TRIANGLE, "Medium", 25, 150, 300 );// [25 150 300]
 			//IFuzzyMembershipFunction(func).calculateDOM(200);
 			manifold.addMember(func);
 			//trace("Medium:" + func.degreeOfMembership);
 			
-			//left0ffset,peakPoint
+			
 			func = factory.create(FuzzyMembershipFunction.RIGHT_SHOULDER, "Far", "150, 300,400","," )  ;//  [150 300 400 400]
 			//IFuzzyMembershipFunction(func).calculateDOM(200);
 			manifold.addMember(func);
@@ -113,20 +113,19 @@ package
 			manifold = new FuzzyManifold("Ammo_Status");
 			manifold.input = ammoStatusInput;
 			
-			//leftPoint,leftPeakPoint,rightPeakPoint
+			
 			func = factory.create(FuzzyMembershipFunction.RIGHT_SHOULDER, "Loads", 10,30, 40 ); // [10 30 40 40]
 			//IFuzzyMembershipFunction(func).calculateDOM(8);
 			manifold.addMember(func);
 			//trace(func.linguisticTerm+":"+func.degreeOfMembership);
 			//trace(func.toString());
-			//leftPoint,leftPeakPoint,rightPeakPoint
+			
 			func = factory.create(FuzzyMembershipFunction.TRIANGLE, "Low",  0, 0, 10);// [0 0 0 10]
 			//IFuzzyMembershipFunction(func).calculateDOM(8);
 			manifold.addMember(func);
 			//trace(func.linguisticTerm+":"+func.degreeOfMembership);
 			//trace(func.toString());
 			
-			//leftPoint,peakPoint,rightPoint
 			func = factory.create(FuzzyMembershipFunction.TRIANGLE, "Okey", 0, 10, 30 );// [0 10 30]
 			//IFuzzyMembershipFunction(func).calculateDOM(8);
 			//trace(func.linguisticTerm+":"+func.degreeOfMembership);
@@ -227,7 +226,7 @@ package
 			trace("OUTPUT MOM:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
 			
-				//fuz.getManifold("Desirability").reset();
+			//fuz.getManifold("Desirability").reset();
 			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTAR_OF_SUM);
 			
 			trace("OUTPUT COS:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);

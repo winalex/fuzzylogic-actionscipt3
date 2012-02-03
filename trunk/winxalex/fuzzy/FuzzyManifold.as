@@ -2,6 +2,7 @@ package winxalex.fuzzy
 {
 	import flash.display.Graphics;
 	import flash.geom.Point;
+	import winxalex.fuzzy.data.AssociativeArray;
 	
 	/**
 	 * ...

@@ -1,4 +1,4 @@
-package winxalex.fuzzy
+package winxalex.fuzzy.data
 {
 	/**
 	 * A singly linked list node.

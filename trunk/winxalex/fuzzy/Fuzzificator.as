@@ -1,11 +1,12 @@
 package winxalex.fuzzy 
 {
 	
-	
-	
 	import flash.utils.ByteArray;
 	import flash.utils.Dictionary;
 	import winxalex.fuzzy.data.VectorEx;
+	import winxalex.fuzzy.data.AssociativeArray;
+	import winxalex.fuzzy.data.SLinkedList;
+	import winxalex.fuzzy.data.SListNode;
 	
 	/**
 	 * ...
