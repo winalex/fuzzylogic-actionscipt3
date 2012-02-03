@@ -10,7 +10,11 @@ package
 		
 		public function Rocket(speed:int=15) 
 		{
+			
+			
 			this.speed = speed;
+			super();
+			
 		}
 		
 		override public function get hitEvent():Event 

@@ -1,4 +1,4 @@
-﻿package winxalex.fuzzy {
+﻿package winxalex.fuzzy.data {
 	
 	import flash.utils.Proxy;
 	import flash.utils.flash_proxy;

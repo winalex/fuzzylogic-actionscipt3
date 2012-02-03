@@ -1,24 +1,28 @@
-package  
+package
 {
+	import flash.display.DisplayObject;
+	
 	/**
 	 * ...
 	 * @author alex winx (winx@winx.ws)
 	 */
-	public class Pistol extends Weapon 
+	public class Pistol extends Weapon
 	{
 		
-		public function Pistol() 
+		public function Pistol(ammo:uint):void
 		{
-			
+			super(ammo);
 		}
 		
-		override public function shoot():Missile 
+		override public function shoot():void
 		{
-		   var missile:DisplayObject = this.parent.addChild(new Bullet());
-		   missile.x = 47;
-		   missile.y = 12;
-		}
+			var missile:DisplayObject = new Bullet();
+			missile.x = this.parent.x + 87;
+			missile.y = this.parent.y + 23;
+			this.parent.parent.addChild(missile);
 		
+		}
+	
 	}
 
 }

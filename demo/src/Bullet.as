@@ -12,7 +12,9 @@ package
 		
 		public function Bullet(speed:int=7) 
 		{
+			
 			this.speed = speed;
+			super();
 		}
 		
 		override public function get hitEvent():Event 

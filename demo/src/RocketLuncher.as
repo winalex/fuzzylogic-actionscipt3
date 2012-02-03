@@ -8,17 +8,17 @@ package
 	public class RocketLuncher extends Weapon 
 	{
 		
-		public function RocketLuncher() 
+		public function RocketLuncher(ammo:uint):void
 		{
-			
+			super(ammo);
 		}
 		
 		override public function shoot():void
 		{
-			var missile:DisplayObject = this.parent.addChild(new Rocket());
-			missile.x = 47;
-		   missile.y = 12;
-			
+			var missile:DisplayObject = new Rocket(); 
+			 missile.x = this.parent.x+87;
+		     missile.y = this.parent.y+23;
+			this.parent.parent.addChild(missile);
 		}
 		
 	}
