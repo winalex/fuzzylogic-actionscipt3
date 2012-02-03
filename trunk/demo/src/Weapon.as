@@ -21,7 +21,14 @@ package
 		
 		public function prepShoot():void 
 		{
-			gotoAndPlay("SHOOT_ANI");
+			var ammoStatus:uint;
+			
+			ammoStatus = ammo - 1;
+			if (ammoStatus > -1) {
+				ammo = ammoStatus;
+				gotoAndPlay("SHOOT_ANI");
+			}
+			
 		}
 		
 		public function shoot():void

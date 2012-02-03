@@ -35,6 +35,7 @@
 		{
 			_weapons.push(weapon);
 			currentWeapon = weapon;
+			weapon.addEventListener("END_SHOOT", onEndShoot);
 		}
 		
 		private function onAddedToStage(e:Event):void 
@@ -42,7 +43,7 @@
 			removeEventListener(Event.ADDED_TO_STAGE, onAddedToStage);
 			
 			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-			this.addEventListener("END_SHOOT", onEndShoot);
+			
 		}
 		
 		
@@ -51,13 +52,23 @@
 		private function findTarget():Solder 
 		{
 			var target:DisplayObject;
+			var len:int = this.parent.numChildren;
 			//not the best way to find target
-			for (var i:int = 0; i<this.parent.numChildren; i++)
+			for (var i:int = 0; i<len; i++)
 			{
 				target = this.parent.getChildAt(i);
-				if(_currentWeapon is Knife && 
+				
 				if (target is Solder && Solder(target).health > 0) {
-					return target as Solder;
+					if (_currentWeapon is Knife )
+					{
+						//trace(target.x,this.width);
+						if (target.x - 25 < 5)
+						   return target as Solder;
+						else
+						   return null;
+					}
+					else
+					  return target as Solder;
 				}
 			}
 			
@@ -73,8 +84,9 @@
 			
 			if (_target) {
 				//selectWeapon(_target);
+				this.removeEventListener(Event.ENTER_FRAME,onEnterFrame);
 				shoot();
-				this.removeEventListener(Event.ENTER_FRAME,onWeapondReady);
+				
 				this._currentWeapon.addEventListener("WEAPON_FIRED",onWeapondReady);
 			}
 			
@@ -87,7 +99,9 @@
 		
 		private function onWeapondReady(e:Event):void {
 			
-			// _target.dispatchEvent(new Event("KNIFE_HIT"));
+			if(this._currentWeapon is Knife)
+			 _target.dispatchEvent(new Event("KNIFE_HIT"));
+			 
 			 _currentWeapon.shoot();
 		}
 		
@@ -95,7 +109,7 @@
 		{
 			
 			_target=null;
-			//this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		}
 		
 		private function selectWeapon(target:Solder):void 

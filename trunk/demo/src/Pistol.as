@@ -1,4 +1,4 @@
-package
+﻿package
 {
 	import flash.display.DisplayObject;
 	
@@ -14,12 +14,17 @@ package
 			super(ammo);
 		}
 		
+		
+			
 		override public function shoot():void
 		{
-			var missile:DisplayObject = new Bullet();
-			missile.x = this.parent.x + 87;
-			missile.y = this.parent.y + 23;
-			this.parent.parent.addChild(missile);
+			
+			
+			
+				var missile:DisplayObject = new Bullet();
+				missile.x = this.parent.x + 87;
+				missile.y = this.parent.y + 23;
+				this.parent.parent.addChild(missile);
 		
 		}
 	
