@@ -280,16 +280,16 @@ package winxalex.fuzzy
 				
 				currentmatch = String(matches[i]);
 				
-				trace("matchOperation>currentmatch:" + currentmatch);
+				//trace("matchOperation>currentmatch:" + currentmatch);
 				
 				//replace ex. 0 and 1(ref0 <opperation> ref1 => ref2) in the steak with reference/pointers
 				
 				text = text.replace(currentmatch, stek.length);
 				
-				trace(text);
+				//trace(text);
 				args = currentmatch.split(operationSpliter);
 				
-				trace(args.join(','));
+				//trace(args.join(','));
 				
 				//token only version (change numbers to Token pointers/references)
 				for (j = 0; j < args.length; j++)
@@ -450,7 +450,7 @@ package winxalex.fuzzy
 			else
 				_isFired = false;
 			
-			trace("Rule:" + this.rule + " has fired " + _isFired.toString().toLocaleUpperCase() + " with result:" + _result);
+			//trace("Rule:" + this.rule + " has fired " + _isFired.toString().toLocaleUpperCase() + " with result:" + _result);
 			
 			return _result;
 		}

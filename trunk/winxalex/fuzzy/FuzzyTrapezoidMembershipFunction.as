@@ -169,6 +169,9 @@ package winxalex.fuzzy
 		
 		override public function get maximumDomain():Number
 		{
+			if (areBoundariesDIRTY)
+			recalcBoundaries();
+			
 			return averageDomain;
 		}
 	
