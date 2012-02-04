@@ -38,11 +38,12 @@ package
 			targets = new Array();
 			// entry point
 			var hero:Hero = new Hero();
-			//hero.fuzzificator = getFuzzificator();
+			hero.fuzzificator = getFuzzificator();
 			hero.y = stage.stageHeight * 0.5;
-			//hero.addWeapon(new RocketLuncher(20));
-			//hero.addWeapon(new Pistol(40));
-			hero.addWeapon(new Knife(int.MAX_VALUE));
+			hero.addWeapon(new Knife(1));
+	        hero.addWeapon(new RocketLuncher(20));
+			hero.addWeapon(new Pistol(30));
+			
 			addChild(hero);
 			
 			spawingTimer = new Timer(1000, 0);

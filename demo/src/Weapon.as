@@ -24,10 +24,15 @@ package
 			var ammoStatus:uint;
 			
 			ammoStatus = ammo - 1;
-			if (ammoStatus > -1) {
+			if (ammoStatus > 0) 
+			{
 				ammo = ammoStatus;
 				gotoAndPlay("SHOOT_ANI");
 			}
+			else
+			ammo = 0;
+			
+			trace("ammo", ammo);
 			
 		}
 		

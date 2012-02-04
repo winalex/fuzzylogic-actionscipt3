@@ -370,7 +370,7 @@ package winxalex.fuzzy
 			var memberfunction:FuzzyMembershipFunction;
 			var manifold:FuzzyManifold;
 			
-			if (!implicationResult.value) return;
+			
 			
 			manifold = fuzzificator.outputFuzzyManifolds[manifoldName];
 			
@@ -380,6 +380,8 @@ package winxalex.fuzzy
 			if (manifold)
 			{
 				memberfunction = manifold.memberfunctions[memberfunctionName];
+				
+				if (!implicationResult.value && memberfunction.areBoundariesDIRTY) return;
 				
 				if (memberfunction)
 				{

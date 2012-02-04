@@ -198,8 +198,21 @@ package
 			trace(fuz.getManifold("Desirability").toString());
 			
 		
-			ammoStatusInput.value = 8;
-			distanceStatusInput.value = 200
+			/*ammoStatusInput.value = 8;
+			distanceStatusInput.value = 200*/
+			
+			/*
+			ammoStatusInput.value = 1;
+			distanceStatusInput.value = 398.85;*/
+			
+			/*ammoStatusInput.value = 30;
+			distanceStatusInput.value = 398.85;*/
+			
+			/**/
+			ammoStatusInput.value = 20;
+			distanceStatusInput.value = 398.85;
+			
+			
 			
 			trace("INPUT> ammo:" + ammoStatusInput.value + " distance:" + distanceStatusInput.value);
 			
@@ -242,7 +255,8 @@ package
 			trace("OUTPUT COA:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
 					
-			
+			trace(fuz.getManifold("Desirability").toString());
+			return;
 			
 			
 			 ammoStatusInput.value = 15;
@@ -275,6 +289,8 @@ package
 			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTROID);
 			
 			trace("OUTPUT COG:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			
+			
 			
 			
 			ammoStatusInput.value = 8;

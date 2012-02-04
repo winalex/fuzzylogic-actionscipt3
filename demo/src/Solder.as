@@ -11,6 +11,7 @@ package
 	{
 		
 		private var _health:Number = 100;
+		public var incomingMissile:Boolean = false;
 		
 		public function Solder() 
 		{

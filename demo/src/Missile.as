@@ -36,7 +36,7 @@
 			for (var i:int = 0; i<this.parent.numChildren; i++) {
 				target = this.parent.getChildAt(i);
 				
-				if ( target is Solder) {
+				if ( target is Solder && Solder(target).health>0) {
 					if (target.hitTestPoint(this.x, this.y))
 					{
 						return target as Solder;
