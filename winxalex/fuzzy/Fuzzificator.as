@@ -196,7 +196,7 @@ package winxalex.fuzzy
 					//get Rule
 					rule = FuzzyRule(node.data);
 					
-				trace(rule.antecedent+rule.consequence);
+				//trace(rule.antecedent+rule.consequence);
 					
 					//get antecendents terms
 					 inputMatches = rule.antecedent.match(termsMatches);
@@ -401,7 +401,7 @@ package winxalex.fuzzy
 			var node:SListNode;
 			var rule:FuzzyRule;
 			
-			trace(this.fuzzyRules.dump());
+			//trace(this.fuzzyRules.dump());
 			
 			
 			if (!inputFuzzymanifolds.length)
