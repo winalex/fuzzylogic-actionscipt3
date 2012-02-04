@@ -93,6 +93,7 @@ package winxalex.fuzzy
 			else
 			{
 				outputFuzzyManifolds[manifold.name] = manifold;
+				
 				_nOutputManifolds++;
 			}
 			
@@ -425,6 +426,8 @@ package winxalex.fuzzy
 				
 			}
 			
+			
+					
 			//evaluate rules
 			//for each(var rule:FuzzyRule in fuzzyRules)
 			node = fuzzyRules.head;

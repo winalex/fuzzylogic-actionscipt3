@@ -437,17 +437,15 @@ package winxalex.fuzzy
 		{
 			//evaluate condition term1 operator term2...
 			_result = evaluateStek(_antCompiledStek);
+			
+			//trace("EVALUATED:"+toString(_antCompiledStek));
+			
+			//result steak
+			evaluateStek(_conCompiledStek);
+			
 			if (_result)
 			{
 				_isFired = true;
-				
-				//trace("EVALUATED:"+toString(_antCompiledStek));
-				
-				//result steak
-				evaluateStek(_conCompiledStek);
-				
-				
-							
 			}
 			else
 				_isFired = false;

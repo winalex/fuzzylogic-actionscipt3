@@ -94,12 +94,13 @@ package winxalex.fuzzy
 		{
 			_degreeOfMembership = value;
 			
-			if (value == 1)
+			
+			/*if (value == 1)
 			{
 				//restoring orginal settings
-				this.recalcBoundaries();
+					FuzzyMembershipFunction(this).recalcBoundaries();
 				return;
-			}
+			}*/
 		}
 		
 		public function get levelOfConfidence():Number

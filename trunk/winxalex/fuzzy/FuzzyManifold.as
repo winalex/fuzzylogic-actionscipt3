@@ -65,8 +65,7 @@ package winxalex.fuzzy
 				
 				//restore
 				func1.degreeOfMembership = func1.levelOfConfidence;
-				func2.degreeOfMembership= func2.levelOfConfidence;
-				
+				func2.degreeOfMembership = func2.levelOfConfidence;
 				
 				return max1 > max2 ? max1 : max2;
 			}
@@ -175,7 +174,8 @@ package winxalex.fuzzy
 		
 		public function getCOG():Number
 		{
-			var len:int = memberfunctions.length;
+			var i:int;
+			var len:int = memberfunctions.length-1;
 			var max1:Number;
 			var max2:Number;
 			var max3:Number;
@@ -198,85 +198,167 @@ package winxalex.fuzzy
 			var intersectionPoint:Point;
 			var shapePoints:Vector.<Point> = new Vector.<Point>;
 			
-			if (len == 2)
-			{
-				func1 = FuzzyMembershipFunction(memberfunctions[0]);
-				func2 = FuzzyMembershipFunction(memberfunctions[1]);
-				
-				intersectionPoint = FuzzyManifold.intersect(func1, func2);
-				
-				shapePoints[shapePoints.length] = func1.leftPoint;
-				shapePoints[shapePoints.length] = func1.leftPeekPoint;
-				//if its triangle (LOC=1 ) or if intersection not lies on the LOC line
-				if (func1.leftPeekPoint.x != func1.rightPeekPoint.x && intersectionPoint.y != func1.levelOfConfidence)
-				{
-					shapePoints[shapePoints.length] = func1.rightPeekPoint;
-					
-				}
-				shapePoints[shapePoints.length] = intersectionPoint;
-				
-				if (intersectionPoint.y != func2.levelOfConfidence)
-					shapePoints[shapePoints.length] = func2.leftPeekPoint;
-				
-				if (func2.leftPeekPoint.x != func2.rightPeekPoint.x)
-					shapePoints[shapePoints.length] = func2.rightPeekPoint;
-				
-				shapePoints[shapePoints.length] = func2.rightPoint;
-				
-				return compute2DPolygonCentroid(shapePoints);
-			}
+			if (len == 1) throw new Error("Min 2 function should be in manifold");
 			
-			if (len == 3)
-			{
-				func1 = FuzzyMembershipFunction(memberfunctions[0]);
-				func2 = FuzzyMembershipFunction(memberfunctions[1]);
-				func3 = FuzzyMembershipFunction(memberfunctions[2]);
-				
-				FuzzyManifold.intersect(func1, func2);
-				
-				intersectionPoint = FuzzyManifold.intersect(func1, func2);
-				
-				shapePoints[shapePoints.length] = func1.leftPoint;
-				shapePoints[shapePoints.length] = func1.leftPeekPoint;
-				//if its triangle (LOC=1 ) or if intersection not lies on the LOC line
-				if (func1.leftPeekPoint.x != func1.rightPeekPoint.x && intersectionPoint.y != func1.levelOfConfidence)
+				func1 = memberfunctions[0];
+			
+				while (!func1.levelOfConfidence && i<len)
 				{
-					shapePoints[shapePoints.length] = func1.rightPeekPoint;
-					
+					i++;
+					func1 = memberfunctions[i];
 				}
 				
-				shapePoints[shapePoints.length] = intersectionPoint;
+				    shapePoints[shapePoints.length] = func1.leftPoint;
+					shapePoints[shapePoints.length] = func1.leftPeekPoint;
 				
-				if (intersectionPoint.y != func2.levelOfConfidence)
-					shapePoints[shapePoints.length] = func2.leftPeekPoint;
 				
-									
-			    intersectionPoint=FuzzyManifold.intersect(func2, func3);
+				 for (; i < len ; i++)
+				 {
+					func1 = memberfunctions[i];
+					func2 = memberfunctions[i + 1];
+					
+					if (!func1.levelOfConfidence && !func2.levelOfConfidence) continue;
+					
+					if (func1.levelOfConfidence && func2.levelOfConfidence)
+					{
+						intersectionPoint = FuzzyManifold.intersect(func1, func2);
+						
+						//if its triangle (LOC=1 ) or if intersection not lies on the LOC line
+						if (func1.leftPeekPoint.x != func1.rightPeekPoint.x && intersectionPoint.y != func1.levelOfConfidence)
+						{
+							shapePoints[shapePoints.length] = func1.rightPeekPoint;
+							
+						}
+						
+						shapePoints[shapePoints.length] = intersectionPoint;
+						
+						if (intersectionPoint.y != func2.levelOfConfidence)
+							shapePoints[shapePoints.length] = func2.leftPeekPoint;
+						
+					}
+					else 
+						if (!func1.levelOfConfidence)
+						{
+							shapePoints[shapePoints.length] = func2.leftPoint;
+							shapePoints[shapePoints.length] = func2.leftPeekPoint;
+						}
+						else if (!func2.levelOfConfidence && i<len)
+						{
+							if (func2.leftPeekPoint.x != func1.rightPeekPoint.x)
+								shapePoints[shapePoints.length] = func1.rightPeekPoint;
+							
+							shapePoints[shapePoints.length] = func1.rightPoint;
+							
+						}
+					
+				 }
+				 
+				 if (!func2 || !func2.levelOfConfidence) func2 = func1;
+				 
+				 if (func2.levelOfConfidence)
+				 {
+					 if (func2.leftPeekPoint.x != func2.rightPeekPoint.x)
+								shapePoints[shapePoints.length] = func2.rightPeekPoint;
+							
+					shapePoints[shapePoints.length] = func2.rightPoint;
+				 }
+				 
+				 
+				 
 				
-				//if its triangle (LOC=1 ) or if intersection not lies on the LOC line
-				if (func2.leftPeekPoint.x != func2.rightPeekPoint.x && intersectionPoint.y != func2.levelOfConfidence)
+				/*if (func1.levelOfConfidence && func2.levelOfConfidence)
 				{
-				   shapePoints[shapePoints.length] = func2.rightPeekPoint;
-				}	
+					intersectionPoint = FuzzyManifold.intersect(func1, func2);
+					
+					shapePoints[shapePoints.length] = func1.leftPoint;
+					shapePoints[shapePoints.length] = func1.leftPeekPoint;
+					//if its triangle (LOC=1 ) or if intersection not lies on the LOC line
+					if (func1.leftPeekPoint.x != func1.rightPeekPoint.x && intersectionPoint.y != func1.levelOfConfidence)
+					{
+						shapePoints[shapePoints.length] = func1.rightPeekPoint;
+						
+					}
+					
+					shapePoints[shapePoints.length] = intersectionPoint;
+					
+					if (intersectionPoint.y != func2.levelOfConfidence)
+						shapePoints[shapePoints.length] = func2.leftPeekPoint;
+					
+				}
+				else 
+					if(!func1.levelOfConfidence && !func2.levelOfConfidence)
+					if (!func1.levelOfConfidence)
+					{
+						shapePoints[shapePoints.length] = func2.leftPoint;
+					    shapePoints[shapePoints.length] = func2.leftPeekPoint;
+					}
+					else if (!func2.levelOfConfidence)
+					{
+						shapePoints[shapePoints.length] = func1.leftPoint;
+					    shapePoints[shapePoints.length] = func1.leftPeekPoint;
+						
+						if (func1.leftPeekPoint.x != func1.rightPeekPoint.x)
+						{
+							shapePoints[shapePoints.length] = func1.rightPeekPoint;
+						}
+						
+						shapePoints[shapePoints.length] = func1.rightPoint;
+					}
 				
-				shapePoints[shapePoints.length] = intersectionPoint;
 				
-				if(intersectionPoint.y!=func3.levelOfConfidence)
-				shapePoints[shapePoints.length] = func3.leftPeekPoint;
 				
-				if(func3.leftPeekPoint.x!=func3.rightPeekPoint.x)
-				shapePoints[shapePoints.length] = func3.rightPeekPoint;
+				if (func2.levelOfConfidence && func3.levelOfConfidence)
+				{
 				
-				shapePoints[shapePoints.length] = func3.rightPoint;
-			/*	
+						intersectionPoint = FuzzyManifold.intersect(func2, func3);
+						
+						//if its triangle (LOC=1 ) or if intersection not lies on the LOC line
+						if (func2.leftPeekPoint.x != func2.rightPeekPoint.x && intersectionPoint.y != func2.levelOfConfidence)
+						{
+							shapePoints[shapePoints.length] = func2.rightPeekPoint;
+						}
+						
+						shapePoints[shapePoints.length] = intersectionPoint;
+						
+						if (intersectionPoint.y != func3.levelOfConfidence)
+							shapePoints[shapePoints.length] = func3.leftPeekPoint;
+						
+						if (func3.leftPeekPoint.x != func3.rightPeekPoint.x)
+							shapePoints[shapePoints.length] = func3.rightPeekPoint;
+						
+						shapePoints[shapePoints.length] = func3.rightPoint;
+				}
+				else 
+					if (!func3.levelOfConfidence)
+					{
+						if (func2.leftPeekPoint.x != func2.rightPeekPoint.x)
+						{
+							shapePoints[shapePoints.length] = func2.rightPeekPoint;
+						}
+						
+						shapePoints[shapePoints.length] = func2.rightPoint;
+					}
+					else if (!func3.levelOfConfidence)
+					{
+						shapePoints[shapePoints.length] = func3.leftPoint;
+					    shapePoints[shapePoints.length] = func3.leftPeekPoint;
+						
+						if (func3.leftPeekPoint.x != func3.rightPeekPoint.x)
+						{
+							shapePoints[shapePoints.length] = func3.rightPeekPoint;
+						}
+						
+						shapePoints[shapePoints.length] = func3.rightPoint;
+					}*/
+				
 				if (_container)
 				{
 					drawAreaShapePoints(shapePoints);
-				}*/
+				} /**/
 				
 				return compute2DPolygonCentroid(shapePoints);
-			}
-			/*
+			/*}
+			
 			
 			   if (len == 4)
 			   {
@@ -290,17 +372,16 @@ package winxalex.fuzzy
 			throw new Error(" Not Implemented for 4 memberfunction");
 		}
 		
-		
-		
 		public function fillArea():void
 		{
-			 for each (var func:FuzzyMembershipFunction in this.memberfunctions)
-					{
-						func.fillArea(_container, _drawingScaleX, _drawingScaleY);
-					}
+			for each (var func:FuzzyMembershipFunction in this.memberfunctions)
+			{
+				func.fillArea(_container, _drawingScaleX, _drawingScaleY);
+			}
 		}
 		
-		public function draw(container:Graphics,scaleX:uint=1,scaleY:uint=50):void{
+		public function draw(container:Graphics, scaleX:uint = 1, scaleY:uint = 50):void
+		{
 			
 			container.clear();
 			
@@ -308,10 +389,10 @@ package winxalex.fuzzy
 			_drawingScaleX = scaleX;
 			_drawingScaleY = scaleY;
 			
-			    for each (var func:FuzzyMembershipFunction in this.memberfunctions)
-					{
-						func.draw(container,scaleX,scaleY);
-					}
+			for each (var func:FuzzyMembershipFunction in this.memberfunctions)
+			{
+				func.draw(container, scaleX, scaleY);
+			}
 		}
 		
 		private function drawAreaShapePoints(points:Vector.<Point>):void
@@ -325,12 +406,9 @@ package winxalex.fuzzy
 			for (i = 0; i < len; ++i)
 			{
 				point = points[i];
-				_container.drawCircle(point.x*_drawingScaleX, -point.y*_drawingScaleY, 2);
+				_container.drawCircle(point.x * _drawingScaleX, -point.y * _drawingScaleY, 2);
 			}
 		}
-		
-		
-		
 		
 		public static function intersect(leftFunction:FuzzyMembershipFunction, rightFunction:FuzzyMembershipFunction):Point
 		{
@@ -369,6 +447,7 @@ package winxalex.fuzzy
 				
 				throw new Error("Cant' find intersection point between " + leftFunction.linguisticTerm + "," + rightFunction.linguisticTerm);
 				
+				//return null;
 			}
 			else if (leftFunction is FuzzyGaussMembershipFunction && rightFunction is FuzzyTrapezoidMembershipFunction)
 			{
@@ -386,9 +465,9 @@ package winxalex.fuzzy
 			return null;
 		}
 		
-		private static function compute2DPolygonCentroid(vertices:Vector.<Point>):Number
+		private static function compute2DPolygonCentroid(shapePoints:Vector.<Point>):Number
 		{
-			var centroid:Number=0;
+			var centroid:Number = 0;
 			var signedArea:Number = 0.0;
 			var x0:Number = 0.0; // Current vertex X
 			var y0:Number = 0.0; // Current vertex Y
@@ -398,14 +477,14 @@ package winxalex.fuzzy
 			
 			// For all vertices except last
 			var i:int = 0;
-			var len:int = vertices.length - 1;
+			var len:int = shapePoints.length - 1;
 			for (i = 0; i < len; ++i)
 			{
-				x0 = vertices[i].x;
-				y0 = vertices[i].y;
+				x0 = shapePoints[i].x;
+				y0 = shapePoints[i].y;
 				
-				x1 = vertices[i + 1].x;
-				y1 = vertices[i + 1].y;
+				x1 = shapePoints[i + 1].x;
+				y1 = shapePoints[i + 1].y;
 				a = (x0 * y1 - x1 * y0);
 				signedArea += a;
 				centroid += (x0 + x1) * a;
@@ -413,10 +492,10 @@ package winxalex.fuzzy
 			}
 			
 			// Do last vertex
-			x0 = vertices[i].x;
-			y0 = vertices[i].y;
-			x1 = vertices[0].x;
-			y1 = vertices[0].y;
+			x0 = shapePoints[i].x;
+			y0 = shapePoints[i].y;
+			x1 = shapePoints[0].x;
+			y1 = shapePoints[0].y;
 			a = (x0 * y1 - x1 * y0);
 			signedArea += a;
 			centroid += (x0 + x1) * a;
@@ -831,8 +910,8 @@ package winxalex.fuzzy
 					for each (var func:FuzzyMembershipFunction in this.memberfunctions)
 					{
 						func.reset();
-						func.levelOfConfidence=func.calculateDOM(input.value);
-						trace(this.name, FuzzyMembershipFunction(func).linguisticTerm,"DOM:"+FuzzyMembershipFunction(func).degreeOfMembership+" for input "+input.value);
+						func.levelOfConfidence = func.calculateDOM(input.value);
+						trace(this.name, FuzzyMembershipFunction(func).linguisticTerm, "DOM:" + FuzzyMembershipFunction(func).degreeOfMembership + " for input " + input.value);
 					}
 				}
 				else

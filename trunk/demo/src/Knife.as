@@ -14,9 +14,14 @@
 			super(ammo);
 		}
 		
+		override public function prepShoot():void 
+		{
+			gotoAndPlay("SHOOT_ANI");
+		}
+		
 		override public function shoot():void
 		{
-		
+			
 		}
 	
 	}
