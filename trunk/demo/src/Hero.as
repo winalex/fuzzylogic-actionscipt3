@@ -18,12 +18,12 @@
 		private var _weapons:Vector.<Weapon>;
 		
 		private var _currentWeapon:Weapon;
-		private var _fuzzificator:Fuzzificator;
 		private var ammoStatusInput:FuzzyInput;
 		private var distanceStatusInput:FuzzyInput;
 		private var _target:Solder;
 		private const HERO_WIDTH:int = 25;
-		private var distanceMaxRange:Number;
+		
+		private var _targetMaxRange:Number = Number.MIN_VALUE;
 		
 		public function Hero():void
 		{
@@ -36,6 +36,9 @@
 		{
 			_weapons.push(weapon);
 			currentWeapon = weapon;
+			
+			if (weapon.maxRange > _targetMaxRange)
+				_targetMaxRange = weapon.maxRange;
 		
 		}
 		
@@ -56,17 +59,9 @@
 			{
 				target = this.parent.getChildAt(i);
 				
-				if (target is Solder && !Solder(target).incomingMissile && target.x-HERO_WIDTH < distanceMaxRange && Solder(target).health > 0)
+							//
+				if (target is Solder && target.x>HERO_WIDTH && target.x - HERO_WIDTH <_targetMaxRange  && !Solder(target).incomingMissile && Solder(target).health > 0)
 				{
-					if (_currentWeapon is Knife)
-					{
-						//trace(target.x,this.width);
-						if (target.x - HERO_WIDTH < 5)
-							return target as Solder;
-						else
-							return null;
-					}
-					else
 						return target as Solder;
 				}
 			}
@@ -78,18 +73,29 @@
 		{
 			//find target start  switch if needed shooting ani
 			
-			if (_target)
-				return;
+			var weapon:Weapon;
+			
 			_target = findTarget();
 			
 			if (_target)
 			{
-				this.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
-				selectWeapon(_target);
+				weapon=selectWeapon(_target);
 				
-				shoot();
+				if (weapon)
+				{
+					if (_currentWeapon != weapon)
+					{
+						currentWeapon = weapon;
+						
+					}
+					
+					this.removeEventListener(Event.ENTER_FRAME, onEnterFrame);
+					this._currentWeapon.addEventListener("WEAPON_FIRED", onWeapondReady);
+					shoot();
+				}
+					
 				
-				this._currentWeapon.addEventListener("WEAPON_FIRED", onWeapondReady);
+				
 			}
 		
 		}
@@ -115,77 +121,60 @@
 			_target.incomingMissile = true;
 			_target = null;
 			this.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+			//trace("End shot");
 		}
 		
-		private function selectWeapon(target:Solder):void
+		private function selectWeapon(target:Solder):Weapon
 		{
 			var len:int = _weapons.length;
 			var weapon:Weapon;
-			var nextWeapon:Weapon;
+			var nextWeapon:Weapon=null;
 			var desirability:Number;
-			var bestDisarability:Number = Number.MIN_VALUE;
-			var distance:Number = target.x - HERO_WIDTH;// Math.sqrt((target.x - this.x) * (target.x - this.x) + (target.y - this.y) * (target.y - this.y));
+			var bestDisarability:Number = 0;
+			var distance:Number; // Math.sqrt((target.x - this.x) * (target.x - this.x) + (target.y - this.y) * (target.y - this.y));
 			
-			for (var i:int = 0; i < len; i++)
-			{
-				
-				weapon = _weapons[i];
-				
-				trace("I", i);
-				
-				if (!weapon.ammo)
-					continue;
-				
-				ammoStatusInput.value = weapon.ammo;
-				distanceStatusInput.value = distance;
-				
-				_fuzzificator.Fuzzify();
-				
-				desirability = FuzzyManifold(_fuzzificator.Defuzzify(DefuzzificationMethod.CENTROID)["Desirability"]).output;
-				trace("COG CORRECTION: ", desirability);
-				desirability = FuzzyManifold(_fuzzificator.Defuzzify(DefuzzificationMethod. AVERAGE_OF_MAXIMA)["Desirability"]).output;
-				
-				trace(">>>>>>>>>>WEAPON>>>>>", weapon, " DISTANCE :", distanceStatusInput.value, " AMMO:", ammoStatusInput.value, "DES>>", bestDisarability, desirability);
-				
-				if (bestDisarability < desirability)
+			distance = target.x - HERO_WIDTH;
+			
+				for (var i:int = 0; i < len; i++)
 				{
-					trace("CHANGE:", bestDisarability, desirability);
-					bestDisarability = desirability;
-					nextWeapon = weapon;
 					
+					weapon = _weapons[i];
+					
+					
+					if (!weapon.ammo || weapon.maxRange < distance)
+						continue;
+					
+					desirability = weapon.getDesirability(distance);
+					
+					trace(">>>WEAPON:",weapon,"HAS DESIRABILITY:",desirability,"at DISTANCE", distance,"AMMO:", weapon.ammo,"tgt:",target.x);
+					
+					if (bestDisarability < desirability)
+					{
+						trace("CHANGE FROM:", bestDisarability,"TO:", desirability);
+						bestDisarability = desirability;
+						nextWeapon = weapon;
+						
+					}
 				}
+				
+				return nextWeapon;
+				
 			}
 			
-			if (nextWeapon)
-				if (_currentWeapon != nextWeapon)
-					currentWeapon = nextWeapon;
-		
-		}
-		
-		public function get currentWeapon():Weapon
-		{
-			return _currentWeapon;
-		}
-		
-		public function set currentWeapon(value:Weapon):void
-		{
-			if (_currentWeapon)
-				this.removeChild(_currentWeapon);
-			_currentWeapon = value;
+			public function get currentWeapon():Weapon
+			{
+				return _currentWeapon;
+			}
 			
-			this.addChild(_currentWeapon);
-		}
+			public function set currentWeapon(value:Weapon):void
+			{
+				if (_currentWeapon)
+					this.removeChild(_currentWeapon);
+				_currentWeapon = value;
+				
+				this.addChild(_currentWeapon);
+			}
 		
-		public function set fuzzificator(value:Fuzzificator):void
-		{
-			_fuzzificator = value;
-			
-			ammoStatusInput = _fuzzificator.getManifold("Ammo_Status").input;
-			distanceStatusInput = _fuzzificator.getManifold("Distance_to_Target").input;
-			
-			distanceMaxRange = FuzzyManifold(_fuzzificator.getManifold("Distance_to_Target")).maxRange;
 		}
 	
 	}
-
-}

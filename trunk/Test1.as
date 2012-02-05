@@ -198,7 +198,8 @@ package
 			trace(fuz.getManifold("Desirability").toString());
 			
 		
-			/*ammoStatusInput.value = 8;
+			/*
+			ammoStatusInput.value = 8;
 			distanceStatusInput.value = 200*/
 			
 			/*
@@ -208,29 +209,28 @@ package
 			/*ammoStatusInput.value = 30;
 			distanceStatusInput.value = 398.85;*/
 			
+			/*ammoStatusInput.value = 30;
+			distanceStatusInput.value = 398.85;*/
+			
 			/**/
-			ammoStatusInput.value = 20;
-			distanceStatusInput.value = 398.85;
+			ammoStatusInput.value = 17;
+			distanceStatusInput.value = 397;
 			
 			
 			
 			trace("INPUT> ammo:" + ammoStatusInput.value + " distance:" + distanceStatusInput.value);
 			
 			fuz.Fuzzify();
-			fuz.getManifold("Distance_to_Target").fillArea();
+			
+			
+			/*fuz.getManifold("Distance_to_Target").fillArea();
 			fuz.getManifold("Ammo_Status").fillArea();
 			
-		/*	func = fuz.getManifold("Desirability").memberfunctions[0];
-			trace("Desirability", func.linguisticTerm, "DOM:", func.degreeOfMembership);
-			func = fuz.getManifold("Desirability").memberfunctions[1];
-			trace("Desirability", func.linguisticTerm, "DOM:", func.degreeOfMembership);
-			func = fuz.getManifold("Desirability").memberfunctions[2];
-			trace("Desirability", func.linguisticTerm, "DOM:", func.degreeOfMembership);*/
-			fuz.getManifold("Desirability").fillArea();
+	    	fuz.getManifold("Desirability").fillArea();*/
 			
 			
 			//can draw dots of the bounding shape (for debug uncomment  drawAreaShapePoints);
-			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTROID);
+			/*fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTROID);
 			
 			trace("OUTPUT COG:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 									
@@ -242,17 +242,17 @@ package
 			//fuz.getManifold("Desirability").reset();
 			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTAR_OF_SUM);
 			
-			trace("OUTPUT COS:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			trace("OUTPUT COS:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);*/
 			
 			//	fuz.getManifold("Desirability").reset();
 			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod. AVERAGE_OF_MAXIMA);
 			
 			trace("OUTPUT MAXAV:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
 			
-				//fuz.getManifold("Desirability").reset();
+			/*	//fuz.getManifold("Desirability").reset();
 				fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTER_OF_AREA);
 			
-			trace("OUTPUT COA:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
+			trace("OUTPUT COA:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);*/
 			
 					
 			trace(fuz.getManifold("Desirability").toString());
