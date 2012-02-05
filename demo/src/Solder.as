@@ -48,6 +48,7 @@ package
 		{
 			this.x = this.x - 4;
 			
+			
 			if (this.x < -this.width)
 			onDie();
 			
