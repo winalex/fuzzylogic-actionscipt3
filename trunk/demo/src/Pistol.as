@@ -10,6 +10,7 @@
 	import winxalex.fuzzy.FuzzyRule;
 	import winxalex.fuzzy.Token;
 	import winxalex.fuzzy.FuzzyOperator;
+	import flash.media.Sound;
 	
 	/**
 	 * ...
@@ -107,6 +108,12 @@
 			fuz.addRule(rule);
 			
 			return fuz;
+		}
+		
+		
+		override public function get shootSound():Sound 
+		{
+			return SoundManager.getInstance().pistolFireSound;
 		}
 		
 		override public function shoot():void

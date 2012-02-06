@@ -60,7 +60,7 @@ package
 			sol.x = this.stage.stageWidth + sol.width;
 			this.addChild(sol);
 			targets.push(sol);
-			spawingTimer.delay = 500 + Math.random();// * 1000;
+			spawingTimer.delay = 500 + Math.random() * 800;
 		
 		}
 	

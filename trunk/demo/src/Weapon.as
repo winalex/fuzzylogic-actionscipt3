@@ -1,6 +1,7 @@
 ﻿package
 {
 	import flash.display.MovieClip;
+	import flash.media.Sound;
 	import winxalex.fuzzy.Fuzzificator;
 	import winxalex.fuzzy.FuzzyInput;
 	import winxalex.fuzzy.FuzzyManifold;
@@ -21,6 +22,7 @@
 		private var _maxRange:Number;
 		private var _minRange:Number;
 		public var target:Solder;
+		private var _shootSound:Sound;
 		
 		public function Weapon(ammo:uint):void
 		{
@@ -79,6 +81,7 @@
 			{
 				ammo = ammoStatus;
 				gotoAndPlay("SHOOT_ANI");
+				//shootSound.play();
 			}
 			else
 				ammo = 0;
@@ -103,6 +106,11 @@
 		public function get maxRange():Number
 		{
 			return _maxRange;
+		}
+		
+		public function get shootSound():Sound 
+		{
+			return null;
 		}
 	
 	}
