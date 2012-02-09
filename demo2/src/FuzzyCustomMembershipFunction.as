@@ -9,14 +9,17 @@ package
 	public class FuzzyCustomMembershipFunction extends FuzzyMembershipFunction 
 	{
 		
-		public function FuzzyCustomMembershipFunction(lin) 
+		public function FuzzyCustomMembershipFunction(lingusiticTerm:String,typeName:String,leftDomain:Number, leftPeekDomain:Number, rightPeekPoint:Number, rightDomain:Number) 
 		{
-			super(li
+			super(linguisticTerm, typeName, leftDomain, leftPeekDomain, rightPeekPoint, rightDomain);
 		}
 		
 		override public function calculateDOM(value:Number):Number 
 		{
-			return super.calculateDOM(value);
+			value /= origRightDomain;
+			value = 1-value;
+			
+			return value * value;
 		}
 		
 	}
