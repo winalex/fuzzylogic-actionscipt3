@@ -160,15 +160,20 @@ package
 				tempStek = new Vector.<Token>(3,true);
 				
 				// creation antescendent(condition stek) stek like "Distance_to_Target IS Far AND Ammo_Status IS Okey"
-				tempStek[0] = new Token(0, FuzzyOperator.fDOM, ["Distance_to_Target", "Far", fuz]);
-				tempStek[1] = new Token(1, FuzzyOperator.fDOM, ["Ammo_Status", "Okey", fuz]);
+				/*v 1.0.1 implemenation
+				 tempStek[0] = new Token(0, FuzzyOperator.fDOM, ["Distance_to_Target", "Far", fuz]);
+				tempStek[1] = new Token(1, FuzzyOperator.fDOM, ["Ammo_Status", "Okey", fuz]);*/
+				 tempStek[0] = new Token(0, FuzzyOperator.fDOM, [fuz.inputFuzzymanifolds.Distance_to_Target.memberfunctions.Far]);
+				tempStek[1] = new Token(1, FuzzyOperator.fDOM, [fuz.getManifold("Ammo_Status").memberfunctions.Okey]);
+			
 				var result:Token=tempStek[2] = new Token(2, FuzzyOperator.fMIN, [tempStek[0], tempStek[1]]);
 				rule.antCompiledStek = tempStek;
 				
 				// creation result stek like "Desirability IS Undesirable"
 				tempStek = new Vector.<Token>(2,true);
 				tempStek[0] = new Token(0, fuz.implication, [result,new Token(0,null,null,1)]);
-				tempStek[1] = new Token(1, FuzzyOperator.fAGGREGATE, ["Desirability", "Undesirable",fuz,rule.weight,tempStek[0]]);
+				tempStek[1] = new Token(1, FuzzyOperator.fAGGREGATE, [fuz.outputFuzzyManifolds.Desirability.memberfunctions.Undesirable,fuz,rule.weight,tempStek[0]]);
+				
 				
 			
 				rule.conCompiledStek = tempStek;
@@ -192,16 +197,25 @@ package
 									rule = new FuzzyRule( "IF Distance_to_Target IS Close AND Ammo_Status IS Low THEN  Desirability IS Undesirable");
 									fuz.addRule(rule);
 												
+									
 			
-									//new Token(1,
+								/*if (
+									and{
+									fuz.inputFuzzymanifolds.Distance_to_Target.membershipfunction.Close;  
+									fuz.inputFuzzymanifolds.Ammo_Status.membershipfunction.Low;
+									}
+								)
+								{
+									fuz.inputFuzzymanifolds.Desirability.membershipfunction.Undesirable;
+								}*/
 			
 			trace(fuz.getManifold("Desirability").toString());
 			
 		
-			/*
-			ammoStatusInput.value = 8;
-			distanceStatusInput.value = 200*/
 			
+			ammoStatusInput.value = 8;
+			distanceStatusInput.value = 200
+			/**/
 			/*
 			ammoStatusInput.value = 1;
 			distanceStatusInput.value = 398.85;*/
@@ -212,9 +226,9 @@ package
 			/*ammoStatusInput.value = 30;
 			distanceStatusInput.value = 398.85;*/
 			
-			/**/
+			/*
 			ammoStatusInput.value = 17;
-			distanceStatusInput.value = 397;
+			distanceStatusInput.value = 397;*/
 			
 			
 			
@@ -230,10 +244,10 @@ package
 			
 			
 			//can draw dots of the bounding shape (for debug uncomment  drawAreaShapePoints);
-			/*fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTROID);
+			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.CENTROID);
 			
 			trace("OUTPUT COG:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
-									
+			/*						
 			fuzzyManifolds = fuz.Defuzzify(DefuzzificationMethod.MEAN_OF_MAXIMUM);
 			//fuz.getManifold("Desirability").reset();
 			trace("OUTPUT MOM:" + FuzzyManifold(fuzzyManifolds["Desirability"]).output);
