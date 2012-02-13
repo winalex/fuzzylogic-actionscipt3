@@ -21,8 +21,8 @@ package winxalex.fuzzy
 	{
 		
 	 //a map of all the fuzzy variables this module uses
-     internal var inputFuzzymanifolds:AssociativeArray;   ///Dictionary;
-	 internal var outputFuzzyManifolds:Dictionary;
+     public var inputFuzzymanifolds:AssociativeArray;   ///Dictionary;
+	 public var outputFuzzyManifolds:Dictionary;
   
 	 
 	 public var type:uint = FuzzificatorType.MAMDANI;

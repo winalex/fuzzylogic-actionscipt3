@@ -335,7 +335,12 @@ package winxalex.fuzzy
 		}
 		
 		
-		public static function fDOM(...args):Number
+		public static function fDOM(memberfunction:FuzzyMembershipFunction):Number
+		{
+			return memberfunction.degreeOfMembership;
+		}
+		
+	/*	public static function fDOM(...args):Number
 		{
 			var memberfunction:FuzzyMembershipFunction;
 			var manifold:FuzzyManifold;
@@ -361,11 +366,47 @@ package winxalex.fuzzy
 				throw new Error(" Manifold " + args[0]+" doesn't exist");
 			}
 		
+		}*/
+		
+		
+		public static function fAGGREGATE (memberfunction:FuzzyMembershipFunction,fuzzificator:Fuzzificator,weight:Number,implicationResult:Token):void
+		{
+					
+			//if(_fuzzificator.type==FuzzificatorType.SUGENO)
+			
+			
+						
+				if (!implicationResult.value && memberfunction.areBoundariesDIRTY) return;
+				
+				if (memberfunction)
+				{
+					
+					
+											
+						if (!memberfunction.areBoundariesDIRTY)//boundaries are dirty when LOC is changed from default value=1
+						{
+							memberfunction.levelOfConfidence= implicationResult.value;
+						 
+						}
+						else
+						{
+							
+							_temp1Token.value = implicationResult.value *  weight;
+							_temp2Token.value = memberfunction.levelOfConfidence;
+							memberfunction.levelOfConfidence= fuzzificator.aggregation(_temp2Token,_temp1Token  );
+							
+							if (fuzzificator.implication == FuzzyOperator.fPRODUCT)
+								memberfunction.isScaled = true;
+							
+						}
+						
+							
+				}
+				
 		}
 		
 		
-		
-		public static function fAGGREGATE (manifoldName:String, memberfunctionName:String,fuzzificator:Fuzzificator,weight:Number,implicationResult:Token):void
+		/*public static function fAGGREGATE (manifoldName:String, memberfunctionName:String,fuzzificator:Fuzzificator,weight:Number,implicationResult:Token):void
 		{
 			var memberfunction:FuzzyMembershipFunction;
 			var manifold:FuzzyManifold;
@@ -415,7 +456,7 @@ package winxalex.fuzzy
 			{
 				throw new Error( " has not existing manifold " + manifoldName);
 			}
-		}
+		}*/
 			
 		
 		

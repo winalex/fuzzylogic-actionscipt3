@@ -171,10 +171,13 @@ package winxalex.fuzzy
 				if (_fuzzificator.implication == termFunction)
 				{
 				  stek[stek.length]= new Token(0, _fuzzificator.implication, [_antCompiledStek[_antCompiledStek.length-1],new Token(0,null,null,1)]);
-				  stek[stek.length] = new Token(1, FuzzyOperator.fAGGREGATE, [manifold,memberFunction,_fuzzificator,_weight,stek[stek.length-1]]);
+				  // stek[stek.length] = new Token(1, FuzzyOperator.fAGGREGATE, [manifold,memberFunction,_fuzzificator,_weight,stek[stek.length-1]]);
+				  stek[stek.length] = new Token(1, FuzzyOperator.fAGGREGATE, [_fuzzificator.getManifold(manifold).memberfunctions[memberFunction],_fuzzificator,_weight,stek[stek.length-1]]);
 				}
 				else
-				  stek[stek.length] = new Token(stek.length, termFunction, [manifold, memberFunction, _fuzzificator]);
+					//v1.0.1
+				  //stek[stek.length] = new Token(stek.length, termFunction, [manifold, memberFunction, _fuzzificator]);
+			      stek[stek.length] = new Token(stek.length, termFunction, [_fuzzificator.getManifold(manifold).memberfunctions[memberFunction]]);
 				
 				//traceString = "DOM("+manifold +"," + memberFunction+")";
 				
