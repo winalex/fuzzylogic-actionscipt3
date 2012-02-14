@@ -14,10 +14,10 @@ package
 	 * 
 	 * desirablity to choose rocket luncher weapon depending of ammo and distance to enemy
 	 */
-	public class Test1 extends Sprite
+	public class Test1OOPRules extends Sprite
 	{
 		
-		public function Test1() 
+		public function Test1OOPRules():void
 		{
 			var tempStek:Vector.<Token>;
 			var tf:TextField;
@@ -178,13 +178,33 @@ package
 			
 				rule.conCompiledStek = tempStek;
 				
-				//compiling need only on the rule input as string
-				fuz.addRule(rule,false);
+				fuz.addRule(rule, false);
+				
+				
+				
 			/*
 				/*rule = new FuzzyRule( " IF Distance_to_Target IS Far AND Ammo_Status IS Okey THEN Desirability IS Undesirable");
 					fuz.addRule(rule);*/
-					rule = new FuzzyRule( " IF Distance_to_Target IS Far AND  Ammo_Status IS Low THEN Desirability IS Undesirable ");
-						fuz.addRule(rule);
+					
+								
+	rule = new FuzzyRule(
+						function():Number 
+						{
+							//IF MEDIUM AND LOW
+							return	fuz.AND.call(null,
+										   fuz.inputFuzzymanifolds.Distance_to_Target.memberfunctions.Far.degreeOfMembership,
+											
+											fuz.inputFuzzymanifolds.Ammo_Status.memberfunctions.Low.degreeOfMembership
+										)
+								 
+						},//THEN UNDESIRABLE
+						fuz.outputFuzzyManifolds.Desirability.memberfunctions.Undesirable
+				      );
+					  
+		 fuz.addRule(rule,false);
+					
+			/*	rule = new FuzzyRule( " IF Distance_to_Target IS Far AND  Ammo_Status IS Low THEN Desirability IS Undesirable ");
+						fuz.addRule(rule);*/
 						rule = new FuzzyRule( "IF Distance_to_Target IS Medium AND Ammo_Status IS Loads THEN Desirability IS VeryDesirable ");
 							fuz.addRule(rule);
 							rule = new FuzzyRule( "IF Distance_to_Target IS Medium AND Ammo_Status IS Okey THEN  Desirability IS VeryDesirable ");
@@ -388,6 +408,32 @@ OUTPUT COA:63.913043478260875
 			
 			
 		}
+		
+		
+		public function OR(...args):Number
+		{
+			trace("OR");
+			/*return function(...args):void
+			{
+				
+			}*/
+			
+			return 0;
+		}
+		
+		public function AND(...args):Number
+		{
+			
+			trace("AND");
+			/*return function(...args):void
+			{
+				
+			}*/
+			
+			return 0;
+		}
+		
+		
 		
 	}
 

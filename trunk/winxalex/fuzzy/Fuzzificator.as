@@ -116,7 +116,7 @@ package winxalex.fuzzy
 		{
 			fuzzyRules.append(rule);
 			
-			
+			rule.fuzzificator = this;
 			// Z is Z1
 			//trace(rule.consequence);
 			

@@ -9,7 +9,7 @@ package winxalex.fuzzy
 	{
 		public var antecedent:String;
 		public var consequence:String;
-		private var _weight:Number;
+		private var _weight:Number=1;
 		
 		private var _isFired:Boolean = false;
 		private var _fuzzificator:Fuzzificator;
@@ -34,28 +34,42 @@ package winxalex.fuzzy
 		private static const _thenCaseRegExp:RegExp = /\s+Then\s+/ig;
 		private static const _punctuationCaseRegExp:RegExp = /(,|\.|;)/g;
 		
+		private var _conditionFunction:Function;
+		private var _resultFunction:FuzzyMembershipFunction;
+		
 		/**
 		 *  IF (Our_Health IS Near_Death) AND (Enemy_Health IS Near_Death) THEN (Aggressiveness IS Fight_Defensively) (optional)WEIGHT=1;
 		 * @param	rule
 		 */
-		public function FuzzyRule(rule:String=""):void
+		public function FuzzyRule(...args):void
 		{
 			var match:Array;
 			
-			if (!rule.length) return;
+			if (args[0] is String)
+			{
+				var rule:String = args[0] as String;
+				if (!rule.length) return;
+				
+				rule = cleanCase(rule);
+				
+				match = rule.split(_thenCaseRegExp, 2);
+				
+				if (!match.length || match.length > 2)
+					throw(new Error(" Rule Error: 'Then' not found in the rule or more then one 'Then' "));
+				
+				_rule = rule;
+				_fuzzificator = null;
+				
+				this.consequence = match[1];
+				this.antecedent = match[0];
+			}
+			else 
+			{
+			  _conditionFunction = args[0];
+			  _resultFunction = FuzzyMembershipFunction(args[1]);
+			}
 			
-			rule = cleanCase(rule);
 			
-			match = rule.split(_thenCaseRegExp, 2);
-			
-			if (!match.length || match.length > 2)
-				throw(new Error(" Rule Error: 'Then' not found in the rule or more then one 'Then' "));
-			
-			_rule = rule;
-			_fuzzificator = null;
-			
-			this.consequence = match[1];
-			this.antecedent = match[0];
 		
 			//trace(this.consequence, this.antecedent);
 		
@@ -438,13 +452,22 @@ package winxalex.fuzzy
 		 */
 		public function evaluate():Number
 		{
-			//evaluate condition term1 operator term2...
-			_result = evaluateStek(_antCompiledStek);
-			
-			//trace("EVALUATED:"+toString(_antCompiledStek));
-			
-			//result steak
-			evaluateStek(_conCompiledStek);
+			if (_conditionFunction) //DIRECT EVALUATION
+			{
+				_result = _conditionFunction.call();
+				_resultFunction.levelOfConfidence = _fuzzificator.aggregation(_fuzzificator.implication(1, _result) * weight, _resultFunction.levelOfConfidence);
+				
+			}
+			else//EVALUATE THRU STEAK
+			{
+				//evaluate condition term1 operator term2...
+				_result = evaluateStek(_antCompiledStek);
+				
+				//trace("EVALUATED:"+toString(_antCompiledStek));
+				
+				//result steak
+				evaluateStek(_conCompiledStek);
+			}
 			
 			if (_result)
 			{
@@ -492,79 +515,9 @@ package winxalex.fuzzy
 			return fr;
 		}
 		
-		/*public function implicate(manifoldName:String, memberfunctionName:String,fuzzificator:Fuzzificator):void
-		{
-			var memberfunction:FuzzyMembershipFunction;
-			var manifold:FuzzyManifold;
-			
-			manifold = fuzzificator.outputFuzzyManifolds[manifoldName];
-			//if(_fuzzificator.type==FuzzificatorType.SUGENO)
-			
-			if (manifold)
-			{
-				memberfunction = manifold.memberfunctions[memberfunctionName];
-				
-				if (memberfunction)
-				{
-					if (_isFired) //result is ready
-					{
-											
-						if (!memberfunction.areBoundariesDIRTY)//boundaries are dirty when LOC is changed from default value=1
-						{
-							memberfunction.levelOfConfidence= _result;
-						  // memberfunction.levelOfConfidence = _result;
-						}
-						else
-						{
-							_nextAggregation.value = _result * this.weight;
-							_prevAggregation.value = memberfunction.levelOfConfidence;
-						
-							memberfunction.levelOfConfidence= _fuzzificator.aggregation(_prevAggregation, _nextAggregation);
-							if (_fuzzificator.implication == FuzzyOperator.fPRODUCT)
-								memberfunction.isScaled = true;
-							
-						}
-						
-					}
-					
-				}
-				else
-					throw new Error(this.rule + " has not existing memeber function  <" + memberfunctionName + "> in manifold <" + manifoldName + ">");
-				
-			}
-			else
-			{
-				throw new Error(this.rule + " has not existing manifold " + manifoldName);
-			}
 		
-		}*/
 		
-		/*private function getDOM(manifoldName:String, memberfunctionName:String):Number
-		{
-			var memberfunction:FuzzyMembershipFunction;
-			var manifold:FuzzyManifold;
-			var currentDOM:Number;
-			
-			manifold = _fuzzificator.inputFuzzymanifolds[manifoldName]
-			
-			if (manifold)
-			{
-				memberfunction = manifold.memberfunctions[memberfunctionName];
-				if (memberfunction)
-				{
-					
-					return memberfunction.degreeOfMembership;
-				}
-				else
-					throw new Error(this.rule + " has not existing memeber function  <" + memberfunctionName + "> in manifold <" + manifoldName + ">");
-				
-			}
-			else
-			{
-				throw new Error(this.rule + " has not existing manifold " + manifoldName);
-			}
-		
-		}*/
+	
 		
 		public function toString():String
 		{
@@ -614,6 +567,11 @@ package winxalex.fuzzy
 		public function get weight():Number
 		{
 			return _weight;
+		}
+		
+		public function set fuzzificator(value:Fuzzificator):void 
+		{
+			_fuzzificator = value;
 		}
 	
 	}
